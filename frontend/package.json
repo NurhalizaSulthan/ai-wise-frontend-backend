@@ -9,10 +9,15 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "apexcharts": "^5.15.2",
+    "echarts": "^6.1.0",
+    "echarts-for-react": "^3.0.6",
+    "flatpickr": "^4.6.13",
     "next": "16.2.7",
-    "next-themes": "^0.4.6",
     "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "react-apexcharts": "^2.1.1",
+    "react-dom": "19.2.4",
+    "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
