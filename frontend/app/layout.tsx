@@ -1,12 +1,19 @@
-import { Outfit } from "next/font/google";
+import type { Metadata } from "next";
+import { Instrument_Sans } from "next/font/google";
 import "./globals.css";
-import "flatpickr/dist/flatpickr.css";
-import { SidebarProvider } from "@/components/contex/SidebarContex";
-import { ThemeProvider } from "@/components/contex/ThemeContex";
+import Providers from "./providers";
 
-const outfit = Outfit({
+const instrumentSans = Instrument_Sans({
+  variable: "--font-instrument-sans",
   subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
 });
+
+export const metadata: Metadata = {
+  title: "AI WISE",
+  description:
+    "Monitoring Real-Time Pekerja melalui Sistem Wearable Keselamatan Kerja",
+};
 
 export default function RootLayout({
   children,
@@ -14,11 +21,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${outfit.className} dark:bg-gray-900`}>
-        <ThemeProvider>
-          <SidebarProvider>{children}</SidebarProvider>
-        </ThemeProvider>
+    <html lang="id" suppressHydrationWarning className={instrumentSans.variable}>
+      <body className="font-sans antialiased">
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
