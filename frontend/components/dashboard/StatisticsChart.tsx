@@ -1,22 +1,23 @@
 "use client";
-import { useEffect, useRef } from "react";
+
+import { useEffect, useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
+import "flatpickr/dist/flatpickr.min.css";
 import { ApexOptions } from "apexcharts";
 import flatpickr from "flatpickr";
 import ChartTab from "@/components/atoms/ChartTab";
-import { CalenderIcon } from "@/icons/index";
-
-
 
 import type { ComponentType } from "react";
 import type { Props as ApexProps } from "react-apexcharts";
+import { Icon } from "@iconify/react";
 
 const Chart = dynamic<ApexProps>(
-  () => import("react-apexcharts").then((mod) => mod.default as unknown as ComponentType<ApexProps>),
+  () =>
+    import("react-apexcharts").then(
+      (mod) => mod.default as unknown as ComponentType<ApexProps>
+    ),
   { ssr: false }
 );
-
-
 
 export default function StatisticsChart() {
   const datePickerRef = useRef<HTMLInputElement>(null);
@@ -30,15 +31,16 @@ export default function StatisticsChart() {
 
     const fp = flatpickr(datePickerRef.current, {
       mode: "range",
-      static: true,
       monthSelectorType: "static",
       dateFormat: "M d",
       defaultDate: [sevenDaysAgo, today],
       clickOpens: true,
-      prevArrow:
-        '<svg class="stroke-current" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.5 15L7.5 10L12.5 5" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
-      nextArrow:
-        '<svg class="stroke-current" width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.5 15L12.5 10L7.5 5" stroke="" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+
+      // Jangan pakai static:true karena bisa bentrok dengan React/Iconify
+      static: false,
+
+      prevArrow: "‹",
+      nextArrow: "›",
     });
 
     return () => {
@@ -48,132 +50,158 @@ export default function StatisticsChart() {
     };
   }, []);
 
-  const options: ApexOptions = {
-    legend: {
-      show: false, // Hide legend
-      position: "top",
-      horizontalAlign: "left",
-    },
-    colors: ["#22C55E", "#86EFAC"], // Define line colors
-    chart: {
-      fontFamily: "Outfit, sans-serif",
-      height: 310,
-      type: "line", // Set the chart type to 'line'
-      toolbar: {
-        show: false, // Hide chart toolbar
+  const options = useMemo<ApexOptions>(
+    () => ({
+      legend: {
+        show: false,
       },
-    },
-    stroke: {
-      curve: "straight", // Define the line style (straight, smooth, or step)
-      width: [2, 2], // Line width for each dataset
-    },
 
-    fill: {
-      type: "gradient",
-      gradient: {
-        opacityFrom: 0.55,
-        opacityTo: 0,
-      },
-    },
-    markers: {
-      size: 0, // Size of the marker points
-      strokeColors: "#fff", // Marker border color
-      strokeWidth: 2,
-      hover: {
-        size: 6, // Marker size on hover
-      },
-    },
-    grid: {
-      xaxis: {
-        lines: {
-          show: false, // Hide grid lines on x-axis
+      colors: ["#157138", "#fb8716"],
+
+      chart: {
+        fontFamily: "var(--font-sans)",
+        height: 310,
+        type: "area",
+        toolbar: {
+          show: false,
+        },
+        zoom: {
+          enabled: false,
         },
       },
-      yaxis: {
-        lines: {
-          show: true, // Show grid lines on y-axis
+
+      stroke: {
+        curve: "smooth",
+        width: [3, 3],
+      },
+
+      fill: {
+        type: "gradient",
+        gradient: {
+          opacityFrom: 0.35,
+          opacityTo: 0.02,
         },
       },
-    },
-    dataLabels: {
-      enabled: false, // Disable data labels
-    },
-    tooltip: {
-      enabled: true, // Enable tooltip
-      x: {
-        format: "dd MMM yyyy", // Format for x-axis tooltip
+
+      markers: {
+        size: 0,
+        strokeColors: "#ffffff",
+        strokeWidth: 2,
+        hover: {
+          size: 6,
+        },
       },
-    },
-    xaxis: {
-      type: "category", // Category-based x-axis
-      categories: [
-        "Jan",
-        "Feb",
-        "Mar",
-        "Apr",
-        "May",
-        "Jun",
-        "Jul",
-        "Aug",
-        "Sep",
-        "Oct",
-        "Nov",
-        "Dec",
-      ],
-      axisBorder: {
-        show: false, // Hide x-axis border
+
+      grid: {
+        borderColor: "var(--border)",
+        strokeDashArray: 4,
+        xaxis: {
+          lines: {
+            show: false,
+          },
+        },
+        yaxis: {
+          lines: {
+            show: true,
+          },
+        },
       },
-      axisTicks: {
-        show: false, // Hide x-axis ticks
+
+      dataLabels: {
+        enabled: false,
       },
+
       tooltip: {
-        enabled: false, // Disable tooltip for x-axis points
+        enabled: true,
+        theme: "light",
       },
-    },
-    yaxis: {
-      labels: {
-        style: {
-          fontSize: "12px", // Adjust font size for y-axis labels
-          colors: ["#6B7280"], // Color of the labels
+
+      xaxis: {
+        type: "category",
+        categories: [
+          "Jan",
+          "Feb",
+          "Mar",
+          "Apr",
+          "May",
+          "Jun",
+          "Jul",
+          "Aug",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dec",
+        ],
+        axisBorder: {
+          show: false,
+        },
+        axisTicks: {
+          show: false,
+        },
+        tooltip: {
+          enabled: false,
+        },
+        labels: {
+          style: {
+            fontSize: "12px",
+            colors: "var(--muted)",
+            fontFamily: "var(--font-sans)",
+          },
         },
       },
-      title: {
-        text: "", // Remove y-axis title
-        style: {
-          fontSize: "0px",
+
+      yaxis: {
+        labels: {
+          style: {
+            fontSize: "12px",
+            colors: ["var(--muted)"],
+            fontFamily: "var(--font-sans)",
+          },
+        },
+        title: {
+          text: "",
         },
       },
-    },
-  };
+    }),
+    []
+  );
 
   const series = [
     {
-      name: "Sales",
+      name: "Alerts",
       data: [180, 190, 170, 160, 175, 165, 170, 205, 230, 210, 240, 235],
     },
     {
-      name: "Revenue",
+      name: "Resolved",
       data: [40, 30, 50, 40, 55, 40, 70, 100, 110, 120, 150, 140],
     },
   ];
+
+
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white px-5 pb-5 pt-5 dark:border-gray-800 dark:bg-white/[0.03] sm:px-6 sm:pt-6">
-      <div className="flex flex-col gap-5 mb-6 sm:flex-row sm:justify-between">
-        <div className="w-full">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
+    <div className="rounded-2xl border border-border bg-surface dark:bg-surface px-5 pb-5 pt-5 sm:px-6 sm:pt-6">
+      <div className="mb-6 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
+        <div className="w-full min-w-0">
+          <h3 className="text-lg font-semibold text-foreground">
             Statistics
           </h3>
-          <p className="mt-1 text-gray-500 text-theme-sm dark:text-gray-400">
+
+          <p className="mt-1 text-sm text-muted">
             Target you ve set for each month
           </p>
         </div>
+
         <div className="flex items-center gap-3 sm:justify-end">
           <ChartTab />
+
           <div className="relative inline-flex items-center">
-            <CalenderIcon className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 lg:left-3 lg:top-1/2 lg:translate-x-0 lg:-translate-y-1/2  text-gray-500 dark:text-gray-400 pointer-events-none z-10" />
+            <Icon
+              icon="solar:calendar-linear"
+              className="pointer-events-none absolute left-1/2 top-1/2 z-10 size-5 -translate-x-1/2 -translate-y-1/2 text-muted lg:left-3 lg:translate-x-0"
+            />
             <input
               ref={datePickerRef}
-              className="h-10 w-10 lg:w-40 lg:h-auto  lg:pl-10 lg:pr-3 lg:py-2 rounded-lg border border-gray-200 bg-white text-sm font-medium text-transparent lg:text-gray-700 outline-none dark:border-gray-700 dark:bg-gray-800 dark:lg:text-gray-300 cursor-pointer"
+              className="h-10 w-10 cursor-pointer rounded-lg border border-border bg-background text-sm font-medium text-transparent outline-none transitionplaceholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 lg:h-auto lg:w-40 lg:py-2 lg:pl-10 lg:pr-3 lg:text-foreground"
               placeholder="Select date range"
             />
           </div>
@@ -181,7 +209,7 @@ export default function StatisticsChart() {
       </div>
 
       <div className="max-w-full overflow-x-auto custom-scrollbar">
-        <div className="min-w-[1000px] xl:min-w-full">
+        <div className="min-w-180 xl:min-w-full">
           <Chart options={options} series={series} type="area" height={310} />
         </div>
       </div>

@@ -1,14 +1,6 @@
-import type { Metadata } from "next";
 import { DataOverview } from "@/components/dashboard/DataOverview";
-import React from "react";
 import StatisticsChart from "@/components/dashboard/StatisticsChart";
 import PieChart from "@/components/dashboard/PieChart";
-
-export const metadata: Metadata = {
-  title:
-    "Next.js E-commerce Dashboard | TailAdmin - Next.js Dashboard Template",
-  description: "This is Next.js Home for TailAdmin Dashboard Template",
-};
 
 export default function Dashboard() {
   return (
@@ -24,7 +16,7 @@ export default function Dashboard() {
       </div>
 
       <div className="col-span-12 xl:col-span-4">
-        <PieChart/>
+        <PieChart />
       </div>
     </div>
   );
