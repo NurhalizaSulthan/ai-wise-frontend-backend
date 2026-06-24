@@ -1,4 +1,5 @@
 "use client";
+
 import type React from "react";
 import { useEffect, useRef } from "react";
 
@@ -17,30 +18,42 @@ export const Dropdown: React.FC<DropdownProps> = ({
 }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
 
- useEffect(() => {
-  const handleClickOutside = (event: MouseEvent) => {
-    if (
-      dropdownRef.current &&
-      !dropdownRef.current.contains(event.target as Node) &&
-      !(event.target as HTMLElement).closest('.dropdown-toggle')
-    ) {
-      onClose();
-    }
-  };
+  useEffect(() => {
+    if (!isOpen) return;
 
-  document.addEventListener("mousedown", handleClickOutside);
-  return () => {
-    document.removeEventListener("mousedown", handleClickOutside);
-  };
-}, [onClose]);
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
 
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(target) &&
+        !target.closest(".dropdown-toggle")
+      ) {
+        onClose();
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        onClose();
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleEscape);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isOpen, onClose]);
 
   if (!isOpen) return null;
 
   return (
     <div
       ref={dropdownRef}
-      className={`absolute z-40  right-0 mt-2  rounded-xl border border-gray-200 bg-white  shadow-theme-lg dark:border-gray-800 dark:bg-gray-dark ${className}`}
+      className={`absolute right-0 z-40 mt-2 rounded-xl border border-muted/20 bg-background shadow-lg ${className}`}
     >
       {children}
     </div>

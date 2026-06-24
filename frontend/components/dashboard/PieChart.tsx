@@ -5,7 +5,8 @@ import dynamic from "next/dynamic";
 
 import { Dropdown } from "../atoms/Dropdown";
 import { DropdownItem } from "../atoms/DropdownItem";
-import { MoreDotIcon } from "@/icons";
+import { Icon } from "@iconify/react";
+// import { MoreDotIcon } from "@/icons";
 
 const ReactECharts = dynamic(
   () => import("echarts-for-react"),
@@ -113,11 +114,11 @@ export default function PieChart() {
   };
 
   return (
-    <div className="rounded-2xl border border-gray-200 bg-white shadow-default dark:border-gray-800 dark:bg-gray-900">
-      <div className="px-5 pt-5 pb-5 sm:px-6">
+    <div className="rounded-2xl border border-border bg-surface dark:border-border dark:bg-surface">
+      <div className="px-5 pt-5 sm:px-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-800 dark:text-white">
+          <h3 className="text-lg font-semibold text-foreground dark:text-foreground">
             Distribusi Jenis Risiko
           </h3>
 
@@ -126,7 +127,10 @@ export default function PieChart() {
               onClick={toggleDropdown}
               className="dropdown-toggle"
             >
-              <MoreDotIcon className="text-gray-400 hover:text-gray-700 dark:hover:text-gray-300" />
+              <Icon
+                icon="solar:menu-dots-bold"
+                className="size-5 text-muted transition-colors hover:text-primary"
+              />
             </button>
 
             <Dropdown
@@ -137,7 +141,7 @@ export default function PieChart() {
               <DropdownItem
                 tag="a"
                 onItemClick={closeDropdown}
-                className="flex w-full rounded-lg text-left font-normal text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                className="flex w-full rounded-lg text-left font-normal text-muted hover:text-muted"
               >
                 Refresh
               </DropdownItem>
@@ -145,7 +149,7 @@ export default function PieChart() {
               <DropdownItem
                 tag="a"
                 onItemClick={closeDropdown}
-                className="flex w-full rounded-lg text-left font-normal text-gray-500 hover:bg-gray-100 hover:text-gray-700"
+                className="flex w-full rounded-lg text-left font-normal text-muted hover:bg-muted hover:text-muted"
               >
                 Download
               </DropdownItem>
@@ -154,7 +158,7 @@ export default function PieChart() {
         </div>
 
         {/* Chart */}
-        <div className="mt-4">
+        <div>
           <ReactECharts
             option={option}
             style={{
