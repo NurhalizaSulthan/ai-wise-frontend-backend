@@ -1,269 +1,271 @@
 "use client";
 
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useSidebar } from "@/components/contex/SidebarContex";
-
-import {
-  ChevronDownIcon,
-  HorizontaLDots,
-  TableIcon,
-  UserCircleIcon,
-  HouseIcon,
-} from "@/icons/index";
+import { Icon } from "@iconify/react";
+import { useSidebar } from "../contex/SidebarContex";
 
 type NavItem = {
-  name: string;
-  icon: React.ReactNode;
-  path?: string;
-  subItems?: {
     name: string;
-    path: string;
-    pro?: boolean;
-    new?: boolean;
-  }[];
+    icon: string;
+    path?: string;
+    subItems?: {
+        name: string;
+        path: string;
+    }[];
 };
 
 const navItems: NavItem[] = [
-  {
-    icon: <HouseIcon />,
-    name: "Dashboard",
-    path: "/dashboard",
-  },
-  {
-    icon: <UserCircleIcon />,
-    name: "Worker",
-    path: "/Worker",
-  },
-  {
-    icon: <TableIcon />,
-    name: "Tables",
-    subItems: [
-      {
-        name: "Basic Tables",
-        path: "/basic-tables",
-      },
-    ],
-  },
+    {
+        name: "Dashboard",
+        icon: "solar:home-2-linear",
+        path: "/dashboard",
+    },
+    {
+        name: "Worker",
+        icon: "mdi:worker",
+        path: "/workers",
+    },
 ];
 
 const AppSidebar: React.FC = () => {
-  const { isExpanded, isMobileOpen, toggleSidebar, toggleMobileSidebar } =
-    useSidebar();
+    const { isExpanded, isMobileOpen, toggleSidebar, toggleMobileSidebar } =
+        useSidebar();
 
-  const pathname = usePathname();
+    const pathname = usePathname();
 
-  const [openSubmenu, setOpenSubmenu] = useState<{
-    index: number;
-  } | null>(null);
+    const isSidebarOpen = isExpanded || isMobileOpen;
 
-  const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>(
-    {},
-  );
+    const [openSubmenu, setOpenSubmenu] = useState<{
+        index: number;
+    } | null>(null);
 
-  const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
+    const [subMenuHeight, setSubMenuHeight] = useState<Record<string, number>>({});
 
-  const isActive = useCallback((path: string) => pathname === path, [pathname]);
+    const subMenuRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  const handleToggle = () => {
-    if (window.innerWidth >= 1024) {
-      toggleSidebar();
-    } else {
-      toggleMobileSidebar();
-    }
-  };
+    const isActive = useCallback(
+        (path: string) => pathname === path || pathname.startsWith(`${path}/`),
+        [pathname]
+    );
 
-  const handleSubmenuToggle = (index: number) => {
-    setOpenSubmenu((prev) => (prev?.index === index ? null : { index }));
-  };
+    const handleToggle = () => {
+        if (typeof window !== "undefined" && window.innerWidth >= 1024) {
+            toggleSidebar();
+        } else {
+            toggleMobileSidebar();
+        }
+    };
 
-  useEffect(() => {
-    let submenuMatched = false;
+    const handleLinkClick = () => {
+        if (isMobileOpen) {
+            toggleMobileSidebar();
+        }
+    };
 
-    navItems.forEach((nav, index) => {
-      if (nav.subItems?.some((item) => isActive(item.path))) {
-        setOpenSubmenu({ index });
-        submenuMatched = true;
-      }
-    });
+    const handleSubmenuToggle = (index: number) => {
+        setOpenSubmenu((prev) => (prev?.index === index ? null : { index }));
+    };
 
-    if (!submenuMatched) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setOpenSubmenu(null);
-    }
-  }, [pathname, isActive]);
+    useEffect(() => {
+        const matchedIndex = navItems.findIndex((nav) =>
+            nav.subItems?.some((item) => isActive(item.path))
+        );
 
-  useEffect(() => {
-    if (openSubmenu !== null) {
-      const key = `main-${openSubmenu.index}`;
+        if (matchedIndex !== -1) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setOpenSubmenu({ index: matchedIndex });
+        } else {
+            setOpenSubmenu(null);
+        }
+    }, [pathname, isActive]);
 
-      if (subMenuRefs.current[key]) {
-        setSubMenuHeight((prev) => ({
-          ...prev,
-          [key]: subMenuRefs.current[key]?.scrollHeight || 0,
-        }));
-      }
-    }
-  }, [openSubmenu]);
+    useEffect(() => {
+        if (!openSubmenu) return;
 
-  const renderMenuItems = (items: NavItem[]) => (
-    <ul className="flex flex-col gap-4">
-      {items.map((nav, index) => (
-        <li key={nav.name}>
-          {nav.subItems ? (
-            <>
-              <button
-                onClick={() => handleSubmenuToggle(index)}
-                className={`menu-item group w-full ${
-                  openSubmenu?.index === index
-                    ? "menu-item-active"
-                    : "menu-item-inactive"
-                } ${isExpanded ? "lg: justify-start" : "lg: justify-center"}`}
-              >
-                <span
-                  className={
-                    openSubmenu?.index === index
-                      ? "menu-item-icon-active"
-                      : "menu-item-icon-inactive"
-                  }
-                >
-                  {nav.icon}
-                </span>
+        const key = `main-${openSubmenu.index}`;
+        const submenu = subMenuRefs.current[key];
 
-                {isExpanded && (
-                  <>
-                    <span className="menu-item-text">{nav.name}</span>
+        if (submenu) {
+            setSubMenuHeight((prev) => ({
+                ...prev,
+                [key]: submenu.scrollHeight,
+            }));
+        }
+    }, [openSubmenu]);
 
-                    <ChevronDownIcon
-                      className={`ml-auto h-5 w-5 transition-transform duration-200 ${
-                        openSubmenu?.index === index
-                          ? "rotate-180 text-brand-500"
-                          : ""
-                      }`}
-                    />
-                  </>
-                )}
-              </button>
+    const renderMenuItems = (items: NavItem[]) => (
+        <ul className="flex flex-col gap-2">
+            {items.map((nav, index) => {
+                const isSubmenuOpen = openSubmenu?.index === index;
 
-              {isExpanded && (
-                <div
-                  ref={(el) => {
-                    subMenuRefs.current[`main-${index}`] = el;
-                  }}
-                  className="overflow-hidden transition-all duration-300"
-                  style={{
-                    height:
-                      openSubmenu?.index === index
-                        ? `${subMenuHeight[`main-${index}`]}px`
-                        : "0px",
-                  }}
-                >
-                  <ul className="mt-2 ml-9 space-y-1">
-                    {nav.subItems.map((subItem) => (
-                      <li key={subItem.name}>
+                if (nav.subItems) {
+                    return (
+                        <li key={nav.name}>
+                            <button
+                                type="button"
+                                onClick={() => handleSubmenuToggle(index)}
+                                className={`group flex w-full items-center gap-3 rounded-2xl px-4 py-7 text-sm font-medium transition
+									${isSubmenuOpen
+                                        ? "bg-primary text-foreground shadow-md shadow-primary/25"
+                                        : "text-muted hover:bg-primary/10 hover:text-primary"
+                                    }
+									${isSidebarOpen ? "justify-start" : "justify-center"}
+								`}
+                            >
+                                <Icon icon={nav.icon} className="size-5 shrink-0" />
+
+                                {isSidebarOpen && (
+                                    <>
+                                        <span>{nav.name}</span>
+
+                                        <Icon
+                                            icon="solar:alt-arrow-down-linear"
+                                            className={`ml-auto size-5 transition-transform duration-200 ${isSubmenuOpen ? "rotate-180" : ""
+                                                }`}
+                                        />
+                                    </>
+                                )}
+                            </button>
+
+                            {isSidebarOpen && (
+                                <div
+                                    ref={(el) => {
+                                        subMenuRefs.current[`main-${index}`] = el;
+                                    }}
+                                    className="overflow-hidden transition-all duration-300"
+                                    style={{
+                                        height: isSubmenuOpen
+                                            ? `${subMenuHeight[`main-${index}`] || 0}px`
+                                            : "0px",
+                                    }}
+                                >
+                                    <ul className="ml-6 mt-2 space-y-1 border-l border-border pl-4">
+                                        {nav.subItems.map((subItem) => (
+                                            <li key={subItem.name}>
+                                                <Link
+                                                    href={subItem.path}
+                                                    onClick={handleLinkClick}
+                                                    className={`block rounded-xl px-3 py-3 text-sm transition ${isActive(subItem.path)
+                                                            ? "bg-primary/10 font-medium text-primary"
+                                                            : "text-muted hover:bg-primary/10 hover:text-primary"
+                                                        }`}
+                                                >
+                                                    {subItem.name}
+                                                </Link>
+                                            </li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+                        </li>
+                    );
+                }
+
+                if (!nav.path) return null;
+
+                return (
+                    <li key={nav.name}>
                         <Link
-                          href={subItem.path}
-                          className={`menu-dropdown-item ${
-                            isActive(subItem.path)
-                              ? "menu-dropdown-item-active"
-                              : "menu-dropdown-item-inactive"
-                          }`}
+                            href={nav.path}
+                            onClick={handleLinkClick}
+                            className={`group flex w-full items-center gap-3 rounded-2xl px-4 py-3 text-sm font-medium transition
+								${isActive(nav.path)
+                                    ? "bg-primary text-background dark:text-foreground shadow-md shadow-primary/25"
+                                    : "text-muted hover:bg-primary/10 hover:text-primary"
+                                }
+								${isSidebarOpen ? "justify-start" : "justify-center"}
+							`}
                         >
-                          {subItem.name}
+                            <Icon icon={nav.icon} className="size-5 shrink-0" />
+
+                            {isSidebarOpen && <span>{nav.name}</span>}
                         </Link>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </>
-          ) : (
-            nav.path && (
-              <Link
-                href={nav.path}
-                className={`menu-item group ${
-                  isActive(nav.path) ? "menu-item-active" : "menu-item-inactive"
-                } ${isExpanded ? "justify-start" : "justify-center"}`}
-              >
-                <span
-                  className={
-                    isActive(nav.path)
-                      ? "menu-item-icon-active"
-                      : "menu-item-icon-inactive"
-                  }
-                >
-                  {nav.icon}
-                </span>
+                    </li>
+                );
+            })}
+        </ul>
+    );
 
-                {isExpanded && (
-                  <span className="menu-item-text">{nav.name}</span>
-                )}
-              </Link>
-            )
-          )}
-        </li>
-      ))}
-    </ul>
-  );
+    return (
+        <>
+            {isMobileOpen && (
+                <button
+                    type="button"
+                    onClick={toggleMobileSidebar}
+                    className="fixed inset-0 z-40 bg-black/40 backdrop-blur-[1px] lg:hidden"
+                    aria-label="Close sidebar overlay"
+                />
+            )}
 
-  return (
-    <aside
-      className={`fixed left-0 top-0 z-50 flex h-screen flex-col border-r border-gray-200 bg-white px-5 text-gray-900 transition-all duration-300 dark:border-gray-800 dark:bg-gray-900
-      ${isExpanded || isMobileOpen ? "w-72.5" : "w-22.5"}
-      ${isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}`}
-    >
-      {/* Header Sidebar */}
-      <div
-        className={`flex items-center ${
-          isExpanded ? "justify-between" : "justify-center"
-        }`}
-      >
-        {isExpanded && (
-          <Link href="/">
-            <Image src="/LogoHeader.svg" alt="Logo" width={150} height={40} />
-          </Link>
-        )}
-
-        <button
-          onClick={handleToggle}
-          className="flex h-10 w-10 items-center justify-center rounded-lg  text-gray-500 hover:bg-gray-100 dark:border-gray-700 dark:hover:bg-gray-800"
-          aria-label="Toggle Sidebar"
-        >
-          {isExpanded ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
+            <aside
+                className={`fixed left-0 top-0 z-50 flex h-screen flex-col border-r border-border bg-surface dark:bg-background px-5 py-5 text-muted shadow-sm transition-all duration-300
+					${isSidebarOpen ? "w-72" : "w-22"}
+					${isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"}
+				`}
             >
-              <rect width="18" height="18" x="3" y="3" rx="2" />
-              <path d="M9 3v18" />
-            </svg>
-          ) : (
-            <Image src="/LogoHeader.svg" alt="Logo" width={28} height={28} />
-          )}
-        </button>
-      </div>
-      <div className="no-scrollbar flex flex-col overflow-y-auto">
-        <nav className="mb-6">
-          <h2
-            className={`mb-4 flex text-xs uppercase leading-5 text-gray-400 ${
-              isExpanded ? "justify-start" : "justify-center"
-            }`}
-          >
-            {isExpanded ? "Menu" : <HorizontaLDots />}
-          </h2>
+                {/* Header Sidebar */}
+                <div className="relative mb-8 flex h-14 items-center">
+                    {isSidebarOpen ? (
+                        <div className="relative flex w-full items-center gap-3">
+                            <Link
+                                href="/dashboard"
+                                onClick={handleLinkClick}
+                                className="flex min-w-0 items-center gap-3"
+                            >
+                                <div className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-primary text-background dark:text-foreground shadow-md shadow-primary/20">
+                                    <Icon icon="fa6-solid:helmet-safety" className="text-xl" />
+                                </div>
 
-          {renderMenuItems(navItems)}
-        </nav>
-      </div>
-    </aside>
-  );
+                                <h1 className="truncate text-xl font-bold text-primary">
+                                    AI <span className="text-tertiary">WISE</span>
+                                </h1>
+                            </Link>
+
+                            <button
+                                type="button"
+                                onClick={handleToggle}
+                                className="absolute right-0 top-1/2 flex size-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-xl text-muted transition hover:bg-primary/10 hover:text-primary"
+                                aria-label="Collapse sidebar"
+                            >
+                                <Icon icon="mynaui:sidebar" className="size-5" />
+                            </button>
+                        </div>
+                    ) : (
+                        <div className="flex w-full justify-center">
+                            <button
+                                type="button"
+                                onClick={handleToggle}
+                                className="group flex size-11 cursor-pointer items-center justify-center rounded-2xl text-primary transition hover:bg-primary/10"
+                                aria-label="Expand sidebar"
+                            >
+                                <Icon
+                                    icon="fa6-solid:helmet-safety"
+                                    className="size-6 transition group-hover:hidden"
+                                />
+
+                                <Icon
+                                    icon="mynaui:sidebar"
+                                    className="hidden size-5 text-muted group-hover:block"
+                                />
+                            </button>
+                        </div>
+                    )}
+                </div>
+
+                <nav className="no-scrollbar flex flex-1 flex-col overflow-y-auto">
+                    {isSidebarOpen && (
+                        <h2 className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted/70">
+                            Menu
+                        </h2>
+                    )}
+
+                    {renderMenuItems(navItems)}
+                </nav>
+            </aside>
+        </>
+    );
 };
 
 export default AppSidebar;
