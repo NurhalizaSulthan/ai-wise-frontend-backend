@@ -1,41 +1,72 @@
 "use client";
 
-import { useSidebar } from "@/components/contex/SidebarContex";
-import AppHeader from "@/components/layout/AppHeader";
-import Backdrop from "@/components/layout/Backdrop";
 import React from "react";
 import AppSidebar from "@/components/layout/AppSidebar";
+import AppHeader from "@/components/layout/AppHeader";
+import Backdrop from "@/components/layout/Backdrop";
+import {
+  SidebarProvider,
+  useSidebar,
+} from "@/components/contex/SidebarContex";
+
+function AdminLayoutContent({ children }: { children: React.ReactNode }) {
+  const { isExpanded, isHovered } = useSidebar();
+
+  const isSidebarLarge = isExpanded || isHovered;
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Sidebar */}
+      <AppSidebar />
+
+      {/* Backdrop untuk mobile sidebar */}
+      <Backdrop />
+
+      {/* Main Content Area */}
+      <div
+        className={`
+          min-h-screen
+          min-w-0
+          overflow-x-hidden
+          transition-all
+          duration-300
+          ease-in-out
+          lg:ml-22.5
+          ${isSidebarLarge ? "xl:ml-72.5" : "xl:ml-22.5"}
+        `}
+      >
+        {/* Header */}
+        <AppHeader />
+
+        {/* Page Content */}
+        <main
+          className="
+            min-w-0
+            px-4
+            pb-6
+            pt-22
+            sm:px-5
+            md:px-6
+            lg:px-8
+          "
+        >
+          <div className="mx-auto w-full max-w-[1600px]">
+            {children}
+          </div>
+        </main>
+      </div>
+    </div>
+  );
+}
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const { isExpanded, isHovered, isMobileOpen } = useSidebar();
-
-  // Dynamic class for main content margin based on sidebar state
-  const mainContentMargin = isMobileOpen
-    ? "ml-0"
-    : isExpanded || isHovered
-      ? "lg:ml-[290px]"
-      : "lg:ml-[90px]";
-
   return (
-    <div className="min-h-screen xl:flex">
-      {/* Sidebar and Backdrop */}
-      <AppSidebar />
-      <Backdrop />
-      {/* Main Content Area */}
-      <div
-        className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}
-      >
-        {/* Header */}
-        <AppHeader />
-        {/* Page Content */}
-        <div className="p-4 mx-auto max-w-(--breakpoint-2xl) md:p-6">
-          {children}
-        </div>
-      </div>
-    </div>
+    <SidebarProvider>
+      <AdminLayoutContent>{children}</AdminLayoutContent>
+    </SidebarProvider>
   );
 }
