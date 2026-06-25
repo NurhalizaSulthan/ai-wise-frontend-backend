@@ -19,9 +19,9 @@ const WorkersToolbar = ({
     onGenderChange,
 }: WorkersToolbarProps) => {
     return (
-        <div className="mb-6 flex items-center justify-between">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
-                <div className="w-80">
+                <div className="w-full sm:w-80">
                     <Input
                         placeholder="Search worker..."
                         value={search}
@@ -48,7 +48,7 @@ const WorkersToolbar = ({
                         className="size-5"
                     />
                 }
-                className="tracking-wider"
+                className="w-full tracking-wider sm:w-auto"
             >
                 Add Worker
             </Button>
