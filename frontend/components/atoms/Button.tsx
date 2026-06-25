@@ -1,7 +1,7 @@
 import React, { ReactNode } from "react";
 
 interface ButtonProps {
-  children: ReactNode; // Button text or content
+  children?: ReactNode; // Button text or content
   size?: "sm" | "md"; // Button size
   variant?: "primary" | "secondary" | "outline"; // Button variant
   startIcon?: ReactNode; // Icon before the text
@@ -23,8 +23,9 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   // Size Classes
   const sizeClasses = {
-    sm: "px-4 py-3 text-sm",
-    md: "px-5 py-3.5 text-sm",
+    sm: "h-9 px-3 text-sm",
+    md: "h-11 px-4 text-sm",
+    lg: "h-12 px-5 text-base",
   };
 
   // Variant Classes
@@ -34,16 +35,14 @@ const Button: React.FC<ButtonProps> = ({
     secondary:
       "bg-muted/20 text-foreground hover:bg-muted/30 hover:text-primary disabled:bg-muted",
     outline:
-      "bg-background text-muted ring-1 ring-inset ring-muted",
+      "border-2 border-muted/50 text-muted",
   };
 
   return (
     <button
-      className={`inline-flex items-center justify-center font-medium gap-2 cursor-pointer rounded-lg transition ${className} ${
-        sizeClasses[size]
-      } ${variantClasses[variant]} ${
-        disabled ? "cursor-not-allowed opacity-50" : ""
-      }`}
+      className={`inline-flex items-center justify-center font-medium gap-2 cursor-pointer rounded-lg transition ${className} ${sizeClasses[size]
+        } ${variantClasses[variant]} ${disabled ? "cursor-not-allowed opacity-50" : ""
+        }`}
       onClick={onClick}
       disabled={disabled}
     >
