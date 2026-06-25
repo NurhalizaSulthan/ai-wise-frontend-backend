@@ -40,22 +40,22 @@ const Input: FC<InputProps> = ({
   endIcon,
 }) => {
   const baseClasses =
-    "h-11 w-full rounded-lg border bg-background px-4 py-2.5 text-sm text-muted placeholder:text-muted/60 shadow-sm outline-none transition focus:ring-2";
+    "w-full rounded-lg border-2 border-border px-5 py-3 text-base text-muted placeholder:text-muted outline-none transition focus:ring-2";
 
   const iconPadding = `${startIcon ? "pl-11" : ""} ${endIcon ? "pr-11" : ""}`;
 
   const stateClasses = disabled
-    ? "cursor-not-allowed border-muted/40 bg-muted/10 text-muted/50"
+    ? "cursor-not-allowed border-border/40 bg-muted/10 text-muted/50"
     : error
-      ? "border-red-500 text-red-600 focus:border-red-500 focus:ring-red-500/20"
+      ? "border-danger/50 text-danger focus:border-danger focus:ring-danger/20"
       : success
-        ? "border-green-500 text-green-600 focus:border-green-500 focus:ring-green-500/20"
-        : "border-muted/30 focus:border-primary focus:ring-primary/20";
+        ? "border-primary/50 text-primary focus:border-primary focus:ring-primary/20"
+        : "border-muted/50 focus:border-primary focus:ring-primary/20";
 
   const hintClasses = error
-    ? "text-red-500"
+    ? "text-danger"
     : success
-      ? "text-green-500"
+      ? "text-primary"
       : "text-muted";
 
   return (
