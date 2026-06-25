@@ -23,7 +23,7 @@ const navItems: NavItem[] = [
         path: "/dashboard",
     },
     {
-        name: "Worker",
+        name: "Workers",
         icon: "mdi:worker",
         path: "/workers",
     },
