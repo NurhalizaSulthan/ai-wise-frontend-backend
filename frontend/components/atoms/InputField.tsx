@@ -40,7 +40,7 @@ const Input: FC<InputProps> = ({
   endIcon,
 }) => {
   const baseClasses =
-    "w-full rounded-lg border-2 border-border px-5 py-3 text-base text-muted placeholder:text-muted outline-none transition focus:ring-2";
+    "w-full h-11 rounded-lg border-2 border-border px-5 py-3 text-base text-muted placeholder:text-muted outline-none transition focus:ring-2";
 
   const iconPadding = `${startIcon ? "pl-11" : ""} ${endIcon ? "pr-11" : ""}`;
 

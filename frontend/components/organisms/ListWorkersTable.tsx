@@ -73,10 +73,7 @@ function ListWorkersTable() {
 
     const [search, setSearch] = useState("");
     const [genderFilter, setGenderFilter] = useState<"all" | "L" | "P">("all");
-    const [pagination, setPagination] = useState({
-        pageIndex: 0,
-        pageSize: 10,
-    });
+    const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 });
 
     const filteredData = useMemo(() => {
         return data.filter((worker) => {
@@ -84,11 +81,7 @@ function ListWorkersTable() {
                 worker.name.toLowerCase().includes(search.toLowerCase()) ||
                 worker.public_id.toLowerCase().includes(search.toLowerCase()) ||
                 worker.supervisor_id.toLowerCase().includes(search.toLowerCase());
-
-            const matchesGender =
-                genderFilter === "all" ||
-                worker.gender === genderFilter;
-
+            const matchesGender = genderFilter === "all" || worker.gender === genderFilter;
             return matchesSearch && matchesGender;
         });
     }, [data, search, genderFilter]);
@@ -97,80 +90,116 @@ function ListWorkersTable() {
     const table = useReactTable<Worker>({
         data: filteredData,
         columns,
-        state: {
-            pagination,
-        },
-
+        state: { pagination },
         onPaginationChange: setPagination,
-
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
     });
 
-
     return (
-        <div className="bg-surface border-border p-7 rounded-xl dark:bg-surface dark:border-border" >
+        <div className="bg-surface border-border p-4 md:p-7 rounded-xl dark:bg-surface dark:border-border">
             <WorkersToolbar
                 search={search}
                 onSearchChange={setSearch}
                 genderFilter={genderFilter}
                 onGenderChange={setGenderFilter}
             />
-            <table className='w-full border-collapse'>
-                <thead>
-                    {table.getHeaderGroups().map((headerGroup) => (
-                        <tr key={headerGroup.id}>
-                            {headerGroup.headers.map((header) => {
-                                const sorted = header.column.getIsSorted();
 
-                                return (
-                                    <th
-                                        key={header.id}
-                                        className="p-3 text-start text-base font-semibold uppercase tracking-wider text-muted border-b-2 border-t-2 border-border"
-                                        onClick={header.column.getCanSort()
-                                            ? header.column.getToggleSortingHandler()
-                                            : undefined}
-                                    >
-                                        <div className="flex items-center gap-3">
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
+            {/* DESKTOP */}
+            <div className="hidden lg:block">
+                <table className="w-full border-collapse">
+                    <thead>
+                        {table.getHeaderGroups().map((headerGroup) => (
+                            <tr key={headerGroup.id}>
+                                {headerGroup.headers.map((header) => {
+                                    const sorted = header.column.getIsSorted();
+                                    return (
+                                        <th
+                                            key={header.id}
+                                            className="p-3 text-start text-base font-semibold uppercase tracking-wider text-muted border-b-2 border-t-2 border-border"
+                                            onClick={header.column.getCanSort()
+                                                ? header.column.getToggleSortingHandler()
+                                                : undefined}
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                {header.isPlaceholder ? null : flexRender(
                                                     header.column.columnDef.header,
                                                     header.getContext()
                                                 )}
+                                                {header.column.getCanSort() && (
+                                                    <Icon
+                                                        icon={
+                                                            sorted === "asc" ? "mdi:chevron-up"
+                                                                : sorted === "desc" ? "mdi:chevron-down"
+                                                                    : "mdi:unfold-more-horizontal"
+                                                        }
+                                                        className="h-3 w-3 text-muted/60"
+                                                    />
+                                                )}
+                                            </div>
+                                        </th>
+                                    );
+                                })}
+                            </tr>
+                        ))}
+                    </thead>
+                    <tbody>
+                        {table.getRowModel().rows.map(row => (
+                            <tr key={row.id} className="border-b border-border">
+                                {row.getVisibleCells().map(cell => (
+                                    <td key={cell.id} className="p-4">
+                                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                                    </td>
+                                ))}
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
 
-                                            {header.column.getCanSort() && (
-                                                <Icon
-                                                    icon={
-                                                        sorted === "asc"
-                                                            ? "mdi:chevron-up"
-                                                            : sorted === "desc"
-                                                                ? "mdi:chevron-down"
-                                                                : "mdi:unfold-more-horizontal"
-                                                    }
-                                                    className="h-3 w-3 text-muted/60"
-                                                />
-                                            )}
-                                        </div>
-                                    </th>
-                                );
-                            })}
-                        </tr>
-                    ))}
-                </thead>
-                <tbody>
-                    {table.getRowModel().rows.map(row => (
-                        <tr key={row.id} className='border-b border-border'>
-                            {row.getVisibleCells().map(cell => (
-                                <td key={cell.id} className='p-4'>
-                                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                                </td>
-                            ))}
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
+            {/* MOBILE */}
+            <div className="flex flex-col gap-3 lg:hidden mt-4">
+                {table.getRowModel().rows.map(row => {
+                    const w = row.original;
+                    return (
+                        <div
+                            key={row.id}
+                            className="border border-border rounded-xl p-4 flex flex-col gap-3"
+                        >
+                            {/* Header kartu: avatar + nama + gender */}
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-3">
+                                    <WorkerAvatar name={w.name} />
+                                    <div>
+                                        <p className="font-semibold text-sm">{w.name}</p>
+                                        <p className="text-xs text-muted">{w.public_id}</p>
+                                    </div>
+                                </div>
+                                <GenderBadge gender={w.gender} />
+                            </div>
+
+                            {/* Detail info */}
+                            <div className="grid grid-cols-2 gap-2 text-sm">
+                                <div>
+                                    <p className="text-xs text-muted font-medium uppercase tracking-wide">Birth Date</p>
+                                    <p className="font-medium">{w.birthDate}</p>
+                                </div>
+                                <div>
+                                    <p className="text-xs text-muted font-medium uppercase tracking-wide">Supervisor</p>
+                                    <p className="font-medium">{w.supervisor_id}</p>
+                                </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="border-t border-border pt-3">
+                                <WorkerActions />
+                            </div>
+                        </div>
+                    );
+                })}
+            </div>
+
             <WorkersPagination
                 table={table}
                 pagination={pagination}
