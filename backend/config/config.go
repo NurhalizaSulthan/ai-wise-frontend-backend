@@ -1,10 +1,13 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os"
+	"time"
 
 	"github.com/joho/godotenv"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
@@ -51,4 +54,27 @@ func getEnv(key string, fallback string) string {
 	} else {
 		return fallback
 	}
+}
+
+func ConnectToDB(config Config){
+	cfg := config
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable", cfg.DB_Host, cfg.DB_Port, cfg.DB_User, cfg.DB_Pass, cfg.DB_Name)
+
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+
+	if err != nil {
+		log.Fatal("Gagal tersambung ke postgres: ", err)
+	}
+
+	sqlDB, err := db.DB()
+
+	if err != nil {
+		log.Fatal("Gagal mengambil database: ", err)
+	}
+
+	sqlDB.SetMaxIdleConns(10)
+	sqlDB.SetMaxOpenConns(100)
+	sqlDB.SetConnMaxLifetime(time.Hour)
+
+	DB = db
 }
