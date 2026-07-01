@@ -13,6 +13,13 @@ type PengawasBase struct {
 	ListPekerja []PekerjaBase `json:"daftar_pekerja"`
 }
 
+type PengawasCreate struct {
+	PublicID    uuid.UUID
+	Nama        string  
+	PassHash	string		
+	ListPekerja []PekerjaBase
+}
+
 type Pengawas struct {
 	InternalID   uint           `json:"internal_id"    gorm:"column:internal_id;primaryKey;autoIncrement"`
 	PublicID     uuid.UUID      `json:"public_id"      gorm:"column:public_id;unique;type:uuid"`

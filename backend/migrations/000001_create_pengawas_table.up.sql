@@ -1,3 +1,5 @@
+CREATE EXTENSION IF NOT EXISTS "pgcrypto";
+
 CREATE TYPE pengawas_role_enum AS ENUM
 (
 	'admin',

@@ -13,7 +13,7 @@ type PekerjaBase struct {
 	TanggalLahir time.Time  `json:"tanggal_lahir"`
 	JenisKelamin string     `json:"jenis_kelamin"`
 	PengawasID   int        `json:"pengawas_id"`
-	Device       DeviceBase `json:"device"`
+	Device       *DeviceBase `json:"device"`
 }
 
 type Pekerja struct {
@@ -35,12 +35,17 @@ func (Pekerja) TableName() string {
 }
 
 func (p Pekerja) GormToBase() *PekerjaBase {
-	return &PekerjaBase{
+	base := &PekerjaBase{
 		PublicID:     p.PublicID,
 		Nama:         p.Nama,
 		TanggalLahir: p.TanggalLahir,
 		JenisKelamin: p.JenisKelamin,
 		PengawasID:   p.PengawasID,
-		Device:       *p.Device.GormToBase(),
 	}
+
+	if p.Device.InternalID != 0 {
+		base.Device = p.Device.GormToBase()
+	}
+
+	return base
 }
