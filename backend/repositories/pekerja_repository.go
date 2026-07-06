@@ -1,16 +1,18 @@
 package repositories
 
 import (
+	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/dto"
+	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/mappers"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/model"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type PekerjaRepository interface {
-	CreatePekerja(modelBase *model.PekerjaBase) (*model.PekerjaBase, error)
-	GetPekerjaById(internal_id int) (*model.PekerjaBase, error)
-	GetPekerjaByUUID(public_id uuid.UUID) (*model.PekerjaBase, error)
-	GetPekerjasByPengawasId(pengawas_id int) ([]model.PekerjaBase, error)
+	CreatePekerja(modelBase *dto.PekerjaBase) (*dto.PekerjaBase, error)
+	GetPekerjaById(internal_id int) (*dto.PekerjaBase, error)
+	GetPekerjaByUUID(public_id uuid.UUID) (*dto.PekerjaBase, error)
+	GetPekerjasByPengawasId(pengawas_id int) ([]dto.PekerjaBase, error)
 }
 
 type PekerjaRepositoryImpl struct {
@@ -21,22 +23,19 @@ func NewPekerjaRepository(db *gorm.DB) PekerjaRepository {
 	return &PekerjaRepositoryImpl{db: db}
 }
 
-func (repo PekerjaRepositoryImpl) CreatePekerja(modelBase *model.PekerjaBase) (*model.PekerjaBase, error){
-	gormModel := &model.Pekerja{
-		Nama: modelBase.Nama,
-		TanggalLahir: modelBase.TanggalLahir,
-		JenisKelamin: modelBase.JenisKelamin,
-		PengawasID: modelBase.PengawasID,
-	}
+func (repo PekerjaRepositoryImpl) CreatePekerja(modelBase *dto.PekerjaBase) (*dto.PekerjaBase, error){
+	gormModel := mappers.Map(modelBase, mappers.ToPekerjaModel)
 
 	if err := repo.db.Create(&gormModel).Error; err != nil {
 		return nil, err
 	}
 
-	return gormModel.GormToBase(), nil
+	base := mappers.Map(gormModel, mappers.ToPekerjaBase)
+
+	return base, nil
 }
 
-func (repo PekerjaRepositoryImpl) GetPekerjaById(internal_id int) (*model.PekerjaBase, error){
+func (repo PekerjaRepositoryImpl) GetPekerjaById(internal_id int) (*dto.PekerjaBase, error){
 	gormModel := &model.Pekerja{}
 
 	if err := repo.db.
@@ -46,12 +45,12 @@ func (repo PekerjaRepositoryImpl) GetPekerjaById(internal_id int) (*model.Pekerj
 		return nil, err
 	}
 
-	model := gormModel.GormToBase()
+	model := mappers.Map(gormModel, mappers.ToPekerjaBase)
 
 	return model, nil
 }
 
-func (repo PekerjaRepositoryImpl) GetPekerjaByUUID(public_id uuid.UUID) (*model.PekerjaBase, error){
+func (repo PekerjaRepositoryImpl) GetPekerjaByUUID(public_id uuid.UUID) (*dto.PekerjaBase, error){
 	gormModel := &model.Pekerja{}
 
 	if err := repo.db.
@@ -63,12 +62,12 @@ func (repo PekerjaRepositoryImpl) GetPekerjaByUUID(public_id uuid.UUID) (*model.
 		return nil, err
 	}
 
-	modelBase := gormModel.GormToBase()
+	modelBase := mappers.Map(gormModel, mappers.ToPekerjaBase)
 	
 	return modelBase, nil
 }
 
-func (repo PekerjaRepositoryImpl) GetPekerjasByPengawasId(pengawas_id int) ([]model.PekerjaBase, error){
+func (repo PekerjaRepositoryImpl) GetPekerjasByPengawasId(pengawas_id int) ([]dto.PekerjaBase, error){
 	var gormModels []model.Pekerja
 
 	if err := repo.db.
@@ -79,11 +78,7 @@ func (repo PekerjaRepositoryImpl) GetPekerjasByPengawasId(pengawas_id int) ([]mo
 			return nil, err
 	}
 
-	modelBase := make([]model.PekerjaBase, len(gormModels))
-
-	for i, g := range gormModels{
-		modelBase[i] = *g.GormToBase()
-	}
+	modelBase := mappers.MapSlice(gormModels, mappers.ToPekerjaBase)
 	
 	return modelBase, nil
 }

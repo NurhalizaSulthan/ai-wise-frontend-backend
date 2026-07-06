@@ -7,14 +7,6 @@ import (
 	"gorm.io/gorm"
 )
 
-type PekerjaBase struct {
-	PublicID     uuid.UUID  `json:"public_id"`
-	Nama         string     `json:"nama"`
-	TanggalLahir time.Time  `json:"tanggal_lahir"`
-	JenisKelamin string     `json:"jenis_kelamin"`
-	PengawasID   int        `json:"pengawas_id"`
-	Device       *DeviceBase `json:"device"`
-}
 
 type Pekerja struct {
 	InternalID   int            `json:"internal_id"   gorm:"column:internal_id;primaryKey;autoIncrement"`
@@ -22,8 +14,9 @@ type Pekerja struct {
 	Nama         string         `json:"nama"          gorm:"column:nama"`
 	TanggalLahir time.Time      `json:"tanggal_lahir" gorm:"column:tanggal_lahir"`
 	JenisKelamin string         `json:"jenis_kelamin" gorm:"column:jenis_kelamin"`
+	
 	PengawasID   int            `json:"pengawas_id"   gorm:"column:pengawas_id"`
-	Device       Device         `json:"device"        gorm:"foreignKey:PekerjaID"`
+	Device       *Device         `json:"device"        gorm:"foreignKey:PekerjaID;references:InternalID"`
 
 	CreatedAt time.Time      `json:"created_at"    gorm:"column:created_at"`
 	UpdatedAt time.Time      `json:"updated_at"    gorm:"column:updated_at"`
@@ -34,18 +27,3 @@ func (Pekerja) TableName() string {
 	return "workers"
 }
 
-func (p Pekerja) GormToBase() *PekerjaBase {
-	base := &PekerjaBase{
-		PublicID:     p.PublicID,
-		Nama:         p.Nama,
-		TanggalLahir: p.TanggalLahir,
-		JenisKelamin: p.JenisKelamin,
-		PengawasID:   p.PengawasID,
-	}
-
-	if p.Device.InternalID != 0 {
-		base.Device = p.Device.GormToBase()
-	}
-
-	return base
-}

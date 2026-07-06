@@ -1,15 +1,17 @@
 package repositories
 
 import (
+	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/dto"
+	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/mappers"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/model"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
 type PengawasRepository interface {
-	CreatePengawas(modelBase *model.PengawasCreate) (*model.PengawasBase, error)
-	GetPengawasById(internal_id int) (*model.PengawasBase, error)
-	GetPengawasByUUID(public_id uuid.UUID) (*model.PengawasBase, error)
+	CreatePengawas(modelBase *dto.PengawasCreate) (*dto.PengawasBase, error)
+	GetPengawasById(internal_id int) (*dto.PengawasBase, error)
+	GetPengawasByUUID(public_id uuid.UUID) (*dto.PengawasBase, error)
 }
 
 type PengawasRepositoryImpl struct {
@@ -20,19 +22,16 @@ func NewPengawasRepository (db *gorm.DB) PengawasRepository{
 	return &PengawasRepositoryImpl{db: db}
 }
 
-func (repo PengawasRepositoryImpl)	CreatePengawas(modelBase *model.PengawasCreate) (*model.PengawasBase, error) {
-	gormModel := &model.Pengawas{
-		Nama: modelBase.Nama,
-		PasswordHash: modelBase.PassHash,
-	}
+func (repo PengawasRepositoryImpl)	CreatePengawas(modelBase *dto.PengawasCreate) (*dto.PengawasBase, error) {
+	gormModel := mappers.Map(modelBase, mappers.ToPengawasModel)
 
 	if err := repo.db.Create(&gormModel).Error; err != nil {
 		return nil, err
 	}
 
-	return gormModel.GormToBase(), nil
+	return mappers.Map(gormModel, mappers.ToPengawasBase), nil
 }
-func (repo PengawasRepositoryImpl)	GetPengawasById(internal_id int) (*model.PengawasBase, error) {
+func (repo PengawasRepositoryImpl)	GetPengawasById(internal_id int) (*dto.PengawasBase, error) {
 	gormModel := &model.Pengawas{}
 
 	if err := repo.db.
@@ -40,9 +39,9 @@ func (repo PengawasRepositoryImpl)	GetPengawasById(internal_id int) (*model.Peng
 		return nil, err
 	}
 
-	return gormModel.GormToBase(), nil
+	return mappers.Map(gormModel, mappers.ToPengawasBase), nil
 }
-func (repo PengawasRepositoryImpl)	GetPengawasByUUID(public_id uuid.UUID) (*model.PengawasBase, error) {
+func (repo PengawasRepositoryImpl)	GetPengawasByUUID(public_id uuid.UUID) (*dto.PengawasBase, error) {
 	gormModel := &model.Pengawas{}
 
 	if err := repo.db.
@@ -50,6 +49,6 @@ func (repo PengawasRepositoryImpl)	GetPengawasByUUID(public_id uuid.UUID) (*mode
 		return nil, err
 	}
 
-	return gormModel.GormToBase(), nil
+	return mappers.Map(gormModel, mappers.ToPengawasBase), nil
 }
 

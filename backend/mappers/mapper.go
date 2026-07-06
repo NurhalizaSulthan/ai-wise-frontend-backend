@@ -7,7 +7,7 @@ func Map[T any, R any](src *T, fn func(*T) *R) *R {
 	return fn(src)
 }
 
-func MapSlice[T []any, R []any](src []T, fn func(*T) *R) []R {
+func MapSlice[T any, R any](src []T, fn func(*T) *R) []R {
 	dst := make([]R, 0, len(src))
 
 	for i := range src {
