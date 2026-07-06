@@ -4,6 +4,8 @@ import { Icon } from "@iconify/react";
 import Input from "../atoms/InputField";
 import Button from "../atoms/Button";
 import WorkerFilterDropdown from "../molecules/WorkerFilterDropdown";
+import { useState } from "react";
+import AddWorkerModal from "./AddWorkerModal";
 
 interface WorkersToolbarProps {
     search: string;
@@ -18,6 +20,8 @@ const WorkersToolbar = ({
     genderFilter,
     onGenderChange,
 }: WorkersToolbarProps) => {
+    const [isAddWorkerOpen, setIsAddWorkerOpen] = useState(false);
+
     return (
         <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-3">
@@ -49,9 +53,15 @@ const WorkersToolbar = ({
                     />
                 }
                 className="w-full tracking-wider sm:w-auto"
+                onClick={() => setIsAddWorkerOpen(true)}
             >
                 Add Worker
             </Button>
+            <AddWorkerModal
+                isOpen={isAddWorkerOpen}
+                onClose={() => setIsAddWorkerOpen(false)}
+            />
+
         </div>
     );
 };
