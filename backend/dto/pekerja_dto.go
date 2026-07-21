@@ -12,5 +12,13 @@ type PekerjaBase struct {
 	TanggalLahir time.Time   `json:"tanggal_lahir"`
 	JenisKelamin string      `json:"jenis_kelamin"`
 	PengawasID   int         `json:"pengawas_id"`
-	Device       DeviceBase `json:"device"`
+	Device       DeviceBase  `json:"device"`
+}
+
+type PekerjaCreate struct {
+	Nama         		string      `json:"nama"`
+	TanggalLahir 		time.Time   `json:"tanggal_lahir"`
+	JenisKelamin 		string      `json:"jenis_kelamin"`
+	PengawasPublicID   	uuid.UUID   `json:"pengawas_public_id"`
+	DevicePublicID		uuid.UUID	`json:"device_public_id"`
 }

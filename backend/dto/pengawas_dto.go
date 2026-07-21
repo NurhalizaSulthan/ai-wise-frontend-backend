@@ -1,16 +1,19 @@
 package dto
 
-import "github.com/google/uuid"
+import (
+	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/enum"
+	"github.com/google/uuid"
+)
 
 type PengawasBase struct {
 	PublicID    uuid.UUID     `json:"public_id"`
 	Nama        string        `json:"nama"`
+	Role		enum.PengawasRole	`json:"role"`
 	ListPekerja []PekerjaBase `json:"daftar_pekerja"`
 }
 
 type PengawasCreate struct {
-	PublicID    uuid.UUID
-	Nama        string
-	PassHash    string
-	ListPekerja []PekerjaBase
+	Nama	string				`json:"nama"`
+	Role	enum.PengawasRole	`json:"role"`
+	Pass	string				`json:"password"`
 }

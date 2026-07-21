@@ -8,6 +8,7 @@ import (
 
 type DeviceRepository interface {
 	CreateDevice(model *model.Device)(*model.Device, error)
+	UpdateDevice(deviceID, pekerjaID int) (error)
 	GetDeviceByPublicID(publicId uuid.UUID) (*model.Device, error)
 	GetAll()([]model.Device, error)
 }
@@ -26,6 +27,10 @@ func (repo *DeviceRepositoryImpl) CreateDevice(model *model.Device)(*model.Devic
 		return nil, err
 	}
 	return model, nil
+}
+
+func (repo *DeviceRepositoryImpl) UpdateDevice(deviceID, pekerjaID int) (error) {
+	return repo.db.Where("internal_id = ?", deviceID).Update("pekerja_id", pekerjaID).Error
 }
 
 func (repo *DeviceRepositoryImpl) GetDeviceByPublicID(publicID uuid.UUID) (*model.Device, error){
