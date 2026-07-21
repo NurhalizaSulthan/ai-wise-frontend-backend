@@ -25,7 +25,7 @@ Login dan mendapatkan bearer token.
 
 ```json
 {
-  "public_id": "string",
+  "nama": "string",
   "password": "string"
 }
 ```

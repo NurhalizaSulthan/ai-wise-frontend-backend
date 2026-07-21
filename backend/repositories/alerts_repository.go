@@ -1,17 +1,22 @@
 package repositories
 
 import (
-	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/dto"
-	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/mappers"
+	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/enum"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/model"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
+type AlertFilter struct {
+	DeviceID 		*int
+	JenisAlert		*enum.JenisAlert
+	TingkatAlert 	*enum.TingkatKeparahan
+}
+
 type AlertRepositories interface {
-	CreateAlert(dto dto.AlertBase) (*dto.AlertBase, error)
-	GetAlertByDevice(deviceId int) ([]dto.AlertBase, error)
-	GetAlertByPublicId(publicId uuid.UUID) (*dto.AlertBase, error)
+	CreateAlert(model *model.Alert) (*model.Alert, error)
+	GetAlertByPublicId(publicId uuid.UUID) (*model.Alert, error)
+	GetAll(filter AlertFilter) ([]model.Alert, error)
 }
 
 type AlertRepositoriesImpl struct {
@@ -22,37 +27,44 @@ func NewAlertRepository(db *gorm.DB) AlertRepositories {
 	return &AlertRepositoriesImpl{db: db}
 }
 
-func (repo AlertRepositoriesImpl) CreateAlert(alert dto.AlertBase) (*dto.AlertBase, error) {
-	newAlert := mappers.ToAlertModel(&alert)
-	if err := repo.db.Create(&newAlert).Error; err != nil {
+func (repo *AlertRepositoriesImpl) CreateAlert(alert *model.Alert) (*model.Alert, error) {
+	if err := repo.db.Create(&alert).Error; err != nil {
 		return nil,err
 	}
 
-	baseAlert := mappers.ToAlertBase(newAlert)
-
-	return baseAlert, nil
+	return alert, nil
 }
 
-func (repo AlertRepositoriesImpl) GetAlertByDevice(deviceId int) ([]dto.AlertBase, error){
-	var model []model.Alert
-
-	if err := repo.db.Where("device_id = ?", deviceId).Find(&model).Error; err != nil {
-		return nil, err
-	}
-
-	dtos := mappers.MapSlice(model, mappers.ToAlertBase)
-
-	return dtos, nil
-}
-
-func (repo AlertRepositoriesImpl) GetAlertByPublicId(publicID uuid.UUID) (*dto.AlertBase, error) { 
+func (repo *AlertRepositoriesImpl) GetAlertByPublicId(publicID uuid.UUID) (*model.Alert, error) { 
 	model := &model.Alert{}
 
 	if err := repo.db.Where("public_id = ?", publicID.String()).First(&model).Error; err != nil {
 		return nil, err
 	}
 
-	dtoBase := mappers.Map(model, mappers.ToAlertBase)
+	return model, nil
+}
 
-	return dtoBase, nil
+func (repo *AlertRepositoriesImpl) GetAll(filter AlertFilter) ([]model.Alert, error) {
+	var modelList []model.Alert
+
+	query := repo.db.Model(&model.Alert{})
+
+	if filter.DeviceID != nil {
+		query.Where("device_id = ?", filter.DeviceID)
+	}
+
+	if filter.JenisAlert != nil {
+		query.Where("jenis_alert = ?", filter.JenisAlert)
+	}
+
+	if filter.TingkatAlert != nil {
+		query.Where("tingkat_alert = ?", filter.TingkatAlert)
+	}
+
+	if err := query.Find(&modelList).Error; err != nil {
+		return nil, err
+	}
+
+	return modelList, nil
 }
