@@ -11,7 +11,7 @@ import (
 
 type Pengawas struct {
 	InternalID   uint           `json:"internal_id"    gorm:"column:internal_id;primaryKey;autoIncrement"`
-	PublicID     uuid.UUID      `json:"public_id"      gorm:"column:public_id;unique;type:uuid"`
+	PublicID     uuid.UUID      `json:"public_id"      gorm:"column:public_id;unique;default:gen_random_uuid()"`
 	Nama         string         `json:"nama"           gorm:"column:nama"`
 	PasswordHash string         `json:"pass_hash"      gorm:"column:pass_hash"`
 	ListPekerja  []Pekerja      `json:"daftar_pekerja" gorm:"foreignKey:PengawasID;references:InternalID"`
@@ -22,5 +22,5 @@ type Pengawas struct {
 }
 
 func (Pengawas) TableName() string {
-	return "observers"
+	return "pengawas"
 }
