@@ -17,7 +17,6 @@ type Pekerja struct {
 	
 	PengawasID   int            `gorm:"column:pengawas_id"`
 
-	DeviceID	int				`gorm:"column:device_id"`
 	Device     	*Device        	`gorm:"foreignKey:PekerjaID"`
 
 	CreatedAt 	time.Time      	`gorm:"column:created_at"`

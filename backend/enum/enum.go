@@ -52,3 +52,17 @@ func (t *TingkatKeparahan) Scan(value interface{}) error {
 func (t TingkatKeparahan) Value() (driver.Value, error) {
 	return string(t), nil
 }
+
+type PengawasRole string
+const (
+	Admin PengawasRole = "Admin"
+	Pengawas	PengawasRole = "Pengawas"
+)
+
+func (t *PengawasRole) Scan(value interface{}) error {
+	return scanStringLike((*string)(t), value)
+} 
+
+func (t PengawasRole) Value() (driver.Value, error) {
+	return string(t), nil
+}

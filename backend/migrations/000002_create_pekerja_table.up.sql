@@ -3,7 +3,7 @@ CREATE type gender AS ENUM (
     'P'
 );
 
-CREATE TABLE workers
+CREATE TABLE pekerjas
 (
     internal_id     BIGSERIAL       PRIMARY KEY,
     public_id       UUID            NOT NULL DEFAULT gen_random_uuid(),

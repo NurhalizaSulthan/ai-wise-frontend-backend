@@ -2,11 +2,11 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
 CREATE TYPE pengawas_role_enum AS ENUM
 (
-	'admin',
-	'pengawas'
+	'Admin',
+	'Pengawas'
 );
 
-CREATE TABLE observers
+CREATE TABLE pengawas
 (
     internal_id     BIGSERIAL       PRIMARY KEY,
     public_id       UUID            NOT NULL DEFAULT gen_random_uuid(),
