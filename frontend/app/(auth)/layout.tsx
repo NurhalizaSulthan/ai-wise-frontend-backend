@@ -25,10 +25,10 @@ export default function AuthLayout({
             {/* HERO BANNER */}
             <div className="w-full px-10 py-14 text-brand">
               <h1 className="text-4xl--line-height font-bold mb-2.5 leading-tight">
-                Sistem Pemantauan Wearable Keselamatan Kerja
+                Smart Wearable Safety Monitoring
               </h1>
               <p className="text-2xl">
-                Monitoring real-time  Pekerja melalui sistem Wearable Keselamatan Kerja
+                Real-time worker monitoring through a wearable safety system
               </p>
             </div>
 
