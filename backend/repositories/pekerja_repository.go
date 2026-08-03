@@ -13,7 +13,9 @@ type PekerjaFilter struct {
 type PekerjaRepository interface {
 	CreatePekerja(modelBase *model.Pekerja) (*model.Pekerja, error)
 	GetPekerjaByUUID(public_id uuid.UUID) (*model.Pekerja, error)
-	GetAll(filter PekerjaFilter) ([]model.Pekerja, error)
+	GetAll(
+		// filter PekerjaFilter
+		) ([]model.Pekerja, error)
 }
 
 type PekerjaRepositoryImpl struct {
@@ -48,13 +50,15 @@ func (repo *PekerjaRepositoryImpl) GetPekerjaByUUID(public_id uuid.UUID) (*model
 	return gormModel, nil
 }
 
-func (repo *PekerjaRepositoryImpl) GetAll(filter PekerjaFilter) ([]model.Pekerja, error) {
+func (repo *PekerjaRepositoryImpl) GetAll(
+	// filter PekerjaFilter
+	) ([]model.Pekerja, error) {
 	var list []model.Pekerja
 	query := repo.db.Model(&model.Pekerja{})
 
-	if filter.PengawasID != nil {
-		query.Where("pengawas_id = ?", filter.PengawasID)
-	}
+	// if filter.PengawasID != nil {
+	// 	query.Where("pengawas_id = ?", filter.PengawasID)
+	// }
 
 	if err := query.Find(&list).Error; err != nil {
 		return nil, err

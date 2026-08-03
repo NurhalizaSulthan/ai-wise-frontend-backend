@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/dto"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/mappers"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/model"
@@ -13,6 +15,7 @@ type PengawasService interface {
 	Create(dto *dto.PengawasCreate)(*dto.PengawasBase, error)
 	GetByPublicID(publicID uuid.UUID) (*dto.PengawasBase, error)
 	GetAll()([]dto.PengawasBase, error)
+	Login(dto *dto.LoginUser) (string, error)
 }
 
 type PengawasServiceImpl struct {
@@ -68,4 +71,24 @@ func (s *PengawasServiceImpl) GetAll()([]dto.PengawasBase, error) {
 	}
 
 	return mappers.MapSlice(data, mappers.ToPengawasBase), nil
+}
+
+func (s *PengawasServiceImpl) Login (dto *dto.LoginUser)(string, error) {
+	user, err := s.r.GetByPengawasNama(dto.Nama)
+
+	if err != nil {
+		return "", err
+	}
+
+	if ok := utils.CheckPasswordHash(dto.Password, user.PasswordHash); !ok {
+		return "", errors.New("Login Gagal")
+	}
+
+	newToken, err := utils.GenerateToken(user.Nama, user.PublicID.String(), string(user.Role))
+
+	if err != nil {
+		return "", err
+	}
+
+	return newToken, nil
 }

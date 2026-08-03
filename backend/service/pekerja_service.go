@@ -11,7 +11,9 @@ import (
 type PekerjaService interface {
 	Create(dto *dto.PekerjaCreate)(*dto.PekerjaBase, error)
 	GetByPublicID(publicID uuid.UUID) (*dto.PekerjaBase, error)
-	GetAll(pengawasID *int)([]dto.PekerjaBase, error)
+	GetAll(
+		// pengawasID *int
+		)([]dto.PekerjaBase, error)
 }
 
 type PekerjaServiceImpl struct {
@@ -77,14 +79,16 @@ func (s *PekerjaServiceImpl) GetByPublicID(publicID uuid.UUID) (*dto.PekerjaBase
 }
 
 func (s *PekerjaServiceImpl) GetAll(
-	pengawasID *int,
+	// pengawasID *int,
 )([]dto.PekerjaBase, error) {
-	filter := &repositories.PekerjaFilter{}
-	if pengawasID != nil {
-		filter.PengawasID = pengawasID
+	// filter := &repositories.PekerjaFilter{}
+	// if pengawasID != nil {
+	// 	filter.PengawasID = pengawasID
 
-	}
-	data, err := s.r.GetAll(*filter)
+	// }
+	data, err := s.r.GetAll(
+		// *filter
+	)
 	if err != nil {
 		return nil, err
 	}

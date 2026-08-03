@@ -16,7 +16,9 @@ type AlertFilter struct {
 type AlertRepositories interface {
 	CreateAlert(model *model.Alert) (*model.Alert, error)
 	GetAlertByPublicId(publicId uuid.UUID) (*model.Alert, error)
-	GetAll(filter AlertFilter) ([]model.Alert, error)
+	GetAll(
+		// filter AlertFilter
+		) ([]model.Alert, error)
 }
 
 type AlertRepositoriesImpl struct {
@@ -45,22 +47,24 @@ func (repo *AlertRepositoriesImpl) GetAlertByPublicId(publicID uuid.UUID) (*mode
 	return model, nil
 }
 
-func (repo *AlertRepositoriesImpl) GetAll(filter AlertFilter) ([]model.Alert, error) {
+func (repo *AlertRepositoriesImpl) GetAll(
+	// filter AlertFilter
+	) ([]model.Alert, error) {
 	var modelList []model.Alert
 
 	query := repo.db.Model(&model.Alert{})
 
-	if filter.DeviceID != nil {
-		query.Where("device_id = ?", filter.DeviceID)
-	}
+	// if filter.DeviceID != nil {
+	// 	query.Where("device_id = ?", filter.DeviceID)
+	// }
 
-	if filter.JenisAlert != nil {
-		query.Where("jenis_alert = ?", filter.JenisAlert)
-	}
+	// if filter.JenisAlert != nil {
+	// 	query.Where("jenis_alert = ?", filter.JenisAlert)
+	// }
 
-	if filter.TingkatAlert != nil {
-		query.Where("tingkat_alert = ?", filter.TingkatAlert)
-	}
+	// if filter.TingkatAlert != nil {
+	// 	query.Where("tingkat_alert = ?", filter.TingkatAlert)
+	// }
 
 	if err := query.Find(&modelList).Error; err != nil {
 		return nil, err
