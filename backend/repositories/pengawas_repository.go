@@ -9,7 +9,9 @@ import (
 type PengawasRepository interface {
 	CreatePengawas(model *model.Pengawas) (*model.Pengawas, error)
 	GetPengawasByUUID(public_id uuid.UUID) (*model.Pengawas, error)
+	GetByPengawasNama(nama string)(*model.Pengawas, error)
 	GetAll() ([]model.Pengawas, error)
+
 }
 
 type PengawasRepositoryImpl struct {
@@ -34,6 +36,16 @@ func (repo *PengawasRepositoryImpl) GetPengawasByUUID(public_id uuid.UUID) (*mod
 
 	if err := repo.db.
 		Preload("ListPekerja").Where("public_id = ?", public_id).First(&gormModel).Error; err != nil {
+		return nil, err
+	}
+
+	return gormModel, nil
+}
+
+func (repo *PengawasRepositoryImpl) GetByPengawasNama(nama string)(*model.Pengawas, error) {
+	gormModel := &model.Pengawas{}
+
+	if err := repo.db.Where("nama = ?", nama).First(gormModel).Error; err != nil {
 		return nil, err
 	}
 

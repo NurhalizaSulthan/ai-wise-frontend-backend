@@ -2,7 +2,6 @@ package service
 
 import (
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/dto"
-	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/enum"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/mappers"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/model"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/repositories"
@@ -12,7 +11,11 @@ import (
 type AlertService interface {
 	Create(dto *dto.AlertCreate)(*dto.AlertBase, error)
 	GetByPublicID(publicID uuid.UUID) (*dto.AlertBase, error)
-	GetAll(deviceID *int, jenisAlert *enum.JenisAlert, tingkatAlert *enum.TingkatKeparahan)([]dto.AlertBase, error)
+	GetAll(
+		// deviceID *int, 
+		// jenisAlert *enum.JenisAlert, 
+		// tingkatAlert *enum.TingkatKeparahan
+		)([]dto.AlertBase, error)
 }
 
 type AlertServiceImpl struct {
@@ -62,14 +65,20 @@ func (s *AlertServiceImpl) GetByPublicID(publicID uuid.UUID) (*dto.AlertBase, er
 	return mappers.Map(data, mappers.ToAlertBase), nil
 }
 
-func (s *AlertServiceImpl) GetAll(deviceID *int, jenisAlert *enum.JenisAlert, tingkatAlert *enum.TingkatKeparahan)([]dto.AlertBase, error) {
-	filter := &repositories.AlertFilter{
-		DeviceID: deviceID,
-		JenisAlert: jenisAlert,
-		TingkatAlert: tingkatAlert,
-	}
+func (s *AlertServiceImpl) GetAll(
+	// deviceID *int, 
+	// jenisAlert *enum.JenisAlert,
+	// tingkatAlert *enum.TingkatKeparahan
+	 )([]dto.AlertBase, error) {
+	// filter := &repositories.AlertFilter{
+	// 	DeviceID: deviceID,
+	// 	JenisAlert: jenisAlert,
+	// 	TingkatAlert: tingkatAlert,
+	// }
 
-	data, err := s.r.GetAll(*filter)
+	data, err := s.r.GetAll(
+		// *filter
+	)
 	if err != nil {
 		return nil, err
 	}

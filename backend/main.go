@@ -6,9 +6,9 @@ import (
 )
 
 func main() {
-	APPConfig := config.LoadEnv()
+	config.LoadEnv()
 
-	if APPConfig == nil {
+	if config.AppConfig == nil {
 		log.Error("Menemukan masalah saat memuat environtment variable: Config bernilai nil")
 	}
 }
