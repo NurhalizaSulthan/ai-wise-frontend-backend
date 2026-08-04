@@ -8,10 +8,7 @@ import { DropdownItem } from "../atoms/DropdownItem";
 import { Icon } from "@iconify/react";
 // import { MoreDotIcon } from "@/icons";
 
-const ReactECharts = dynamic(
-  () => import("echarts-for-react"),
-  { ssr: false }
-);
+const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
 export default function PieChart() {
   const [isOpen, setIsOpen] = useState(false);
@@ -27,28 +24,28 @@ export default function PieChart() {
   const data = [
     {
       value: 20,
-      name: "Risiko Jatuh",
+      name: "	Fall Risk",
       itemStyle: {
         color: "#46C0D9",
       },
     },
     {
       value: 15,
-      name: "Postur Kerja Berbahaya",
+      name: "	Hazardous Work Posture",
       itemStyle: {
         color: "#F5AE4B",
       },
     },
     {
       value: 35,
-      name: "Kelelahan",
+      name: "	Fatigue",
       itemStyle: {
         color: "#7C6CF5",
       },
     },
     {
       value: 30,
-      name: "Paparan Panas",
+      name: "	Heat Exposure",
       itemStyle: {
         color: "#F38A84",
       },
@@ -119,14 +116,11 @@ export default function PieChart() {
         {/* Header */}
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-foreground dark:text-foreground">
-            Distribusi Jenis Risiko
+            Risk Type Distribution
           </h3>
 
           <div className="relative inline-block">
-            <button
-              onClick={toggleDropdown}
-              className="dropdown-toggle"
-            >
+            <button onClick={toggleDropdown} className="dropdown-toggle">
               <Icon
                 icon="solar:menu-dots-bold"
                 className="size-5 text-muted transition-colors hover:text-primary"
