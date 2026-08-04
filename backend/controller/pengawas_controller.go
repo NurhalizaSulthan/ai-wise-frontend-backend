@@ -14,6 +14,7 @@ import (
 type PengawasController interface {
 	Create(ctx fiber.Ctx) error
 	GetByPublicID(ctx fiber.Ctx) error
+	GetAll(ctx fiber.Ctx) error
 }
 
 type PengawasControllerImpl struct {

@@ -1,4 +1,4 @@
-ALTER TABLE observers DROP CONSTRAINT observer_public_id_unique;
-DROP TABLE IF EXISTS observers;
+ALTER TABLE IF EXISTS pengawas DROP CONSTRAINT IF EXISTS pengawas_public_id_unique;
+DROP TABLE IF EXISTS pengawas;
 
 DROP type pengawas_role_enum;
