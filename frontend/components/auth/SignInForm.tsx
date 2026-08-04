@@ -13,7 +13,6 @@ const SignInForm = () => {
   return (
     <div className="flex flex-col flex-1 lg:w-1/2 w-full">
       <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
-
         {/* // TODO: Hapus kalau udah gak digunakan */}
         <Link
           href="/"
@@ -50,10 +49,20 @@ const SignInForm = () => {
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
                     />
-                    <span
+                    <button
+                      type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2"
-                    ></span>
+                      className="absolute z-30 -translate-y-1/2 cursor-pointer right-4 top-1/2 text-muted hover:text-primary"
+                    >
+                      <Icon
+                        icon={
+                          showPassword
+                            ? "solar:eye-bold"
+                            : "solar:eye-closed-bold"
+                        }
+                        width={20}
+                      />
+                    </button>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
@@ -76,7 +85,14 @@ const SignInForm = () => {
                   </Button>
                 </div>
                 <div>
-                  <Button variant="secondary" className="w-full" size="sm" startIcon={<Icon icon="material-icon-theme:google" width={20} />}>
+                  <Button
+                    variant="secondary"
+                    className="w-full"
+                    size="sm"
+                    startIcon={
+                      <Icon icon="material-icon-theme:google" width={20} />
+                    }
+                  >
                     Sign in with Google
                   </Button>
                 </div>
@@ -99,6 +115,6 @@ const SignInForm = () => {
       </div>
     </div>
   );
-}
+};
 
 export default SignInForm;

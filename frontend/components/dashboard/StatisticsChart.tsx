@@ -187,7 +187,7 @@ export default function StatisticsChart() {
           </h3>
 
           <p className="mt-1 text-sm text-muted">
-            Target you ve set for each month
+            Safety alerts trend
           </p>
         </div>
 

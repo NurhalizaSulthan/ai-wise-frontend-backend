@@ -1,11 +1,18 @@
 import { DataOverview } from "@/components/dashboard/DataOverview";
 import StatisticsChart from "@/components/dashboard/StatisticsChart";
 import PieChart from "@/components/dashboard/PieChart";
+import PageTitle from "@/components/molecules/PageTitle";
 
 export default function Dashboard() {
   return (
-    <div className="grid grid-cols-12 gap-4 md:gap-6">
-      {/* Baris 1 */}
+    <div className="grid grid-cols-12 gap-4 md:gap-6 ">
+      <div className="col-span-12">
+        <PageTitle
+          title="Dashboard"
+          description="Real-time overview of worker safety and risk monitoring."
+        />
+      </div>
+
       <div className="col-span-12">
         <DataOverview />
       </div>
