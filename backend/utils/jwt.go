@@ -12,20 +12,20 @@ import (
 )
 
 type AuthContext struct {
-  Username string
-  PublicID string
-  Role string
+	Username string
+	PublicID string
+	Role     string
 }
 
-type UserClaims struct{
+type UserClaims struct {
 	jwt.RegisteredClaims
-	Nama string `json:"nama"`
+	Nama     string `json:"nama"`
 	PublicID string `json:"nomor_handphone"`
-	Role string	`json:"role"`
+	Role     string `json:"role"`
 }
 
 func createClaims(nama, publicID, role string) UserClaims {
-	expiryMinute, err := strconv.Atoi("1800");
+	expiryMinute, err := strconv.Atoi("1800")
 
 	if err != nil {
 		expiryMinute = 1800
@@ -35,17 +35,17 @@ func createClaims(nama, publicID, role string) UserClaims {
 
 	return UserClaims{
 		RegisteredClaims: jwt.RegisteredClaims{
-			Issuer: "AI-Wise system",
+			Issuer:    "AI-Wise system",
 			ExpiresAt: jwt.NewNumericDate(login_expiration_duration),
 		},
-		Nama: nama,
-    PublicID: publicID,
-	Role: role,
+		Nama:     nama,
+		PublicID: publicID,
+		Role:     role,
 	}
 }
 
-func GenerateToken(nama, nomorHP, role string) (string, error){
-	claims := createClaims(nama, nomorHP,role )
+func GenerateToken(nama, nomorHP, role string) (string, error) {
+	claims := createClaims(nama, nomorHP, role)
 
 	token := jwt.NewWithClaims(
 		jwt.SigningMethodHS256,

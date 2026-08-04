@@ -2,6 +2,7 @@ package controller
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/dto"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/service"
@@ -20,7 +21,7 @@ type AuthControllerImpl struct {
 // Login implements [AuthController].
 func (a *AuthControllerImpl) Login(ctx fiber.Ctx) error {
 	userLogin := &dto.LoginUser{}
-	
+
 	if err := ctx.Bind().Body(userLogin); err != nil {
 		return utils.BadRequest(ctx, "Autentikasi gagal", err)
 	}
@@ -34,18 +35,35 @@ func (a *AuthControllerImpl) Login(ctx fiber.Ctx) error {
 	if token == "" {
 		return utils.Unauthorized(ctx, "Nama atau password salah", errors.New("Unauthorized"))
 	}
-	
+
 	ctx.Cookie(&fiber.Cookie{
-        Name:     "access_token",
-        Value:    token,
-        HTTPOnly: true,
-        Secure:   false,
-        SameSite: "Lax",
-        Path:     "/",
-        MaxAge:   60 * 15,
-    })
+		Name:     "access_token",
+		Value:    token,
+		HTTPOnly: true,
+		Secure:   false,
+		SameSite: "Lax",
+		Path:     "/",
+		MaxAge:   60 * 15,
+	})
 
 	return utils.SuccessResponse(ctx, "Login sukses", nil)
+}
+
+func (a *AuthControllerImpl) Create(ctx fiber.Ctx) error {
+	userLogin := &dto.PengawasCreate{}
+
+	if err := ctx.Bind().Body(userLogin); err != nil {
+		return utils.BadRequest(ctx, "Autentikasi gagal", err)
+	}
+
+	data, err := a.p.Create(userLogin)
+
+	if err != nil {
+		return utils.BadRequest(ctx, "Pengawas tidak ditemukan", err)
+	}
+
+	message := fmt.Sprintf("Pengawas %s telah terdaftar", data.Nama)
+	return utils.SuccessResponse(ctx, "Registrasi Sukses", message)
 }
 
 func NewAuthController(p service.PengawasService) AuthController {

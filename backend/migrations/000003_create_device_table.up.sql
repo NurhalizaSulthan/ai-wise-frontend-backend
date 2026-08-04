@@ -7,5 +7,5 @@ CREATE TABLE devices
     updated_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at TIMESTAMPTZ NULL,
     CONSTRAINT      device_public_id_unique  UNIQUE(public_id),
-    CONSTRAINT      device_fk_worker   FOREIGN KEY (pekerja_id) REFERENCES workers(internal_id)
+    CONSTRAINT      device_fk_worker   FOREIGN KEY (pekerja_id) REFERENCES pekerjas(internal_id)
 );
