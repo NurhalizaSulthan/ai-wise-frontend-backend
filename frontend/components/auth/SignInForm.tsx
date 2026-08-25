@@ -1,5 +1,4 @@
 "use client";
-import Checkbox from "@/components/atoms/Checkbox";
 import Input from "@/components/atoms/InputField";
 import Label from "@/components/atoms/Label";
 import Button from "@/components/atoms/Button";
@@ -9,26 +8,16 @@ import { Icon } from "@iconify/react";
 
 const SignInForm = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
   return (
     <div className="flex flex-col flex-1 lg:w-1/2 w-full">
-      <div className="w-full max-w-md sm:pt-10 mx-auto mb-5">
-        {/* // TODO: Hapus kalau udah gak digunakan */}
-        <Link
-          href="/"
-          className="inline-flex items-center text-sm text-muted transition-colors"
-        >
-          Back to dashboard
-        </Link>
-      </div>
-      <div className="flex flex-col justify-center flex-1 w-full max-w-md mx-auto">
+      <div className="flex flex-col justify-center flex-1 w-full max-w-lg mx-auto">
         <div>
           <div className="mb-5 sm:mb-8">
-            <h1 className="mb-2 font-semibold text-foreground text-2xl  sm:text-xl">
-              Sign In
+            <h1 className="font-bold text-foreground text-4xl sm:text-xl">
+              MASUK
             </h1>
             <p className="text-sm text-muted">
-              Enter your email and password to sign in!
+              Silakan masukkan nama lengkap dan kata sandi Anda untuk melanjutkan.
             </p>
           </div>
           <div>
@@ -36,18 +25,18 @@ const SignInForm = () => {
               <div className="space-y-6">
                 <div>
                   <Label>
-                    Email <span className="text-error">*</span>{" "}
+                    Nama Lengkap<span className="text-error">*</span>{" "}
                   </Label>
-                  <Input placeholder="info@gmail.com" type="email" />
+                  <Input placeholder="Masukkan nama Anda" type="text" />
                 </div>
                 <div>
                   <Label>
-                    Password <span className="text-error">*</span>{" "}
+                    Kata Sandi <span className="text-error">*</span>{" "}
                   </Label>
                   <div className="relative">
                     <Input
                       type={showPassword ? "text" : "password"}
-                      placeholder="Enter your password"
+                      placeholder="Masukkan kata sandi Anda"
                     />
                     <button
                       type="button"
@@ -65,35 +54,17 @@ const SignInForm = () => {
                     </button>
                   </div>
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Checkbox checked={isChecked} onChange={setIsChecked} />
-                    <span className="block font-normal text-muted">
-                      Keep me logged in
-                    </span>
-                  </div>
+                <div className="flex items-center justify-end">
                   <Link
                     href="/reset-password"
                     className="text-sm text-muted hover:text-primary"
                   >
-                    Forgot password?
+                    Lupa kata sandi?
                   </Link>
                 </div>
                 <div>
-                  <Button className="w-full" size="sm">
-                    Sign in
-                  </Button>
-                </div>
-                <div>
-                  <Button
-                    variant="secondary"
-                    className="w-full"
-                    size="sm"
-                    startIcon={
-                      <Icon icon="material-icon-theme:google" width={20} />
-                    }
-                  >
-                    Sign in with Google
+                  <Button className="w-full">
+                    MASUK
                   </Button>
                 </div>
               </div>
@@ -101,12 +72,12 @@ const SignInForm = () => {
 
             <div className="mt-5">
               <p className="text-sm font-normal text-center text-muted dark:text-muted/50 ">
-                Don&apos;t have an account? {""}
+                Belum memiliki akun?{" "}
                 <Link
                   href="/signup"
-                  className="text-primary hover:text-primary/50 dark:text-primary/30"
+                  className="text-primary font-semibold hover:text-primary/90 dark:text-primary/30"
                 >
-                  Sign Up
+                  Daftar
                 </Link>
               </p>
             </div>

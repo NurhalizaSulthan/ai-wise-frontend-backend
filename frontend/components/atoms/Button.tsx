@@ -23,9 +23,9 @@ const Button: React.FC<ButtonProps> = ({
 }) => {
   // Size Classes
   const sizeClasses = {
-    sm: "h-9 px-3 text-sm",
-    md: "h-11 px-4 text-sm",
-    lg: "h-12 px-5 text-base",
+    sm: "h-10 px-3 text-sm",
+    md: "h-12 px-4 text-base",
+    lg: "h-13 px-5 text-lg",
   };
 
   // Variant Classes
@@ -40,7 +40,7 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
-      className={`inline-flex items-center justify-center font-medium gap-2 cursor-pointer rounded-lg transition ${className} ${sizeClasses[size]
+      className={`inline-flex items-center justify-center font-semibold gap-2 cursor-pointer rounded-lg tracking-widest transition ${className} ${sizeClasses[size]
         } ${variantClasses[variant]} ${disabled ? "cursor-not-allowed opacity-50" : ""
         }`}
       onClick={onClick}
