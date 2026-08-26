@@ -5,6 +5,7 @@ import (
 
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/config"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/controller"
+	response "github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/responses"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/utils"
 	jwtware "github.com/gofiber/contrib/v3/jwt"
 	"github.com/gofiber/fiber/v3"
@@ -20,6 +21,7 @@ func Setup(
 	kerjaCont controller.PekerjaController,
 	deviceCont controller.DeviceController,
 	alertCont controller.AlertController,
+	tlmtryCont controller.TelemetryController,
 ) {
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -52,12 +54,29 @@ func Setup(
 			return c.Next()
 		},
 		ErrorHandler: func(c fiber.Ctx, err error) error {
-			return utils.UnauthorizedReponse(c, "User unauthorized", err)
+			return response.Unauthorized(c, "User unauthorized", err)
 		},
 	}))
 
 	api.Get("/pengawas", awasCont.GetAll)
+	api.Get("/pengawas/detail", awasCont.GetByPublicID)
+	api.Post("/pengawas", awasCont.Create)
+
+	// Pekerja endpoint
 	api.Get("/pekerja", kerjaCont.GetAll)
+	api.Get("/pekerja/detail", kerjaCont.GetByPublicID)
+	api.Post("/pekerja", kerjaCont.Create)
+
+	// Device endpoint
 	api.Get("/device", deviceCont.GetAll)
+	api.Get("/device/detail", deviceCont.GetByPublicID)
+	api.Post("/device", deviceCont.Create)
+
 	api.Get("/alert", alertCont.GetAll)
+	api.Post("/alert", alertCont.Create)
+	api.Post("/alert/detail", alertCont.GetByPublicID)
+
+	api.Get("/telemetry", tlmtryCont.GetAll)
+	api.Post("/telemetry", tlmtryCont.Create)
+	api.Get("/telemetry/detail", tlmtryCont.GetByPublicID)
 }

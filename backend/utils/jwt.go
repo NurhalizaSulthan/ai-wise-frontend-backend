@@ -25,7 +25,7 @@ type UserClaims struct {
 }
 
 func createClaims(nama, publicID, role string) UserClaims {
-	expiryMinute, err := strconv.Atoi("1800")
+	expiryMinute, err := strconv.Atoi(config.AppConfig.JWTTokenExpiry)
 
 	if err != nil {
 		expiryMinute = 1800

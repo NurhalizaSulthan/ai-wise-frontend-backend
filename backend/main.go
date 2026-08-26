@@ -4,7 +4,7 @@ import (
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/config"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/controller"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/repositories"
-	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/route"
+	route "github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/routes"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/service"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/log"
@@ -23,7 +23,7 @@ func main() {
 
 	app.Use(cors.New(
 		cors.Config{
-			AllowOrigins:     []string{"http://localhost:3000"},
+			AllowOrigins:     []string{config.AppConfig.APPUrl},
 			AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 			AllowCredentials: true,
 		},
@@ -33,17 +33,20 @@ func main() {
 	deviceRepo := repositories.NewDeviceRepository(config.DB)
 	pekerjRepo := repositories.NewPekerjaRepository(config.DB)
 	pengawRepo := repositories.NewPengawasRepository(config.DB)
+	tlmtryRepo := repositories.NewTelemetryRepository(config.DB)
 
 	alertServ := service.NewAlertService(alertRepo, deviceRepo)
 	deviceServ := service.NewDeviceService(deviceRepo, pekerjRepo)
 	pekerjServ := service.NewPekerjaService(pekerjRepo, pengawRepo, deviceRepo)
 	pengawServ := service.NewPengawasService(pengawRepo)
+	tlmtryServ := service.NewTelemetryService(tlmtryRepo)
 
 	authCont := controller.NewAuthController(pengawServ)
 	alertCont := controller.NewAlertController(alertServ)
 	deviceCont := controller.NewDeviceController(deviceServ)
 	pekerjCont := controller.NewPekerjaController(pekerjServ)
 	pengawCont := controller.NewPengawasController(pengawServ)
+	tlmtryCont := controller.NewTelemetryController(tlmtryServ)
 
 	route.Setup(
 		app,
@@ -52,6 +55,7 @@ func main() {
 		pekerjCont,
 		deviceCont,
 		alertCont,
+		tlmtryCont,
 	)
 
 	port := config.AppConfig.APPPort

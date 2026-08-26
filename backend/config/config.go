@@ -35,13 +35,15 @@ func LoadEnv() {
 	}
 
 	AppConfig = &Config{
-		APPPort:         getEnv("APP_PORT", "3000"),
-		APPUrl:          getEnv("APP_URL", "localhost"),
-		DBHost:          getEnv("DB_HOST", "localhost"),
-		DBPort:          getEnv("DB_PORT", "5432"),
-		DBUser:          getEnv("DB_USER", "postgres_user"),
-		DBPass:          getEnv("DB_PASS", "postgres_pass"),
-		DBName:          getEnv("DB_NAME", "postgres_db"),
+		APPPort: getEnv("BACKEND_PORT", "3000"),
+		APPUrl:  getEnv("FRONTEND_URL", "localhost"),
+
+		DBHost: getEnv("DB_HOST", "localhost"),
+		DBPort: getEnv("DB_PORT", "5432"),
+		DBUser: getEnv("DB_USERNAME", "postgres_user"),
+		DBPass: getEnv("DB_PASSWORD", "postgres_pass"),
+		DBName: getEnv("DB_NAME", "postgres_db"),
+
 		JWTSecret:       getEnv("JWT_SECRET", "secretkey"),
 		JWTTokenExpiry:  getEnv("JWT_TOKEN_EXPIRY", "900"),
 		JWTRefreshToken: getEnv("JWT_REFRESH_TOKEN", "1800"),
