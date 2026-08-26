@@ -16,9 +16,13 @@ func ToDeviceBase(d *model.Device) *dto.DeviceBase {
 		PekerjaID: d.PekerjaID,
 	}
 
-	if alert := MapSlice(d.ListAlert, ToAlertBase); alert != nil {
-		base.ListAlert = alert
+	if telemetry := MapSlice(d.Telemetry, ToTelemetryBase); telemetry != nil {
+		base.Telemetry = telemetry
 	}
+
+	// if alert := MapSlice(d.ListAlert, ToAlertBase); alert != nil {
+	// 	base.ListAlert = alert
+	// }
 
 	return base
 

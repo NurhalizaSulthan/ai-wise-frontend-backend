@@ -11,30 +11,30 @@ import (
 	"github.com/google/uuid"
 )
 
-type DeviceController interface {
+type TelemetryController interface {
 	Create(ctx fiber.Ctx) error
 	GetByPublicID(ctx fiber.Ctx) error
 	GetAll(ctx fiber.Ctx) error
 }
 
-type DeviceControllerImpl struct {
-	s service.DeviceService
+type TelemetryControllerImpl struct {
+	s service.TelemetryService
 }
 
 // Create     	  godoc
 // @Summary       Create
-// @Description   Endpoint untuk menambah data device
-// @Tags          Device
+// @Description   Endpoint untuk menambah data telemetry
+// @Tags          Telemetry
 // @Accept        json
 // @Produce       json
-// @Param         device  body  dto.DeviceCreate  true  "Data device"
-// @Success       201 {object}   utils.CreationSuccessResponse{status=string, status_code=int, message=string, data=dto.DeviceBase}
+// @Param         telemetry  body  dto.TelemetryCreate  true  "Data telemetry"
+// @Success       201 {object}   utils.CreationSuccessResponse{status=string, status_code=int, message=string, data=dto.TelemetryBase}
 // @Failure       400 {object}   utils.BadRequestResponse{status=string, status_code=int, message=string, error=string}
 // @Failure       500 {object}   utils.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security      ApiKeyAuth
-// @Router        /api/v1/device [post]
-func (a *DeviceControllerImpl) Create(ctx fiber.Ctx) error {
-	create := &dto.DeviceCreate{}
+// @Router        /api/v1/telemetry [post]
+func (a *TelemetryControllerImpl) Create(ctx fiber.Ctx) error {
+	create := &dto.TelemetryCreate{}
 
 	if err := ctx.Bind().Body(create); err != nil {
 		return response.BadRequest(ctx, constants.BodyParsingError, err)
@@ -49,16 +49,16 @@ func (a *DeviceControllerImpl) Create(ctx fiber.Ctx) error {
 
 // GetDetail 	godoc
 // @Summary 	GetDetail
-// @Description Endpoint untuk mengambil detail device
-// @Tags 		Device
+// @Description Endpoint untuk mengambil detail telemetry
+// @Tags 		Telemetry
 // @Produce 	json
-// @Param       public_id query int true "Public ID anak"
-// @Success     200 {object}   utils.SuccessResponse{status=string, status_code=int, message=string, data=dto.DeviceBase}
+// @Param       public_id query int true "Public ID telemetry"
+// @Success     200 {object}   utils.SuccessResponse{status=string, status_code=int, message=string, data=dto.TelemetryBase}
 // @Failure     400 {object}   utils.BadRequestResponse{status=string, status_code=int, message=string, error=string}
 // @Failure     500 {object}   utils.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security    ApiKeyAuth
-// @Router 		/api/v1/device/detail [get]
-func (a *DeviceControllerImpl) GetByPublicID(ctx fiber.Ctx) error {
+// @Router 		/api/v1/telemetry/detail [get]
+func (a *TelemetryControllerImpl) GetByPublicID(ctx fiber.Ctx) error {
 	publicID := ctx.Params("public_id")
 	if publicID == "" {
 		return response.BadRequest(ctx, constants.RetrievalError, errors.New(constants.PublicIDMissingError))
@@ -81,24 +81,24 @@ func (a *DeviceControllerImpl) GetByPublicID(ctx fiber.Ctx) error {
 
 // GetAll 		godoc
 // @Summary 	GetAll
-// @Description Endpoint untuk mengambil semua device
-// @Tags 		Device
+// @Description Endpoint untuk mengambil semua telemetry
+// @Tags 		Telemetry
 // @Produce 	json
-// @Success     200 {object}   utils.SuccessResponse{status=string, status_code=int, message=string, data=[]dto.DeviceBase}
+// @Success     200 {object}   utils.SuccessResponse{status=string, status_code=int, message=string, data=[]dto.TelemetryBase}
 // @Failure     400 {object}   utils.BadRequestResponse{status=string, status_code=int, message=string, error=string}
 // @Failure     500 {object}   utils.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security    ApiKeyAuth
-// @Router 		/api/v1/device [get]
-func (a *DeviceControllerImpl) GetAll(ctx fiber.Ctx) error {
+// @Router 		/api/v1/telemetry [get]
+func (a *TelemetryControllerImpl) GetAll(ctx fiber.Ctx) error {
 	data, err := a.s.GetAll()
+
 	if err != nil {
 		return response.InternalError(ctx, constants.RetrievalError, err)
 	}
 
 	return response.Success(ctx, constants.DataRetrievalSuccess, data)
-
 }
 
-func NewDeviceController(s service.DeviceService) DeviceController {
-	return &DeviceControllerImpl{s: s}
+func NewTelemetryController(s service.TelemetryService) TelemetryController {
+	return &TelemetryControllerImpl{s: s}
 }
