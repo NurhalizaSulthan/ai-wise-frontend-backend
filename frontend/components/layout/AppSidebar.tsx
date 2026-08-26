@@ -23,9 +23,19 @@ const navItems: NavItem[] = [
         path: "/dashboard",
     },
     {
-        name: "Workers",
+        name: "Monitoring",
+        icon: "carbon:cloud-monitoring",
+        path: "/monitoring",
+    },
+    {
+        name: "Pekerja",
         icon: "mdi:worker",
         path: "/workers",
+    },
+    {
+        name: "Perangkat",
+        icon: "solar:cpu-linear",
+        path: "/devices",
     },
 ];
 
@@ -106,7 +116,7 @@ const AppSidebar: React.FC = () => {
                             <button
                                 type="button"
                                 onClick={() => handleSubmenuToggle(index)}
-                                className={`group flex w-full items-center gap-3 rounded-2xl px-4 py-7 text-sm font-medium transition
+                                className={`group flex w-full items-center gap-3 rounded-xl px-4 py-7 text-sm font-medium transition
 									${isSubmenuOpen
                                         ? "bg-primary text-foreground shadow-md shadow-primary/25"
                                         : "text-muted hover:bg-primary/10 hover:text-primary"
@@ -148,8 +158,8 @@ const AppSidebar: React.FC = () => {
                                                     href={subItem.path}
                                                     onClick={handleLinkClick}
                                                     className={`block rounded-xl px-3 py-3 text-sm transition ${isActive(subItem.path)
-                                                            ? "bg-primary/10 font-medium text-primary"
-                                                            : "text-muted hover:bg-primary/10 hover:text-primary"
+                                                        ? "bg-primary/10 font-medium text-primary"
+                                                        : "text-muted hover:bg-primary/10 hover:text-primary"
                                                         }`}
                                                 >
                                                     {subItem.name}

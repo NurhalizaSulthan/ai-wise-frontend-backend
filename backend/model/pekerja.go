@@ -9,21 +9,22 @@ import (
 
 
 type Pekerja struct {
-	InternalID   int            `json:"internal_id"   gorm:"column:internal_id;primaryKey;autoIncrement"`
-	PublicID     uuid.UUID      `json:"public_id"     gorm:"column:public_id;unique"`
-	Nama         string         `json:"nama"          gorm:"column:nama"`
-	TanggalLahir time.Time      `json:"tanggal_lahir" gorm:"column:tanggal_lahir"`
-	JenisKelamin string         `json:"jenis_kelamin" gorm:"column:jenis_kelamin"`
+	InternalID   int            `gorm:"column:internal_id;primaryKey;autoIncrement"`
+	PublicID     uuid.UUID      `gorm:"column:public_id;default:gen_random_uuid()"`
+	Nama         string         `gorm:"column:nama"`
+	TanggalLahir time.Time      `gorm:"column:tanggal_lahir"`
+	JenisKelamin string         `gorm:"column:jenis_kelamin"`
 	
-	PengawasID   int            `json:"pengawas_id"   gorm:"column:pengawas_id"`
-	Device       *Device         `json:"device"        gorm:"foreignKey:PekerjaID;references:InternalID"`
+	PengawasID   int            `gorm:"column:pengawas_id"`
 
-	CreatedAt time.Time      `json:"created_at"    gorm:"column:created_at"`
-	UpdatedAt time.Time      `json:"updated_at"    gorm:"column:updated_at"`
-	DeletedAt gorm.DeletedAt `json:"deleted_at"    gorm:"column:deleted_at"`
+	Device     	*Device        	`gorm:"foreignKey:PekerjaID"`
+
+	CreatedAt 	time.Time      	`gorm:"column:created_at"`
+	UpdatedAt 	time.Time      	`gorm:"column:updated_at"`
+	DeletedAt 	gorm.DeletedAt 	`gorm:"column:deleted_at"`
 }
 
 func (Pekerja) TableName() string {
-	return "workers"
+	return "pekerjas"
 }
 

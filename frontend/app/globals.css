@@ -44,6 +44,7 @@
 	--shadow-card: 0 8px 24px rgba(0, 0, 0, 0.08);
 
 	/* Theme */
+	--color-brand: var(--brand);
 	--color-primary: var(--primary);
 	--color-secondary: var(--secondary);
 	--color-tertiary: var(--tertiary);
@@ -64,7 +65,7 @@
 	--secondary: #1c7e41;
 	--tertiary: #fb8716;
 	--background: #f6f6f6;
-	--foreground: #000000;
+	--foreground: #0d0907;
 
 	--surface: #ffffff;
 	--muted: #6b7280;
@@ -76,10 +77,11 @@
 
 /* DARK */
 .dark {
+	--brand: #ffffff;
 	--primary: #157138;
 	--secondary: #1c7e41;
 	--tertiary: #fb8716;
-	--background: #070A08;
+	--background: #0d0907;
 	--foreground: #f9fafb;
 	--surface: 	#0e1111;
 	--muted: #94a3b8;

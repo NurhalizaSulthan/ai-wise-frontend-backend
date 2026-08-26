@@ -29,7 +29,7 @@ func ToPengawasModel(p *dto.PengawasCreate) *model.Pengawas {
 
 	model := &model.Pengawas{
 		Nama: p.Nama,
-		PasswordHash: p.PassHash,
+		PasswordHash: p.Pass,
 	}
 
 	return model
