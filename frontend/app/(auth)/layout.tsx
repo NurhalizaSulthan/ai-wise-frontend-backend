@@ -28,7 +28,7 @@ export default function AuthLayout({
                 Smart Wearable Safety Monitoring
               </h1>
               <p className="text-2xl">
-                Real-time worker monitoring through a wearable safety system
+                Memantau Kondisi Pekerja Secara Real-Time untuk Meningkatkan Keselamatan Kerja
               </p>
             </div>
 
