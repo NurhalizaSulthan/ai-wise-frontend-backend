@@ -1,17 +1,13 @@
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-      tags:
-        - kaizerd23/rikub-backend:1.0.0
+    image: kaizerd23/rikub-backend:1.0.0
 
     depends_on:
       migrate:
         condition: service_completed_successfully
 
     env_file:
-      - .env
+      - ./example.env
 
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
