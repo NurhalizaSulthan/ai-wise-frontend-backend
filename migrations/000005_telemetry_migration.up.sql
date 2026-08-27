@@ -17,5 +17,5 @@ CREATE TABLE IF NOT EXISTS telemetries (
       updated_at      TIMESTAMPTZ         NOT NULL DEFAULT CURRENT_TIMESTAMP,
       deleted_at      TIMESTAMPTZ         NULL,
       CONSTRAINT telemetries_public_id_unique UNIQUE(public_id),
-      CONSTRAINT telemetries_device_id_fk FOREIGN KEY (device_id) REFERENCES devices(internal_id),
+      CONSTRAINT telemetries_device_id_fk FOREIGN KEY (device_id) REFERENCES devices(internal_id) ON DELETE SET NULL
 );

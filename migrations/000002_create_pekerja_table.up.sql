@@ -15,5 +15,5 @@ CREATE TABLE pekerjas
     updated_at      TIMESTAMPTZ     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at      TIMESTAMPTZ     NULL,
     CONSTRAINT      pekerja_public_id_unique     UNIQUE(public_id),
-    CONSTRAINT      pekerja_fk_observer          FOREIGN KEY      (pengawas_id)   REFERENCES pengawas(internal_id)
+    CONSTRAINT      pekerja_fk_observer          FOREIGN KEY      (pengawas_id)   REFERENCES pengawas(internal_id) ON DELETE SET NULL
 );

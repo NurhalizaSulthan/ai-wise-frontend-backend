@@ -28,9 +28,9 @@ type PekerjaControllerImpl struct {
 // @Accept        json
 // @Produce       json
 // @Param         pekerja  body  dto.PekerjaCreate  true  "Data pekerja"
-// @Success       201 {object}   utils.CreationSuccessResponse{status=string, status_code=int, message=string, data=dto.PekerjaBase}
-// @Failure       400 {object}   utils.BadRequestResponse{status=string, status_code=int, message=string, error=string}
-// @Failure       500 {object}   utils.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Success       201 {object}   response.CreationSuccessResponse{status=string, status_code=int, message=string, data=dto.PekerjaBase}
+// @Failure       400 {object}   response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure       500 {object}   response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security      ApiKeyAuth
 // @Router        /api/v1/pekerja [post]
 func (a *PekerjaControllerImpl) Create(ctx fiber.Ctx) error {
@@ -53,9 +53,9 @@ func (a *PekerjaControllerImpl) Create(ctx fiber.Ctx) error {
 // @Tags 			Pekerja
 // @Produce 		json
 // @Param         	public_id query int true "Public ID anak"
-// @Success       	200 {object}   utils.SuccessResponse{status=string, status_code=int, message=string, data=dto.PekerjaBase}
-// @Failure       	400 {object}   utils.BadRequestResponse{status=string, status_code=int, message=string, error=string}
-// @Failure       	500 {object}   utils.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Success       	200 {object}   response.SuccessResponse{status=string, status_code=int, message=string, data=dto.PekerjaBase}
+// @Failure       	400 {object}   response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure       	500 {object}   response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security      	ApiKeyAuth
 // @Router 			/api/v1/pekerja/detail [get]
 func (a *PekerjaControllerImpl) GetByPublicID(ctx fiber.Ctx) error {
@@ -84,9 +84,9 @@ func (a *PekerjaControllerImpl) GetByPublicID(ctx fiber.Ctx) error {
 // @Description Endpoint untuk mengambil semua pekerja
 // @Tags 		Pekerja
 // @Produce 	json
-// @Success     200 {object}   utils.SuccessResponse{status=string, status_code=int, message=string, data=[]dto.PekerjaBase}
-// @Failure     400 {object}   utils.BadRequestResponse{status=string, status_code=int, message=string, error=string}
-// @Failure     500 {object}   utils.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Success     200 {object}   response.SuccessResponse{status=string, status_code=int, message=string, data=[]dto.PekerjaBase}
+// @Failure     400 {object}   response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure     500 {object}   response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security    ApiKeyAuth
 // @Router 		/api/v1/pekerja [get]
 func (a *PekerjaControllerImpl) GetAll(ctx fiber.Ctx) error {

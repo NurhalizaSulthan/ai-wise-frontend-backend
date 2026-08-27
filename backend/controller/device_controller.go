@@ -28,9 +28,9 @@ type DeviceControllerImpl struct {
 // @Accept        json
 // @Produce       json
 // @Param         device  body  dto.DeviceCreate  true  "Data device"
-// @Success       201 {object}   utils.CreationSuccessResponse{status=string, status_code=int, message=string, data=dto.DeviceBase}
-// @Failure       400 {object}   utils.BadRequestResponse{status=string, status_code=int, message=string, error=string}
-// @Failure       500 {object}   utils.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Success       201 {object}   response.CreationSuccessResponse{status=string, status_code=int, message=string, data=dto.DeviceBase}
+// @Failure       400 {object}   response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure       500 {object}   response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security      ApiKeyAuth
 // @Router        /api/v1/device [post]
 func (a *DeviceControllerImpl) Create(ctx fiber.Ctx) error {
@@ -53,9 +53,9 @@ func (a *DeviceControllerImpl) Create(ctx fiber.Ctx) error {
 // @Tags 		Device
 // @Produce 	json
 // @Param       public_id query int true "Public ID anak"
-// @Success     200 {object}   utils.SuccessResponse{status=string, status_code=int, message=string, data=dto.DeviceBase}
-// @Failure     400 {object}   utils.BadRequestResponse{status=string, status_code=int, message=string, error=string}
-// @Failure     500 {object}   utils.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Success     200 {object}   response.SuccessResponse{status=string, status_code=int, message=string, data=dto.DeviceBase}
+// @Failure     400 {object}   response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure     500 {object}   response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security    ApiKeyAuth
 // @Router 		/api/v1/device/detail [get]
 func (a *DeviceControllerImpl) GetByPublicID(ctx fiber.Ctx) error {
@@ -84,9 +84,9 @@ func (a *DeviceControllerImpl) GetByPublicID(ctx fiber.Ctx) error {
 // @Description Endpoint untuk mengambil semua device
 // @Tags 		Device
 // @Produce 	json
-// @Success     200 {object}   utils.SuccessResponse{status=string, status_code=int, message=string, data=[]dto.DeviceBase}
-// @Failure     400 {object}   utils.BadRequestResponse{status=string, status_code=int, message=string, error=string}
-// @Failure     500 {object}   utils.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Success     200 {object}   response.SuccessResponse{status=string, status_code=int, message=string, data=[]dto.DeviceBase}
+// @Failure     400 {object}   response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure     500 {object}   response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security    ApiKeyAuth
 // @Router 		/api/v1/device [get]
 func (a *DeviceControllerImpl) GetAll(ctx fiber.Ctx) error {
