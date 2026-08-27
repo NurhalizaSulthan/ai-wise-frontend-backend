@@ -28,9 +28,9 @@ type PengawasControllerImpl struct {
 // @Accept        json
 // @Produce       json
 // @Param         pengawas  body  dto.PengawasCreate  true  "Data pengawas"
-// @Success       201 {object}   utils.CreationSuccessResponse{status=string, status_code=int, message=string, data=dto.PengawasBase}
-// @Failure       400 {object}   utils.BadRequestResponse{status=string, status_code=int, message=string, error=string}
-// @Failure       500 {object}   utils.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Success       201 {object}   response.CreationSuccessResponse{status=string, status_code=int, message=string, data=dto.PengawasBase}
+// @Failure       400 {object}   response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure       500 {object}   response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security      ApiKeyAuth
 // @Router        /api/v1/pengawas [post]
 func (a *PengawasControllerImpl) Create(ctx fiber.Ctx) error {
@@ -53,9 +53,9 @@ func (a *PengawasControllerImpl) Create(ctx fiber.Ctx) error {
 // @Tags Pengawas
 // @Produce json
 // @Param         public_id query int true "Public ID anak"
-// @Success       200 {object}   utils.SuccessResponse{status=string, status_code=int, message=string, data=dto.PengawasBase}
-// @Failure       400 {object}   utils.BadRequestResponse{status=string, status_code=int, message=string, error=string}
-// @Failure       500 {object}   utils.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Success       200 {object}   response.SuccessResponse{status=string, status_code=int, message=string, data=dto.PengawasBase}
+// @Failure       400 {object}   response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure       500 {object}   response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security      ApiKeyAuth
 // @Router /api/v1/pengawas/detail [get]
 func (a *PengawasControllerImpl) GetByPublicID(ctx fiber.Ctx) error {
@@ -84,9 +84,9 @@ func (a *PengawasControllerImpl) GetByPublicID(ctx fiber.Ctx) error {
 // @Description Endpoint untuk mengambil semua pengawas
 // @Tags Pengawas
 // @Produce json
-// @Success       200 {object}   utils.SuccessResponse{status=string, status_code=int, message=string, data=[]dto.PengawasBase}
-// @Failure       400 {object}   utils.BadRequestResponse{status=string, status_code=int, message=string, error=string}
-// @Failure       500 {object}   utils.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Success       200 {object}   response.SuccessResponse{status=string, status_code=int, message=string, data=[]dto.PengawasBase}
+// @Failure       400 {object}   response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure       500 {object}   response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security      ApiKeyAuth
 // @Router /api/v1/pengawas [get]
 func (a *PengawasControllerImpl) GetAll(ctx fiber.Ctx) error {
