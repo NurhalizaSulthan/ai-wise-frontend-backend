@@ -1,6 +1,6 @@
 services:
   backend:
-    image: kaizerd23/rikub-backend:1.0.0
+    image: kaizerd23/rikub-backend:1.0.1
 
     depends_on:
       migrate:

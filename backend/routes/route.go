@@ -73,4 +73,5 @@ func Setup(
 	api.Get("/telemetry", tlmtryCont.GetAll)
 	api.Post("/telemetry", tlmtryCont.Create)
 	api.Get("/telemetry/detail", tlmtryCont.GetByPublicID)
+	api.Get("/telemetry/pagination", tlmtryCont.Pagination)
 }
