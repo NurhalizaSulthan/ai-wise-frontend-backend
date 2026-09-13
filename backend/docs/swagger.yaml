@@ -1,0 +1,1349 @@
+basePath: /
+definitions:
+  dto.AlertBase:
+    properties:
+      device_id:
+        type: integer
+      jenis_alert:
+        $ref: '#/definitions/enum.JenisAlert'
+      public_id:
+        type: string
+      tingkat_alert:
+        $ref: '#/definitions/enum.TingkatKeparahan'
+    type: object
+  dto.AlertCreate:
+    properties:
+      device_public_id:
+        type: string
+      jenis_alert:
+        $ref: '#/definitions/enum.JenisAlert'
+      tingkat_alert:
+        $ref: '#/definitions/enum.TingkatKeparahan'
+    type: object
+  dto.DeviceBase:
+    properties:
+      pekerja_id:
+        type: integer
+      public_id:
+        type: string
+      telemetry:
+        description: ListAlert []AlertBase `json:"daftar_alert"`
+        items:
+          $ref: '#/definitions/dto.TelemetryBase'
+        type: array
+    type: object
+  dto.DeviceCreate:
+    properties:
+      pekerja_public_id:
+        type: string
+    type: object
+  dto.LoginUser:
+    properties:
+      nama:
+        type: string
+      password:
+        type: string
+    type: object
+  dto.PaginationDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dto.TelemetryBase'
+        type: array
+      has_next:
+        type: boolean
+      has_previous:
+        type: boolean
+      next_cursor:
+        type: string
+      previous_cursor:
+        type: string
+    type: object
+  dto.PekerjaBase:
+    properties:
+      device:
+        $ref: '#/definitions/dto.DeviceBase'
+      jenis_kelamin:
+        type: string
+      nama:
+        type: string
+      pengawas_id:
+        type: integer
+      public_id:
+        type: string
+      tanggal_lahir:
+        type: string
+    type: object
+  dto.PekerjaCreate:
+    properties:
+      device_public_id:
+        description: PengawasPublicID uuid.UUID `json:"pengawas_public_id"`
+        type: string
+      jenis_kelamin:
+        type: string
+      nama:
+        type: string
+      tanggal_lahir:
+        type: string
+    type: object
+  dto.PengawasBase:
+    properties:
+      daftar_pekerja:
+        items:
+          $ref: '#/definitions/dto.PekerjaBase'
+        type: array
+      nama:
+        type: string
+      public_id:
+        type: string
+      role:
+        $ref: '#/definitions/enum.PengawasRole'
+    type: object
+  dto.PengawasCreate:
+    properties:
+      nama:
+        type: string
+      password:
+        type: string
+      role:
+        $ref: '#/definitions/enum.PengawasRole'
+    type: object
+  dto.TelemetryBase:
+    properties:
+      acc_x:
+        type: number
+      acc_y:
+        type: number
+      acc_z:
+        type: number
+      created_at:
+        type: string
+      gyro_x:
+        type: number
+      gyro_y:
+        type: number
+      gyro_z:
+        type: number
+      latitude:
+        type: number
+      longitude:
+        type: number
+      pitch:
+        type: number
+      public_id:
+        type: string
+      roll:
+        type: number
+      yaw:
+        type: number
+    type: object
+  dto.TelemetryCreate:
+    properties:
+      acc_x:
+        type: number
+      acc_y:
+        type: number
+      acc_z:
+        type: number
+      gyro_x:
+        type: number
+      gyro_y:
+        type: number
+      gyro_z:
+        type: number
+      latitude:
+        type: number
+      longitude:
+        type: number
+      pitch:
+        type: number
+      roll:
+        type: number
+      yaw:
+        type: number
+    type: object
+  enum.JenisAlert:
+    enum:
+    - Jatuh
+    - Postur Tubuh
+    - Cuaca Ekstrem
+    type: string
+    x-enum-varnames:
+    - Jatuh
+    - Postur
+    - Cuaca
+  enum.PengawasRole:
+    enum:
+    - Admin
+    - Pengawas
+    type: string
+    x-enum-varnames:
+    - Admin
+    - Pengawas
+  enum.TingkatKeparahan:
+    enum:
+    - Tinggi
+    - Menengah
+    - Rendah
+    type: string
+    x-enum-varnames:
+    - Tinggi
+    - Menengah
+    - Rendah
+  response.BadRequestResponse:
+    properties:
+      error:
+        example: Invalid request
+        type: string
+      message:
+        example: Gagal parsing request
+        type: string
+      status:
+        example: 400 Bad Request
+        type: string
+      status_code:
+        example: 400
+        type: integer
+    type: object
+  response.CreationSuccessResponse:
+    properties:
+      data: {}
+      message:
+        example: Sukses menambahkan data
+        type: string
+      status:
+        example: 201 Created
+        type: string
+      status_code:
+        example: 201
+        type: integer
+    type: object
+  response.InternalErrorResponse:
+    properties:
+      error:
+        example: Internal server error
+        type: string
+      message:
+        example: Kesalahan pada sisi server
+        type: string
+      status:
+        example: 500 Internal Server Error
+        type: string
+      status_code:
+        example: 500
+        type: integer
+    type: object
+  response.SuccessResponse:
+    properties:
+      data: {}
+      message:
+        example: Request berhasil
+        type: string
+      status:
+        example: 200 OK
+        type: string
+      status_code:
+        example: 200
+        type: integer
+    type: object
+  response.UnauthorizedResponse:
+    properties:
+      error:
+        example: Token tidak valid atau sudah kedaluwarsa
+        type: string
+      message:
+        example: Unauthorized
+        type: string
+      status:
+        example: 401 Unauthorized
+        type: string
+      status_code:
+        example: 401
+        type: integer
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:4000
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: API sistem rikub
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Rikub Backend
+  version: 1.0.0
+paths:
+  /api/v1/alert:
+    get:
+      description: Endpoint untuk mengambil semua alert
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                ' data':
+                  items:
+                    $ref: '#/definitions/dto.AlertBase'
+                  type: array
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: GetAll
+      tags:
+      - Alert
+    post:
+      consumes:
+      - application/json
+      description: Endpoint untuk menambah data alert
+      parameters:
+      - description: Data alert
+        in: body
+        name: alert
+        required: true
+        schema:
+          $ref: '#/definitions/dto.AlertCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.CreationSuccessResponse'
+            - properties:
+                ' data':
+                  $ref: '#/definitions/dto.AlertBase'
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Create
+      tags:
+      - Alert
+  /api/v1/alert/detail:
+    get:
+      description: Endpoint untuk mengambil detail alert
+      parameters:
+      - description: Public ID anak
+        in: query
+        name: public_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                ' data':
+                  $ref: '#/definitions/dto.AlertBase'
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: GetDetail
+      tags:
+      - Alert
+  /api/v1/device:
+    get:
+      description: Endpoint untuk mengambil semua device
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                ' data':
+                  items:
+                    $ref: '#/definitions/dto.DeviceBase'
+                  type: array
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: GetAll
+      tags:
+      - Device
+    post:
+      consumes:
+      - application/json
+      description: Endpoint untuk menambah data device
+      parameters:
+      - description: Data device
+        in: body
+        name: device
+        required: true
+        schema:
+          $ref: '#/definitions/dto.DeviceCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.CreationSuccessResponse'
+            - properties:
+                ' data':
+                  $ref: '#/definitions/dto.DeviceBase'
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Create
+      tags:
+      - Device
+  /api/v1/device/detail:
+    get:
+      description: Endpoint untuk mengambil detail device
+      parameters:
+      - description: Public ID anak
+        in: query
+        name: public_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                ' data':
+                  $ref: '#/definitions/dto.DeviceBase'
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: GetDetail
+      tags:
+      - Device
+  /api/v1/pekerja:
+    get:
+      description: Endpoint untuk mengambil semua pekerja
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                ' data':
+                  items:
+                    $ref: '#/definitions/dto.PekerjaBase'
+                  type: array
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: GetAll
+      tags:
+      - Pekerja
+    post:
+      consumes:
+      - application/json
+      description: Endpoint untuk menambah data pekerja
+      parameters:
+      - description: Data pekerja
+        in: body
+        name: pekerja
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PekerjaCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.CreationSuccessResponse'
+            - properties:
+                ' data':
+                  $ref: '#/definitions/dto.PekerjaBase'
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Create
+      tags:
+      - Pekerja
+  /api/v1/pekerja/detail:
+    get:
+      description: Endpoint untuk mengambil detail pekerja
+      parameters:
+      - description: Public ID anak
+        in: query
+        name: public_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                ' data':
+                  $ref: '#/definitions/dto.PekerjaBase'
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: GetDetail
+      tags:
+      - Pekerja
+  /api/v1/pengawas:
+    get:
+      description: Endpoint untuk mengambil semua pengawas
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                ' data':
+                  items:
+                    $ref: '#/definitions/dto.PengawasBase'
+                  type: array
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: GetAll
+      tags:
+      - Pengawas
+    post:
+      consumes:
+      - application/json
+      description: Endpoint untuk menambah data pengawas
+      parameters:
+      - description: Data pengawas
+        in: body
+        name: pengawas
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PengawasCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.CreationSuccessResponse'
+            - properties:
+                ' data':
+                  $ref: '#/definitions/dto.PengawasBase'
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Create
+      tags:
+      - Pengawas
+  /api/v1/pengawas/detail:
+    get:
+      description: Endpoint untuk mengambil detail pengawas
+      parameters:
+      - description: Public ID anak
+        in: query
+        name: public_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                ' data':
+                  $ref: '#/definitions/dto.PengawasBase'
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: GetDetail
+      tags:
+      - Pengawas
+  /api/v1/telemetry:
+    get:
+      consumes:
+      - application/json
+      description: Endpoint untuk paginasi data telemetry
+      parameters:
+      - description: Cursor untuk data sebelumnya
+        in: query
+        name: before
+        type: string
+      - description: Cursor untuk data berikutnya
+        in: query
+        name: after
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.PaginationDTO'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Pagination
+      tags:
+      - Telemetry
+    post:
+      consumes:
+      - application/json
+      description: Endpoint untuk menambah data telemetry
+      parameters:
+      - description: Data telemetry
+        in: body
+        name: telemetry
+        required: true
+        schema:
+          $ref: '#/definitions/dto.TelemetryCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.CreationSuccessResponse'
+            - properties:
+                ' data':
+                  $ref: '#/definitions/dto.TelemetryBase'
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Create
+      tags:
+      - Telemetry
+  /api/v1/telemetry/detail:
+    get:
+      description: Endpoint untuk mengambil detail telemetry
+      parameters:
+      - description: Public ID telemetry
+        in: query
+        name: public_id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                ' data':
+                  $ref: '#/definitions/dto.TelemetryBase'
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: GetDetail
+      tags:
+      - Telemetry
+  /auth/v1/login:
+    get:
+      consumes:
+      - application/json
+      description: Endpoint untuk login
+      parameters:
+      - description: Data Login
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginUser'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                ' data':
+                  type: object
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "401":
+          description: Unauthorized
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.UnauthorizedResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Login
+      tags:
+      - Auth
+  /auth/v1/register:
+    post:
+      consumes:
+      - application/json
+      description: Endpoint untuk registrasi data pengawas
+      parameters:
+      - description: Data pengawas
+        in: body
+        name: device
+        required: true
+        schema:
+          $ref: '#/definitions/dto.PengawasCreate'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.CreationSuccessResponse'
+            - properties:
+                ' data':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Create
+      tags:
+      - Auth
+swagger: "2.0"

@@ -25,10 +25,10 @@ type AuthControllerImpl struct {
 // @Accept		json
 // @Produce 	json
 // @Param       login 	body 		dto.LoginUser true "Data Login"
-// @Success     200 	{object}   	utils.SuccessResponse{status=string, status_code=int, message=string, data=nil}
-// @Failure     400 	{object}   	utils.BadRequestResponse{status=string, status_code=int, message=string, error=string}
-// @Failure     401 	{object}   	utils.UnauthorizedResponse{status=string, status_code=int, message=string, error=string}
-// @Failure     500 	{object}   	utils.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Success     200 	{object}   	response.SuccessResponse{status=string, status_code=int, message=string, data=nil}
+// @Failure     400 	{object}   	response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure     401 	{object}   	response.UnauthorizedResponse{status=string, status_code=int, message=string, error=string}
+// @Failure     500 	{object}   	response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security    ApiKeyAuth
 // @Router 		/auth/v1/login [get]
 func (a *AuthControllerImpl) Login(ctx fiber.Ctx) error {
@@ -68,9 +68,9 @@ func (a *AuthControllerImpl) Login(ctx fiber.Ctx) error {
 // @Accept        json
 // @Produce       json
 // @Param         device  body  dto.PengawasCreate  true  "Data pengawas"
-// @Success       201 {object}  utils.CreationSuccessResponse{status=string, status_code=int, message=string, data=string}
-// @Failure       400 {object}  utils.BadRequestResponse{status=string, status_code=int, message=string, error=string}
-// @Failure       500 {object}  utils.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Success       201 {object}  response.CreationSuccessResponse{status=string, status_code=int, message=string, data=string}
+// @Failure       400 {object}  response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure       500 {object}  response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security      ApiKeyAuth
 // @Router        /auth/v1/register [post]
 func (a *AuthControllerImpl) Create(ctx fiber.Ctx) error {

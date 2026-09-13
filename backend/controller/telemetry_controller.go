@@ -15,6 +15,7 @@ type TelemetryController interface {
 	Create(ctx fiber.Ctx) error
 	GetByPublicID(ctx fiber.Ctx) error
 	GetAll(ctx fiber.Ctx) error
+	Pagination(ctx fiber.Ctx) error
 }
 
 type TelemetryControllerImpl struct {
@@ -28,9 +29,9 @@ type TelemetryControllerImpl struct {
 // @Accept        json
 // @Produce       json
 // @Param         telemetry  body  dto.TelemetryCreate  true  "Data telemetry"
-// @Success       201 {object}   utils.CreationSuccessResponse{status=string, status_code=int, message=string, data=dto.TelemetryBase}
-// @Failure       400 {object}   utils.BadRequestResponse{status=string, status_code=int, message=string, error=string}
-// @Failure       500 {object}   utils.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Success       201 {object}   response.CreationSuccessResponse{status=string, status_code=int, message=string, data=dto.TelemetryBase}
+// @Failure       400 {object}   response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure       500 {object}   response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security      ApiKeyAuth
 // @Router        /api/v1/telemetry [post]
 func (a *TelemetryControllerImpl) Create(ctx fiber.Ctx) error {
@@ -53,9 +54,9 @@ func (a *TelemetryControllerImpl) Create(ctx fiber.Ctx) error {
 // @Tags 		Telemetry
 // @Produce 	json
 // @Param       public_id query int true "Public ID telemetry"
-// @Success     200 {object}   utils.SuccessResponse{status=string, status_code=int, message=string, data=dto.TelemetryBase}
-// @Failure     400 {object}   utils.BadRequestResponse{status=string, status_code=int, message=string, error=string}
-// @Failure     500 {object}   utils.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Success     200 {object}   response.SuccessResponse{status=string, status_code=int, message=string, data=dto.TelemetryBase}
+// @Failure     400 {object}   response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure     500 {object}   response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security    ApiKeyAuth
 // @Router 		/api/v1/telemetry/detail [get]
 func (a *TelemetryControllerImpl) GetByPublicID(ctx fiber.Ctx) error {
@@ -84,9 +85,9 @@ func (a *TelemetryControllerImpl) GetByPublicID(ctx fiber.Ctx) error {
 // @Description Endpoint untuk mengambil semua telemetry
 // @Tags 		Telemetry
 // @Produce 	json
-// @Success     200 {object}   utils.SuccessResponse{status=string, status_code=int, message=string, data=[]dto.TelemetryBase}
-// @Failure     400 {object}   utils.BadRequestResponse{status=string, status_code=int, message=string, error=string}
-// @Failure     500 {object}   utils.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Success     200 {object}   response.SuccessResponse{status=string, status_code=int, message=string, data=[]dto.TelemetryBase}
+// @Failure     400 {object}   response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure     500 {object}   response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security    ApiKeyAuth
 // @Router 		/api/v1/telemetry [get]
 func (a *TelemetryControllerImpl) GetAll(ctx fiber.Ctx) error {
@@ -99,6 +100,59 @@ func (a *TelemetryControllerImpl) GetAll(ctx fiber.Ctx) error {
 	return response.Success(ctx, constants.DataRetrievalSuccess, data)
 }
 
+// Pagination     	  godoc
+// @Summary       Pagination
+// @Description   Endpoint untuk paginasi data telemetry
+// @Tags          Telemetry
+// @Accept        json
+// @Produce       json
+// @Param         before  query  string  false  "Cursor untuk data sebelumnya"
+// @Param         after   query  string  false  "Cursor untuk data berikutnya"
+// @Success       200 {object} response.SuccessResponse{data=dto.PaginationDTO}
+// @Failure       400 {object} response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure       500 {object} response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Security      ApiKeyAuth
+// @Router        /api/v1/telemetry/pagination [get]
+func (a *TelemetryControllerImpl) Pagination(ctx fiber.Ctx) error {
+
+	before := ctx.Query("before")
+	after := ctx.Query("after")
+
+	if before != "" && after != "" {
+		return response.BadRequest(
+			ctx,
+			"Parameter before dan after tidak dapat digunakan bersamaan",
+			errors.New("Double Query"),
+		)
+	}
+
+	result, err := a.s.GetPagination(
+		before,
+		after,
+	)
+
+	if err != nil {
+		return response.InternalError(
+			ctx,
+			"Gagal mengambil paginasi",
+			err,
+		)
+	}
+
+	body := &dto.PaginationDTO{
+		Data:           result.Data,
+		NextCursor:     result.NextCursor,
+		PreviousCursor: result.PreviousCursor,
+		HasNext:        result.HasNext,
+		HasPrevious:    result.HasPrevious,
+	}
+
+	return response.Success(
+		ctx,
+		"Sukses mengambil paginasi",
+		body,
+	)
+}
 func NewTelemetryController(s service.TelemetryService) TelemetryController {
 	return &TelemetryControllerImpl{s: s}
 }

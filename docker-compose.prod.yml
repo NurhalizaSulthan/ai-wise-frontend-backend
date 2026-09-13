@@ -1,0 +1,59 @@
+services:
+  backend:
+    image: kaizerd23/rikub-backend:1.0.1
+
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+    env_file:
+      - ./example.env
+
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+
+    restart: unless-stopped
+
+    networks:
+      - network
+
+  migrate:
+    image: migrate/migrate:4
+
+    volumes:
+      - ./migrations:/migrations
+
+    command: [ "-path", "/migrations", "-database", "postgres://${DB_USERNAME}:${DB_PASSWORD}@database:${DB_PORT}/${DB_NAME}?sslmode=disable", "up" ]
+
+    depends_on:
+      database:
+        condition: service_healthy
+
+    networks:
+      - network
+  database:
+    image: postgres:18-alpine3.24
+
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}" ]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
+    volumes:
+      - ./postgres/data:/var/lib/postgresql
+
+    restart: unless-stopped
+
+    networks:
+      - network
+
+networks:
+  network:
+    driver: bridge

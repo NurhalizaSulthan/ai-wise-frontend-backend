@@ -3,14 +3,8 @@ package route
 import (
 	"log"
 
-	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/config"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/controller"
-	response "github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/responses"
-	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/utils"
-	jwtware "github.com/gofiber/contrib/v3/jwt"
 	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/extractors"
-	"github.com/google/uuid"
 	"github.com/joho/godotenv"
 )
 
@@ -34,29 +28,29 @@ func Setup(
 
 	api := app.Group("/api/v1")
 
-	api.Use(jwtware.New(jwtware.Config{
-		SigningKey: jwtware.SigningKey{Key: []byte(config.AppConfig.JWTSecret)},
-		Extractor:  extractors.FromCookie("access_token"),
-		SuccessHandler: func(c fiber.Ctx) error {
-			// nama := utils.GetNamaClaim(c)
-			nama := "Sample"
-			role := "Sample"
-			uid, err := uuid.NewUUID()
-			if err != nil {
-				log.Println("Error making uid")
-			}
-			userCred := &utils.AuthContext{
-				Username: nama,
-				Role:     role,
-				PublicID: uid.String(),
-			}
-			c.Locals("auth", userCred)
-			return c.Next()
-		},
-		ErrorHandler: func(c fiber.Ctx, err error) error {
-			return response.Unauthorized(c, "User unauthorized", err)
-		},
-	}))
+	// api.Use(jwtware.New(jwtware.Config{
+	// 	SigningKey: jwtware.SigningKey{Key: []byte(config.AppConfig.JWTSecret)},
+	// 	Extractor:  extractors.FromCookie("access_token"),
+	// 	SuccessHandler: func(c fiber.Ctx) error {
+	// 		// nama := utils.GetNamaClaim(c)
+	// 		nama := "Sample"
+	// 		role := "Sample"
+	// 		uid, err := uuid.NewUUID()
+	// 		if err != nil {
+	// 			log.Println("Error making uid")
+	// 		}
+	// 		userCred := &utils.AuthContext{
+	// 			Username: nama,
+	// 			Role:     role,
+	// 			PublicID: uid.String(),
+	// 		}
+	// 		c.Locals("auth", userCred)
+	// 		return c.Next()
+	// 	},
+	// 	ErrorHandler: func(c fiber.Ctx, err error) error {
+	// 		return response.Unauthorized(c, "User unauthorized", err)
+	// 	},
+	// }))
 
 	api.Get("/pengawas", awasCont.GetAll)
 	api.Get("/pengawas/detail", awasCont.GetByPublicID)
@@ -79,4 +73,5 @@ func Setup(
 	api.Get("/telemetry", tlmtryCont.GetAll)
 	api.Post("/telemetry", tlmtryCont.Create)
 	api.Get("/telemetry/detail", tlmtryCont.GetByPublicID)
+	api.Get("/telemetry/pagination", tlmtryCont.Pagination)
 }
