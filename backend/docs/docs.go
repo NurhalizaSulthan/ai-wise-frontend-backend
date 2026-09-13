@@ -1327,14 +1327,31 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Endpoint untuk mengambil semua telemetry",
+                "description": "Endpoint untuk paginasi data telemetry",
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Telemetry"
                 ],
-                "summary": "GetAll",
+                "summary": "Pagination",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Cursor untuk data sebelumnya",
+                        "name": "before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Cursor untuk data berikutnya",
+                        "name": "after",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1346,20 +1363,8 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        " data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/dto.TelemetryBase"
-                                            }
-                                        },
-                                        " message": {
-                                            "type": "string"
-                                        },
-                                        " status_code": {
-                                            "type": "integer"
-                                        },
-                                        "status": {
-                                            "type": "string"
+                                        "data": {
+                                            "$ref": "#/definitions/dto.PaginationDTO"
                                         }
                                     }
                                 }
@@ -1965,6 +1970,29 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.PaginationDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.TelemetryBase"
+                    }
+                },
+                "has_next": {
+                    "type": "boolean"
+                },
+                "has_previous": {
+                    "type": "boolean"
+                },
+                "next_cursor": {
+                    "type": "string"
+                },
+                "previous_cursor": {
                     "type": "string"
                 }
             }

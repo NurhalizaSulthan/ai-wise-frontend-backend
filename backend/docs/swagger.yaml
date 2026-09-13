@@ -44,6 +44,21 @@ definitions:
       password:
         type: string
     type: object
+  dto.PaginationDTO:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dto.TelemetryBase'
+        type: array
+      has_next:
+        type: boolean
+      has_previous:
+        type: boolean
+      next_cursor:
+        type: string
+      previous_cursor:
+        type: string
+    type: object
   dto.PekerjaBase:
     properties:
       device:
@@ -1001,7 +1016,18 @@ paths:
       - Pengawas
   /api/v1/telemetry:
     get:
-      description: Endpoint untuk mengambil semua telemetry
+      consumes:
+      - application/json
+      description: Endpoint untuk paginasi data telemetry
+      parameters:
+      - description: Cursor untuk data sebelumnya
+        in: query
+        name: before
+        type: string
+      - description: Cursor untuk data berikutnya
+        in: query
+        name: after
+        type: string
       produces:
       - application/json
       responses:
@@ -1011,16 +1037,8 @@ paths:
             allOf:
             - $ref: '#/definitions/response.SuccessResponse'
             - properties:
-                ' data':
-                  items:
-                    $ref: '#/definitions/dto.TelemetryBase'
-                  type: array
-                ' message':
-                  type: string
-                ' status_code':
-                  type: integer
-                status:
-                  type: string
+                data:
+                  $ref: '#/definitions/dto.PaginationDTO'
               type: object
         "400":
           description: Bad Request
@@ -1054,7 +1072,7 @@ paths:
               type: object
       security:
       - ApiKeyAuth: []
-      summary: GetAll
+      summary: Pagination
       tags:
       - Telemetry
     post:
