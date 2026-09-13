@@ -7,6 +7,7 @@ import (
 
 func ToTelemetryBase(model *model.Telemetry) *dto.TelemetryBase {
 	return &dto.TelemetryBase{
+		PublicID:  model.PublicID,
 		AccX:      model.AccX,
 		AccY:      model.AccY,
 		AccZ:      model.AccZ,

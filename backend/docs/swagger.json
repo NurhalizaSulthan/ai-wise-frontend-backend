@@ -1,0 +1,2292 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "API sistem rikub",
+        "title": "Rikub Backend",
+        "termsOfService": "http://swagger.io/terms/",
+        "contact": {
+            "name": "API Support",
+            "url": "http://www.swagger.io/support",
+            "email": "support@swagger.io"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        },
+        "version": "1.0.0"
+    },
+    "host": "localhost:4000",
+    "basePath": "/",
+    "paths": {
+        "/api/v1/alert": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk mengambil semua alert",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Alert"
+                ],
+                "summary": "GetAll",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.AlertBase"
+                                            }
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk menambah data alert",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Alert"
+                ],
+                "summary": "Create",
+                "parameters": [
+                    {
+                        "description": "Data alert",
+                        "name": "alert",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.AlertCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.CreationSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "$ref": "#/definitions/dto.AlertBase"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/alert/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk mengambil detail alert",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Alert"
+                ],
+                "summary": "GetDetail",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Public ID anak",
+                        "name": "public_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "$ref": "#/definitions/dto.AlertBase"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/device": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk mengambil semua device",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Device"
+                ],
+                "summary": "GetAll",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.DeviceBase"
+                                            }
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk menambah data device",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Device"
+                ],
+                "summary": "Create",
+                "parameters": [
+                    {
+                        "description": "Data device",
+                        "name": "device",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.DeviceCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.CreationSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "$ref": "#/definitions/dto.DeviceBase"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/device/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk mengambil detail device",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Device"
+                ],
+                "summary": "GetDetail",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Public ID anak",
+                        "name": "public_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "$ref": "#/definitions/dto.DeviceBase"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pekerja": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk mengambil semua pekerja",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pekerja"
+                ],
+                "summary": "GetAll",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.PekerjaBase"
+                                            }
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk menambah data pekerja",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pekerja"
+                ],
+                "summary": "Create",
+                "parameters": [
+                    {
+                        "description": "Data pekerja",
+                        "name": "pekerja",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.PekerjaCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.CreationSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "$ref": "#/definitions/dto.PekerjaBase"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pekerja/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk mengambil detail pekerja",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pekerja"
+                ],
+                "summary": "GetDetail",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Public ID anak",
+                        "name": "public_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "$ref": "#/definitions/dto.PekerjaBase"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pengawas": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk mengambil semua pengawas",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pengawas"
+                ],
+                "summary": "GetAll",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.PengawasBase"
+                                            }
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk menambah data pengawas",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pengawas"
+                ],
+                "summary": "Create",
+                "parameters": [
+                    {
+                        "description": "Data pengawas",
+                        "name": "pengawas",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.PengawasCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.CreationSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "$ref": "#/definitions/dto.PengawasBase"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pengawas/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk mengambil detail pengawas",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pengawas"
+                ],
+                "summary": "GetDetail",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Public ID anak",
+                        "name": "public_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "$ref": "#/definitions/dto.PengawasBase"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/telemetry": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk paginasi data telemetry",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Telemetry"
+                ],
+                "summary": "Pagination",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Cursor untuk data sebelumnya",
+                        "name": "before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Cursor untuk data berikutnya",
+                        "name": "after",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.PaginationDTO"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk menambah data telemetry",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Telemetry"
+                ],
+                "summary": "Create",
+                "parameters": [
+                    {
+                        "description": "Data telemetry",
+                        "name": "telemetry",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.TelemetryCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.CreationSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "$ref": "#/definitions/dto.TelemetryBase"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/telemetry/detail": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk mengambil detail telemetry",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Telemetry"
+                ],
+                "summary": "GetDetail",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Public ID telemetry",
+                        "name": "public_id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "$ref": "#/definitions/dto.TelemetryBase"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/v1/login": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk login",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "description": "Data Login",
+                        "name": "login",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "type": "object"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.UnauthorizedResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/auth/v1/register": {
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk registrasi data pengawas",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Create",
+                "parameters": [
+                    {
+                        "description": "Data pengawas",
+                        "name": "device",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.PengawasCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.CreationSuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " data": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "dto.AlertBase": {
+            "type": "object",
+            "properties": {
+                "device_id": {
+                    "type": "integer"
+                },
+                "jenis_alert": {
+                    "$ref": "#/definitions/enum.JenisAlert"
+                },
+                "public_id": {
+                    "type": "string"
+                },
+                "tingkat_alert": {
+                    "$ref": "#/definitions/enum.TingkatKeparahan"
+                }
+            }
+        },
+        "dto.AlertCreate": {
+            "type": "object",
+            "properties": {
+                "device_public_id": {
+                    "type": "string"
+                },
+                "jenis_alert": {
+                    "$ref": "#/definitions/enum.JenisAlert"
+                },
+                "tingkat_alert": {
+                    "$ref": "#/definitions/enum.TingkatKeparahan"
+                }
+            }
+        },
+        "dto.DeviceBase": {
+            "type": "object",
+            "properties": {
+                "pekerja_id": {
+                    "type": "integer"
+                },
+                "public_id": {
+                    "type": "string"
+                },
+                "telemetry": {
+                    "description": "ListAlert []AlertBase `json:\"daftar_alert\"`",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.TelemetryBase"
+                    }
+                }
+            }
+        },
+        "dto.DeviceCreate": {
+            "type": "object",
+            "properties": {
+                "pekerja_public_id": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.LoginUser": {
+            "type": "object",
+            "properties": {
+                "nama": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.PaginationDTO": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.TelemetryBase"
+                    }
+                },
+                "has_next": {
+                    "type": "boolean"
+                },
+                "has_previous": {
+                    "type": "boolean"
+                },
+                "next_cursor": {
+                    "type": "string"
+                },
+                "previous_cursor": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.PekerjaBase": {
+            "type": "object",
+            "properties": {
+                "device": {
+                    "$ref": "#/definitions/dto.DeviceBase"
+                },
+                "jenis_kelamin": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "pengawas_id": {
+                    "type": "integer"
+                },
+                "public_id": {
+                    "type": "string"
+                },
+                "tanggal_lahir": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.PekerjaCreate": {
+            "type": "object",
+            "properties": {
+                "device_public_id": {
+                    "description": "PengawasPublicID uuid.UUID `json:\"pengawas_public_id\"`",
+                    "type": "string"
+                },
+                "jenis_kelamin": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "tanggal_lahir": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.PengawasBase": {
+            "type": "object",
+            "properties": {
+                "daftar_pekerja": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.PekerjaBase"
+                    }
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "public_id": {
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/enum.PengawasRole"
+                }
+            }
+        },
+        "dto.PengawasCreate": {
+            "type": "object",
+            "properties": {
+                "nama": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "role": {
+                    "$ref": "#/definitions/enum.PengawasRole"
+                }
+            }
+        },
+        "dto.TelemetryBase": {
+            "type": "object",
+            "properties": {
+                "acc_x": {
+                    "type": "number"
+                },
+                "acc_y": {
+                    "type": "number"
+                },
+                "acc_z": {
+                    "type": "number"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "gyro_x": {
+                    "type": "number"
+                },
+                "gyro_y": {
+                    "type": "number"
+                },
+                "gyro_z": {
+                    "type": "number"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "pitch": {
+                    "type": "number"
+                },
+                "public_id": {
+                    "type": "string"
+                },
+                "roll": {
+                    "type": "number"
+                },
+                "yaw": {
+                    "type": "number"
+                }
+            }
+        },
+        "dto.TelemetryCreate": {
+            "type": "object",
+            "properties": {
+                "acc_x": {
+                    "type": "number"
+                },
+                "acc_y": {
+                    "type": "number"
+                },
+                "acc_z": {
+                    "type": "number"
+                },
+                "gyro_x": {
+                    "type": "number"
+                },
+                "gyro_y": {
+                    "type": "number"
+                },
+                "gyro_z": {
+                    "type": "number"
+                },
+                "latitude": {
+                    "type": "number"
+                },
+                "longitude": {
+                    "type": "number"
+                },
+                "pitch": {
+                    "type": "number"
+                },
+                "roll": {
+                    "type": "number"
+                },
+                "yaw": {
+                    "type": "number"
+                }
+            }
+        },
+        "enum.JenisAlert": {
+            "type": "string",
+            "enum": [
+                "Jatuh",
+                "Postur Tubuh",
+                "Cuaca Ekstrem"
+            ],
+            "x-enum-varnames": [
+                "Jatuh",
+                "Postur",
+                "Cuaca"
+            ]
+        },
+        "enum.PengawasRole": {
+            "type": "string",
+            "enum": [
+                "Admin",
+                "Pengawas"
+            ],
+            "x-enum-varnames": [
+                "Admin",
+                "Pengawas"
+            ]
+        },
+        "enum.TingkatKeparahan": {
+            "type": "string",
+            "enum": [
+                "Tinggi",
+                "Menengah",
+                "Rendah"
+            ],
+            "x-enum-varnames": [
+                "Tinggi",
+                "Menengah",
+                "Rendah"
+            ]
+        },
+        "response.BadRequestResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Invalid request"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Gagal parsing request"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "400 Bad Request"
+                },
+                "status_code": {
+                    "type": "integer",
+                    "example": 400
+                }
+            }
+        },
+        "response.CreationSuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "message": {
+                    "type": "string",
+                    "example": "Sukses menambahkan data"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "201 Created"
+                },
+                "status_code": {
+                    "type": "integer",
+                    "example": 201
+                }
+            }
+        },
+        "response.InternalErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Internal server error"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Kesalahan pada sisi server"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "500 Internal Server Error"
+                },
+                "status_code": {
+                    "type": "integer",
+                    "example": 500
+                }
+            }
+        },
+        "response.SuccessResponse": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "message": {
+                    "type": "string",
+                    "example": "Request berhasil"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "200 OK"
+                },
+                "status_code": {
+                    "type": "integer",
+                    "example": 200
+                }
+            }
+        },
+        "response.UnauthorizedResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string",
+                    "example": "Token tidak valid atau sudah kedaluwarsa"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "Unauthorized"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "401 Unauthorized"
+                },
+                "status_code": {
+                    "type": "integer",
+                    "example": 401
+                }
+            }
+        }
+    },
+    "externalDocs": {
+        "description": "OpenAPI",
+        "url": "https://swagger.io/resources/open-api/"
+    }
+}

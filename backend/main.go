@@ -1,16 +1,38 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/config"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/controller"
+	_ "github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/docs"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/repositories"
 	route "github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/routes"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/service"
+	"github.com/gofiber/contrib/v3/swaggo"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/log"
 	"github.com/gofiber/fiber/v3/middleware/cors"
 )
 
+// File utama project
+// @title           Rikub Backend
+// @version         1.0.0
+// @description     API sistem rikub
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
+
+// @license.name  Apache 2.0
+// @license.url   http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host      localhost:4000
+// @BasePath  /
+
+// @externalDocs.description  OpenAPI
+// @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
 	config.LoadEnv()
 	config.ConnectToDB()
@@ -20,6 +42,14 @@ func main() {
 	if config.AppConfig == nil {
 		log.Error("Menemukan masalah saat memuat environtment variable: Config bernilai nil")
 	}
+
+	app.Get("/swagger/*", swaggo.HandlerDefault)
+	app.Get("/docs/*", swaggo.New(swaggo.Config{
+		URL:               "http://example.com/doc.json",
+		DeepLinking:       false,
+		DocExpansion:      "none",
+		OAuth2RedirectUrl: fmt.Sprintf("http://localhost:%s/swagger/oauth2-redirect.html", config.AppConfig.APPPort),
+	}))
 
 	app.Use(cors.New(
 		cors.Config{

@@ -20,5 +20,5 @@ CREATE TABLE alerts(
     updated_at      TIMESTAMPTZ         NOT NULL DEFAULT CURRENT_TIMESTAMP,
     deleted_at      TIMESTAMPTZ         NULL,
     CONSTRAINT      alert_public_id_unique UNIQUE (public_id),
-    CONSTRAINT      alert_fk_device     FOREIGN KEY (device_id) REFERENCES devices(internal_id)
+    CONSTRAINT      alert_fk_device     FOREIGN KEY (device_id) REFERENCES devices(internal_id) ON DELETE SET NULL
 );
