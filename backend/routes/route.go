@@ -22,7 +22,7 @@ func Setup(
 		log.Println("File ENV tidak ditemukan menggunakna konfigurasi awal")
 	}
 
-	auth := app.Group("/v1/auth")
+	auth := app.Group("/auth/v1")
 	auth.Post("/login", userCont.Login)
 	auth.Post("/register", awasCont.Create)
 
