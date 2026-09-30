@@ -1,3 +1,4 @@
+EXPLAIN ANALYZE 
 INSERT INTO telemetries (device_id, acc_x, acc_y, acc_z, gyro_x, gyro_y, gyro_z, roll, pitch, yaw, latitude, longitude)
 VALUES
 ((SELECT internal_id FROM devices WHERE pekerja_id = (SELECT internal_id FROM pekerjas WHERE nama = 'Fakhri Rasyad')), 0.03, 0.23, 9.69, -0.67, 0.39, 1.46, -1.3, 0.4, 232.7, -5.233134028576208, 119.50286355589539),

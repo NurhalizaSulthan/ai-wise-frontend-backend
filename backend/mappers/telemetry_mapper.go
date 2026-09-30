@@ -5,7 +5,7 @@ import (
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/model"
 )
 
-func ToTelemetryBase(model *model.Telemetry) *dto.TelemetryBase {
+func ToTelemetryBase(model *model.HyperTelemetry) *dto.TelemetryBase {
 	return &dto.TelemetryBase{
 		PublicID:  model.PublicID,
 		AccX:      model.AccX,
@@ -23,8 +23,8 @@ func ToTelemetryBase(model *model.Telemetry) *dto.TelemetryBase {
 	}
 }
 
-func ToTelemetryModel(dto *dto.TelemetryCreate) *model.Telemetry {
-	return &model.Telemetry{
+func ToTelemetryModel(dto *dto.TelemetryCreate) *model.HyperTelemetry {
+	return &model.HyperTelemetry{
 		AccX:      dto.AccX,
 		AccY:      dto.AccY,
 		AccZ:      dto.AccZ,

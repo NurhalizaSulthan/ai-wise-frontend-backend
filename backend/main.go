@@ -6,6 +6,7 @@ import (
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/config"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/controller"
 	_ "github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/docs"
+	mqttclient "github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/mqtt_client"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/repositories"
 	route "github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/routes"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/service"
@@ -65,8 +66,12 @@ func main() {
 	pengawRepo := repositories.NewPengawasRepository(config.DB)
 	tlmtryRepo := repositories.NewTelemetryRepository(config.DB)
 
+	brokerString := fmt.Sprintf("%s:%s", config.AppConfig.MQTT_HOST, config.AppConfig.MQTT_PORT)
+	mqttClient := mqttclient.NewMQTTClient(brokerString, config.AppConfig.MQTT_CLIENT, tlmtryRepo)
+	mqttClient.Connect()
+
 	alertServ := service.NewAlertService(alertRepo, deviceRepo)
-	deviceServ := service.NewDeviceService(deviceRepo, pekerjRepo)
+	deviceServ := service.NewDeviceService(deviceRepo, pekerjRepo, mqttClient)
 	pekerjServ := service.NewPekerjaService(pekerjRepo, pengawRepo, deviceRepo)
 	pengawServ := service.NewPengawasService(pengawRepo)
 	tlmtryServ := service.NewTelemetryService(tlmtryRepo)

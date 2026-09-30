@@ -1,0 +1,91 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      tags:
+        - kaizerd23/rikub-backend:1.0.1
+
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+      mosquitto:
+        condition: service_started
+
+    env_file:
+      - .env
+
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+
+    restart: unless-stopped
+
+    networks:
+      - network
+
+  migrate:
+    image: migrate/migrate:4
+
+    volumes:
+      - ./migrations:/migrations
+
+    command: [ "-path", "/migrations", "-database", "postgres://${DB_USERNAME}:${DB_PASSWORD}@database:${DB_PORT}/${DB_NAME}?sslmode=disable", "up" ]
+
+    depends_on:
+      database:
+        condition: service_healthy
+
+    networks:
+      - network
+
+  db-init:
+    image: alpine
+    volumes:
+      - ./postgres/data:/home/postgres/pgdata/data
+    command: sh -c "chown -R 1000:1000 /home/postgres/pgdata/data && chmod -R 700 /home/postgres/pgdata/data"
+    restart: "no"
+
+  database:
+    image: timescale/timescaledb-ha:pg18-all-amd64
+
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+      PGDATA: /home/postgres/pgdata/data
+
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}" ]
+      interval: 1m30s
+      timeout: 30s
+      retries: 5
+      start_period: 30s
+
+    ports:
+      - "5433:5432"
+
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+
+    volumes:
+      - ./postgres/data:/home/postgres/pgdata/data
+
+    restart: unless-stopped
+
+    networks:
+      - network
+
+  mosquitto:
+    image: eclipse-mosquitto:2.1.2-alpine
+    volumes:
+      - ./mqtt/data:/mosquitto/data
+      - ./mqtt/log:/mosquitto/log
+      - ./mqtt/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    ports:
+      - "${MQTT_PORT}:${MQTT_PORT}"
+    networks:
+      - network
+networks:
+  network:
+    driver: bridge
