@@ -1,6 +1,7 @@
 import { DataOverview } from "@/components/dashboard/DataOverview";
 import StatisticsChart from "@/components/dashboard/StatisticsChart";
 import PieChart from "@/components/dashboard/PieChart";
+import DeviceMap from "@/components/dashboard/DeviceMap";
 import PageTitle from "@/components/molecules/PageTitle";
 
 export default function Dashboard() {
@@ -24,6 +25,10 @@ export default function Dashboard() {
 
       <div className="col-span-12 xl:col-span-4">
         <PieChart />
+      </div>
+
+      <div className="col-span-12">
+        <DeviceMap />
       </div>
     </div>
   );
