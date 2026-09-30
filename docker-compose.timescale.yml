@@ -86,6 +86,31 @@ services:
       - "${MQTT_PORT}:${MQTT_PORT}"
     networks:
       - network
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v2.55.0
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    networks:
+      - network
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:11.3.0
+    volumes:
+      - ./grafana/grafana.yml:/etc/grafana/provisioning/datasources/datasource.yaml
+      - ./grafana/grafana-data:/var/lib/grafana
+    ports:
+      - 5000:3000
+    networks:
+      - network
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=password
+
 networks:
   network:
     driver: bridge
