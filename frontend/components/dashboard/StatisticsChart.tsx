@@ -179,7 +179,7 @@ export default function StatisticsChart() {
 
 
   return (
-    <div className="rounded-2xl border border-border bg-surface dark:bg-surface px-5 pb-5 pt-5 sm:px-6 sm:pt-6">
+    <div className="flex h-full flex-col rounded-2xl border border-border bg-surface dark:bg-surface px-5 pb-5 pt-5 sm:px-6 sm:pt-6">
       <div className="mb-6 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <div className="w-full min-w-0">
           <h3 className="text-lg font-semibold text-foreground">
@@ -208,9 +208,9 @@ export default function StatisticsChart() {
         </div>
       </div>
 
-      <div className="max-w-full overflow-x-auto custom-scrollbar">
-        <div className="min-w-180 xl:min-w-full">
-          <Chart options={options} series={series} type="area" height={310} />
+      <div className="max-w-full flex-1 overflow-x-auto custom-scrollbar">
+         <div className="h-full min-w-180 xl:min-w-full">
+          <Chart options={options} series={series} type="area" height="100%" />
         </div>
       </div>
     </div>
