@@ -65,7 +65,7 @@ func (s *TelemetryServiceImpl) GetPagination(
 
 	const pageSize = 10
 
-	var data []model.Telemetry
+	var data []model.HyperTelemetry
 	var err error
 
 	switch {

@@ -9,11 +9,12 @@ import (
 )
 
 type TelemetryRepository interface {
-	Create(model *model.Telemetry) (*model.Telemetry, error)
-	GetDetail(public_id uuid.UUID) (*model.Telemetry, error)
-	GetAll() ([]model.Telemetry, error)
-	GetPagination(publicID uuid.UUID, timestamp time.Time, after bool) ([]model.Telemetry, error)
-	GetFirstPagination() ([]model.Telemetry, error)
+	Create(model *model.HyperTelemetry) (*model.HyperTelemetry, error)
+	BatchCreate(models []model.HyperTelemetry) error
+	GetDetail(public_id uuid.UUID) (*model.HyperTelemetry, error)
+	GetAll() ([]model.HyperTelemetry, error)
+	GetPagination(publicID uuid.UUID, timestamp time.Time, after bool) ([]model.HyperTelemetry, error)
+	GetFirstPagination() ([]model.HyperTelemetry, error)
 }
 
 type TelemetryRepositoryImpl struct {
@@ -24,7 +25,7 @@ func NewTelemetryRepository(db *gorm.DB) TelemetryRepository {
 	return &TelemetryRepositoryImpl{db: db}
 }
 
-func (repo *TelemetryRepositoryImpl) Create(model *model.Telemetry) (*model.Telemetry, error) {
+func (repo *TelemetryRepositoryImpl) Create(model *model.HyperTelemetry) (*model.HyperTelemetry, error) {
 
 	if err := repo.db.Create(&model).Error; err != nil {
 		return nil, err
@@ -33,8 +34,22 @@ func (repo *TelemetryRepositoryImpl) Create(model *model.Telemetry) (*model.Tele
 	return model, nil
 }
 
-func (repo *TelemetryRepositoryImpl) GetDetail(public_id uuid.UUID) (*model.Telemetry, error) {
-	gormModel := &model.Telemetry{}
+func (repo *TelemetryRepositoryImpl) BatchCreate(
+	models []model.HyperTelemetry,
+) error {
+
+	if len(models) == 0 {
+		return nil
+	}
+
+	return repo.db.CreateInBatches(
+		&models,
+		500,
+	).Error
+}
+
+func (repo *TelemetryRepositoryImpl) GetDetail(public_id uuid.UUID) (*model.HyperTelemetry, error) {
+	gormModel := &model.HyperTelemetry{}
 
 	if err := repo.db.Where("public_id = ?", public_id).First(&gormModel).Error; err != nil {
 		return nil, err
@@ -43,8 +58,8 @@ func (repo *TelemetryRepositoryImpl) GetDetail(public_id uuid.UUID) (*model.Tele
 	return gormModel, nil
 }
 
-func (repo *TelemetryRepositoryImpl) GetAll() ([]model.Telemetry, error) {
-	var list []model.Telemetry
+func (repo *TelemetryRepositoryImpl) GetAll() ([]model.HyperTelemetry, error) {
+	var list []model.HyperTelemetry
 
 	if err := repo.db.Find(&list).Error; err != nil {
 		return nil, err
@@ -57,9 +72,9 @@ func (repo *TelemetryRepositoryImpl) GetPagination(
 	publicID uuid.UUID,
 	timestamp time.Time,
 	after bool,
-) ([]model.Telemetry, error) {
+) ([]model.HyperTelemetry, error) {
 
-	var list []model.Telemetry
+	var list []model.HyperTelemetry
 
 	if after {
 		err := repo.db.
@@ -97,8 +112,8 @@ func (repo *TelemetryRepositoryImpl) GetPagination(
 
 	return list, nil
 }
-func (repo *TelemetryRepositoryImpl) GetFirstPagination() ([]model.Telemetry, error) {
-	var list []model.Telemetry
+func (repo *TelemetryRepositoryImpl) GetFirstPagination() ([]model.HyperTelemetry, error) {
+	var list []model.HyperTelemetry
 
 	err := repo.db.
 		Order("created_at ASC").
