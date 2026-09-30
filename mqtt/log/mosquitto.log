@@ -1,0 +1,18 @@
+1790774752: New connection from 172.21.0.4:37936 on port 1883.
+1790774752: New client connected from 172.21.0.4:37936 as rikub_backend (p4, c1, k30).
+1790774774: Client rikub_backend [172.21.0.4:37936] disconnected: connection closed by client.
+1790775525: New connection from 172.21.0.6:54862 on port 1883.
+1790775525: New client connected from 172.21.0.6:54862 as rikub_backend (p4, c1, k30).
+1790775581: Client rikub_backend [172.21.0.6:54862] disconnected: connection closed by client.
+1790775600: New connection from 172.21.0.6:53862 on port 1883.
+1790775600: New client connected from 172.21.0.6:53862 as rikub_backend (p4, c1, k30).
+1790775806: Client rikub_backend [172.21.0.6:53862] disconnected: connection closed by client.
+1790775825: New connection from 172.21.0.6:56694 on port 1883.
+1790775825: New client connected from 172.21.0.6:56694 as rikub_backend (p4, c1, k30).
+1790776188: Client rikub_backend [172.21.0.6:56694] disconnected: connection closed by client.
+1790776213: New connection from 172.19.0.6:38898 on port 1883.
+1790776213: New client connected from 172.19.0.6:38898 as rikub_backend (p4, c1, k30).
+1790776469: Client rikub_backend [172.19.0.6:38898] disconnected: connection closed by client.
+1790776496: New connection from 172.19.0.6:40330 on port 1883.
+1790776496: New client connected from 172.19.0.6:40330 as rikub_backend (p4, c1, k30).
+1790776835: Client rikub_backend [172.19.0.6:40330] disconnected: connection closed by client.

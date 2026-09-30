@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"maps"
 	"sync"
 	"time"
 
@@ -43,6 +44,7 @@ func NewMQTTClient(
 	broker string,
 	clientID string,
 	repo repositories.TelemetryRepository,
+	devRepo repositories.DeviceRepository,
 ) *MQTTClient {
 
 	opts := mqtt.NewClientOptions()
@@ -66,6 +68,20 @@ func NewMQTTClient(
 	opts.OnConnect = m.OnConnect
 
 	m.client = mqtt.NewClient(opts)
+
+	dev, err := devRepo.GetAll()
+
+	if err != nil {
+		log.Panicln("Gagal populasi mqtt")
+	}
+
+	for _, y := range dev {
+		fmt.Println(y.InternalID)
+		fmt.Println(y.PublicID)
+		topicString := fmt.Sprintf("telemetry/%s", y.PublicID)
+		fmt.Println(topicString)
+		m.AddTopic(y.InternalID, topicString)
+	}
 
 	return m
 }
@@ -193,9 +209,7 @@ func (m *MQTTClient) OnConnect(client mqtt.Client) {
 
 	topics := make(map[string]*MQTTTopic, len(m.topics))
 
-	for topic, mqttTopic := range m.topics {
-		topics[topic] = mqttTopic
-	}
+	maps.Copy(topics, m.topics)
 
 	m.mu.RUnlock()
 
