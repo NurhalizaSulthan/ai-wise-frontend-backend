@@ -31,13 +31,44 @@ services:
 
     networks:
       - network
+  # database:
+  #   image: postgres:18-alpine3.24
+
+  #   environment:
+  #     POSTGRES_USER: ${DB_USERNAME}
+  #     POSTGRES_PASSWORD: ${DB_PASSWORD}
+  #     POSTGRES_DB: ${DB_NAME}
+
+  #   healthcheck:
+  #     test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}" ]
+  #     interval: 1m30s
+  #     timeout: 30s
+  #     retries: 5
+  #     start_period: 30s
+
+  #   volumes:
+  #     - ./postgres/data:/var/lib/postgresql
+
+  #   restart: unless-stopped
+
+  #   networks:
+  #     - network
+
+  db-init:
+    image: alpine
+    volumes:
+      - ./postgres/data:/home/postgres/pgdata/data
+    command: sh -c "chown -R 1000:1000 /home/postgres/pgdata/data && chmod -R 700 /home/postgres/pgdata/data"
+    restart: "no"
+
   database:
-    image: postgres:18-alpine3.24
+    image: timescale/timescaledb-ha:pg18-all-amd64
 
     environment:
       POSTGRES_USER: ${DB_USERNAME}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
+      PGDATA: /home/postgres/pgdata/data
 
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}" ]
@@ -46,11 +77,64 @@ services:
       retries: 5
       start_period: 30s
 
+    ports:
+      - "5433:5432"
+
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+
     volumes:
-      - ./postgres/data:/var/lib/postgresql
+      - ./postgres/data:/home/postgres/pgdata/data
 
     restart: unless-stopped
 
+    networks:
+      - network
+
+  mosquitto:
+    image: eclipse-mosquitto:2.1.2-alpine
+    volumes:
+      - ./mqtt/data:/mosquitto/data
+      - ./mqtt/log:/mosquitto/log
+      - ./mqtt/config/mosquitto.conf:/mosquitto/config/mosquitto.conf
+    ports:
+      - "${MQTT_PORT}:${MQTT_PORT}"
+    networks:
+      - network
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v2.55.0
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    ports:
+      - 9090:9090
+    networks:
+      - network
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:11.3.0
+    volumes:
+      - ./grafana/grafana.yml:/etc/grafana/provisioning/datasources/datasource.yaml
+      - ./grafana/grafana-data:/var/lib/grafana
+    ports:
+      - 5000:3000
+    networks:
+      - network
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=password
+
+  adminer:
+    image: adminer:6.1.1
+    container_name: adminer_web
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ADMINER_DEFAULT_SERVER: database
     networks:
       - network
 
