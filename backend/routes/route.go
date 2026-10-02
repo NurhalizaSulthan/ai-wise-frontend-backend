@@ -60,11 +60,13 @@ func Setup(
 	api.Get("/pekerja", kerjaCont.GetAll)
 	api.Get("/pekerja/detail", kerjaCont.GetByPublicID)
 	api.Post("/pekerja", kerjaCont.Create)
+	api.Get("/pekerja/pagination", kerjaCont.Pagination)
 
 	// Device endpoint
 	api.Get("/device", deviceCont.GetAll)
 	api.Get("/device/detail", deviceCont.GetByPublicID)
 	api.Post("/device", deviceCont.Create)
+	api.Get("/device/pagination", deviceCont.Pagination)
 
 	api.Get("/alert", alertCont.GetAll)
 	api.Post("/alert", alertCont.Create)
