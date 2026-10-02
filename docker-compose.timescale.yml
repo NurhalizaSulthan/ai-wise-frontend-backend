@@ -5,6 +5,9 @@ services:
       dockerfile: Dockerfile
       tags:
         - kaizerd23/rikub-backend:1.1.0
+        # platforms:
+        # - linux/arm64
+        # - linux/amd64
 
     depends_on:
       migrate:
