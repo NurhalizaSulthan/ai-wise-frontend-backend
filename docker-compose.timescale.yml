@@ -4,7 +4,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
       tags:
-        - kaizerd23/rikub-backend:1.0.1
+        - kaizerd23/rikub-backend:1.1.0
 
     depends_on:
       migrate:
