@@ -14,6 +14,7 @@ type PekerjaService interface {
 	GetByPublicID(publicID uuid.UUID) (*dto.PekerjaBase, error)
 	GetAll() ([]dto.PekerjaBase, error)
 	GetPagination(before string, after string) (*dto.PaginationResult, error)
+	Update(update *dto.PekerjaUpdate) (*dto.PekerjaBase, error)
 }
 
 type PekerjaServiceImpl struct {
@@ -164,7 +165,10 @@ func (s *PekerjaServiceImpl) Create(dto *dto.PekerjaCreate) (*dto.PekerjaBase, e
 	if err != nil {
 		return nil, err
 	}
-	if err := s.dr.UpdateDevice(device.InternalID, data.InternalID); err != nil {
+
+	device.PekerjaID = &data.InternalID
+
+	if err := s.dr.UpdateDevice(device); err != nil {
 		return nil, err
 	}
 
@@ -197,4 +201,48 @@ func (s *PekerjaServiceImpl) GetAll(
 	}
 
 	return mappers.MapSlice(data, mappers.ToPekerjaBase), nil
+}
+
+func (s *PekerjaServiceImpl) Update(
+	update *dto.PekerjaUpdate,
+) (*dto.PekerjaBase, error) {
+	model, err := s.r.GetPekerjaByUUID(*update.PublicID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if update.DevicePublicID != nil {
+		device, err := s.dr.GetDeviceByPublicID(*update.DevicePublicID)
+
+		if err != nil {
+			return nil, err
+		}
+
+		device.PekerjaID = &model.InternalID
+
+		err = s.dr.UpdateDevice(device)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	if update.Nama != nil {
+		model.Nama = *update.Nama
+	}
+
+	if update.TanggalLahir != nil {
+		model.TanggalLahir = *update.TanggalLahir
+	}
+
+	if update.JenisKelamin != nil {
+		model.JenisKelamin = *update.JenisKelamin
+	}
+
+	if err = s.r.Update(model); err != nil {
+		return nil, err
+	}
+
+	return mappers.Map(model, mappers.ToPekerjaBase), nil
+
 }

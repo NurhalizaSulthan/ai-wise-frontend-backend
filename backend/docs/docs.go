@@ -450,6 +450,108 @@ const docTemplate = `{
                     }
                 }
             },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk update data device",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Device"
+                ],
+                "summary": "Update",
+                "parameters": [
+                    {
+                        "description": "Data update device",
+                        "name": "update",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/dto.DeviceUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.DeviceBase"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
             "post": {
                 "security": [
                     {
@@ -672,6 +774,114 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/device/pagination": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk paginasi data device",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Device"
+                ],
+                "summary": "Pagination",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Cursor untuk data sebelumnya",
+                        "name": "before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Cursor untuk data berikutnya",
+                        "name": "after",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.PaginationDTO"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/pekerja": {
             "get": {
                 "security": [
@@ -712,6 +922,108 @@ const docTemplate = `{
                                         },
                                         "status": {
                                             "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk update data pekerja",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pekerja"
+                ],
+                "summary": "Update",
+                "parameters": [
+                    {
+                        "description": "Data update pekerja",
+                        "name": "update",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/dto.PekerjaUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.PekerjaBase"
                                         }
                                     }
                                 }
@@ -933,6 +1245,114 @@ const docTemplate = `{
                                         },
                                         "status": {
                                             "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pekerja/pagination": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk paginasi data pekerja",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pekerja"
+                ],
+                "summary": "Pagination",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Cursor untuk data sebelumnya",
+                        "name": "before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Cursor untuk data berikutnya",
+                        "name": "after",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.PaginationDTO"
                                         }
                                     }
                                 }
@@ -1327,31 +1747,14 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "Endpoint untuk paginasi data telemetry",
-                "consumes": [
-                    "application/json"
-                ],
+                "description": "Endpoint untuk mengambil semua telemetry",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "Telemetry"
                 ],
-                "summary": "Pagination",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Cursor untuk data sebelumnya",
-                        "name": "before",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Cursor untuk data berikutnya",
-                        "name": "after",
-                        "in": "query"
-                    }
-                ],
+                "summary": "GetAll",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -1363,8 +1766,20 @@ const docTemplate = `{
                                 {
                                     "type": "object",
                                     "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/dto.PaginationDTO"
+                                        " data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/dto.TelemetryBase"
+                                            }
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
                                         }
                                     }
                                 }
@@ -1586,6 +2001,114 @@ const docTemplate = `{
                                         },
                                         "status": {
                                             "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.BadRequestResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.InternalErrorResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        " error": {
+                                            "type": "string"
+                                        },
+                                        " message": {
+                                            "type": "string"
+                                        },
+                                        " status_code": {
+                                            "type": "integer"
+                                        },
+                                        "status": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/telemetry/pagination": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "Endpoint untuk paginasi data telemetry",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Telemetry"
+                ],
+                "summary": "Pagination",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Cursor untuk data sebelumnya",
+                        "name": "before",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Cursor untuk data berikutnya",
+                        "name": "after",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.SuccessResponse"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/dto.PaginationDTO"
                                         }
                                     }
                                 }
@@ -1940,11 +2463,17 @@ const docTemplate = `{
         "dto.DeviceBase": {
             "type": "object",
             "properties": {
+                "mac_address": {
+                    "type": "string"
+                },
                 "pekerja_id": {
                     "type": "integer"
                 },
                 "public_id": {
                     "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/enum.DeviceStatus"
                 },
                 "telemetry": {
                     "description": "ListAlert []AlertBase ` + "`" + `json:\"daftar_alert\"` + "`" + `",
@@ -1963,6 +2492,23 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.DeviceUpdate": {
+            "type": "object",
+            "properties": {
+                "mac_address": {
+                    "type": "string"
+                },
+                "pekerja_id": {
+                    "type": "integer"
+                },
+                "public_id": {
+                    "type": "string"
+                },
+                "status": {
+                    "$ref": "#/definitions/enum.DeviceStatus"
+                }
+            }
+        },
         "dto.LoginUser": {
             "type": "object",
             "properties": {
@@ -1977,12 +2523,7 @@ const docTemplate = `{
         "dto.PaginationDTO": {
             "type": "object",
             "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.TelemetryBase"
-                    }
-                },
+                "data": {},
                 "has_next": {
                     "type": "boolean"
                 },
@@ -2031,6 +2572,26 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "nama": {
+                    "type": "string"
+                },
+                "tanggal_lahir": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.PekerjaUpdate": {
+            "type": "object",
+            "properties": {
+                "device_public_id": {
+                    "type": "string"
+                },
+                "jenis_kelamin": {
+                    "type": "string"
+                },
+                "nama": {
+                    "type": "string"
+                },
+                "public_id": {
                     "type": "string"
                 },
                 "tanggal_lahir": {
@@ -2153,6 +2714,17 @@ const docTemplate = `{
                     "type": "number"
                 }
             }
+        },
+        "enum.DeviceStatus": {
+            "type": "string",
+            "enum": [
+                "aktif",
+                "tidak aktif"
+            ],
+            "x-enum-varnames": [
+                "Aktif",
+                "TidakAktif"
+            ]
         },
         "enum.JenisAlert": {
             "type": "string",

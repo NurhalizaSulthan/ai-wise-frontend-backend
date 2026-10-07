@@ -19,7 +19,7 @@ func Setup(
 ) {
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Println("File ENV tidak ditemukan menggunakna konfigurasi awal")
+		log.Println("File ENV tidak ditemukan menggunakan konfigurasi awal")
 	}
 
 	auth := app.Group("/auth/v1")
@@ -61,12 +61,14 @@ func Setup(
 	api.Get("/pekerja/detail", kerjaCont.GetByPublicID)
 	api.Post("/pekerja", kerjaCont.Create)
 	api.Get("/pekerja/pagination", kerjaCont.Pagination)
+	api.Put("/pekerja", kerjaCont.Update)
 
 	// Device endpoint
 	api.Get("/device", deviceCont.GetAll)
 	api.Get("/device/detail", deviceCont.GetByPublicID)
 	api.Post("/device", deviceCont.Create)
 	api.Get("/device/pagination", deviceCont.Pagination)
+	api.Put("/device", deviceCont.Update)
 
 	api.Get("/alert", alertCont.GetAll)
 	api.Post("/alert", alertCont.Create)

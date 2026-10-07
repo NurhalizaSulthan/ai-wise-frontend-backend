@@ -1,13 +1,13 @@
 services:
   backend:
-    image: kaizerd23/rikub-backend:1.1.0
+    image: kaizerd23/rikub-backend:${APP_TAG}
 
     depends_on:
       migrate:
         condition: service_completed_successfully
 
     env_file:
-      - ./example.env
+      - example.env
 
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
@@ -31,28 +31,6 @@ services:
 
     networks:
       - network
-  # database:
-  #   image: postgres:18-alpine3.24
-
-  #   environment:
-  #     POSTGRES_USER: ${DB_USERNAME}
-  #     POSTGRES_PASSWORD: ${DB_PASSWORD}
-  #     POSTGRES_DB: ${DB_NAME}
-
-  #   healthcheck:
-  #     test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME} -d ${DB_NAME}" ]
-  #     interval: 1m30s
-  #     timeout: 30s
-  #     retries: 5
-  #     start_period: 30s
-
-  #   volumes:
-  #     - ./postgres/data:/var/lib/postgresql
-
-  #   restart: unless-stopped
-
-  #   networks:
-  #     - network
 
   db-init:
     image: alpine
@@ -135,6 +113,38 @@ services:
       - "8080:8080"
     environment:
       ADMINER_DEFAULT_SERVER: database
+    networks:
+      - network
+
+  pg_exporter:
+    image: prometheuscommunity/postgres-exporter:v0.20.1
+    container_name: postgres_exporter
+    restart: unless-stopped
+    environment:
+      - DATA_SOURCE_URI=database:${DB_PORT}/${DB_NAME}?sslmode=disable
+      - DATA_SOURCE_USER=${DB_USERNAME}
+      - DATA_SOURCE_PASS=${DB_PASSWORD}
+    networks:
+      - network
+    depends_on:
+      - database
+
+  node_exporter:
+    image: quay.io/prometheus/node-exporter:v1.12.0
+    container_name: node_exporter
+    pid: host
+    restart: unless-stopped
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.rootfs=/rootfs'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)'
+    expose:
+      - 9100
     networks:
       - network
 

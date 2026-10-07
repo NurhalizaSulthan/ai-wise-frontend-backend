@@ -22,10 +22,14 @@ definitions:
     type: object
   dto.DeviceBase:
     properties:
+      mac_address:
+        type: string
       pekerja_id:
         type: integer
       public_id:
         type: string
+      status:
+        $ref: '#/definitions/enum.DeviceStatus'
       telemetry:
         description: ListAlert []AlertBase `json:"daftar_alert"`
         items:
@@ -37,6 +41,17 @@ definitions:
       pekerja_public_id:
         type: string
     type: object
+  dto.DeviceUpdate:
+    properties:
+      mac_address:
+        type: string
+      pekerja_id:
+        type: integer
+      public_id:
+        type: string
+      status:
+        $ref: '#/definitions/enum.DeviceStatus'
+    type: object
   dto.LoginUser:
     properties:
       nama:
@@ -46,10 +61,7 @@ definitions:
     type: object
   dto.PaginationDTO:
     properties:
-      data:
-        items:
-          $ref: '#/definitions/dto.TelemetryBase'
-        type: array
+      data: {}
       has_next:
         type: boolean
       has_previous:
@@ -82,6 +94,19 @@ definitions:
       jenis_kelamin:
         type: string
       nama:
+        type: string
+      tanggal_lahir:
+        type: string
+    type: object
+  dto.PekerjaUpdate:
+    properties:
+      device_public_id:
+        type: string
+      jenis_kelamin:
+        type: string
+      nama:
+        type: string
+      public_id:
         type: string
       tanggal_lahir:
         type: string
@@ -162,6 +187,14 @@ definitions:
       yaw:
         type: number
     type: object
+  enum.DeviceStatus:
+    enum:
+    - aktif
+    - tidak aktif
+    type: string
+    x-enum-varnames:
+    - Aktif
+    - TidakAktif
   enum.JenisAlert:
     enum:
     - Jatuh
@@ -584,6 +617,63 @@ paths:
       summary: Create
       tags:
       - Device
+    put:
+      consumes:
+      - application/json
+      description: Endpoint untuk update data device
+      parameters:
+      - description: Data update device
+        in: body
+        name: update
+        schema:
+          $ref: '#/definitions/dto.DeviceUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.DeviceBase'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Update
+      tags:
+      - Device
   /api/v1/device/detail:
     get:
       description: Endpoint untuk mengambil detail device
@@ -644,6 +734,67 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: GetDetail
+      tags:
+      - Device
+  /api/v1/device/pagination:
+    get:
+      consumes:
+      - application/json
+      description: Endpoint untuk paginasi data device
+      parameters:
+      - description: Cursor untuk data sebelumnya
+        in: query
+        name: before
+        type: string
+      - description: Cursor untuk data berikutnya
+        in: query
+        name: after
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.PaginationDTO'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Pagination
       tags:
       - Device
   /api/v1/pekerja:
@@ -768,6 +919,63 @@ paths:
       summary: Create
       tags:
       - Pekerja
+    put:
+      consumes:
+      - application/json
+      description: Endpoint untuk update data pekerja
+      parameters:
+      - description: Data update pekerja
+        in: body
+        name: update
+        schema:
+          $ref: '#/definitions/dto.PekerjaUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.PekerjaBase'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Update
+      tags:
+      - Pekerja
   /api/v1/pekerja/detail:
     get:
       description: Endpoint untuk mengambil detail pekerja
@@ -828,6 +1036,67 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: GetDetail
+      tags:
+      - Pekerja
+  /api/v1/pekerja/pagination:
+    get:
+      consumes:
+      - application/json
+      description: Endpoint untuk paginasi data pekerja
+      parameters:
+      - description: Cursor untuk data sebelumnya
+        in: query
+        name: before
+        type: string
+      - description: Cursor untuk data berikutnya
+        in: query
+        name: after
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.PaginationDTO'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Pagination
       tags:
       - Pekerja
   /api/v1/pengawas:
@@ -1016,18 +1285,7 @@ paths:
       - Pengawas
   /api/v1/telemetry:
     get:
-      consumes:
-      - application/json
-      description: Endpoint untuk paginasi data telemetry
-      parameters:
-      - description: Cursor untuk data sebelumnya
-        in: query
-        name: before
-        type: string
-      - description: Cursor untuk data berikutnya
-        in: query
-        name: after
-        type: string
+      description: Endpoint untuk mengambil semua telemetry
       produces:
       - application/json
       responses:
@@ -1037,8 +1295,16 @@ paths:
             allOf:
             - $ref: '#/definitions/response.SuccessResponse'
             - properties:
-                data:
-                  $ref: '#/definitions/dto.PaginationDTO'
+                ' data':
+                  items:
+                    $ref: '#/definitions/dto.TelemetryBase'
+                  type: array
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
               type: object
         "400":
           description: Bad Request
@@ -1072,7 +1338,7 @@ paths:
               type: object
       security:
       - ApiKeyAuth: []
-      summary: Pagination
+      summary: GetAll
       tags:
       - Telemetry
     post:
@@ -1199,6 +1465,67 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: GetDetail
+      tags:
+      - Telemetry
+  /api/v1/telemetry/pagination:
+    get:
+      consumes:
+      - application/json
+      description: Endpoint untuk paginasi data telemetry
+      parameters:
+      - description: Cursor untuk data sebelumnya
+        in: query
+        name: before
+        type: string
+      - description: Cursor untuk data berikutnya
+        in: query
+        name: after
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.SuccessResponse'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.PaginationDTO'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.BadRequestResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+        "500":
+          description: Internal Server Error
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.InternalErrorResponse'
+            - properties:
+                ' error':
+                  type: string
+                ' message':
+                  type: string
+                ' status_code':
+                  type: integer
+                status:
+                  type: string
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Pagination
       tags:
       - Telemetry
   /auth/v1/login:

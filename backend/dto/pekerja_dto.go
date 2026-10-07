@@ -22,3 +22,11 @@ type PekerjaCreate struct {
 	// PengawasPublicID uuid.UUID `json:"pengawas_public_id"`
 	DevicePublicID uuid.UUID `json:"device_public_id"`
 }
+
+type PekerjaUpdate struct {
+	PublicID       *uuid.UUID `json:"public_id"`
+	Nama           *string    `json:"nama"`
+	TanggalLahir   *time.Time `json:"tanggal_lahir"`
+	JenisKelamin   *string    `json:"jenis_kelamin"`
+	DevicePublicID *uuid.UUID `json:"device_public_id"`
+}
