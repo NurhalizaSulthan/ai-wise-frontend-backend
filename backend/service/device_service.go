@@ -17,6 +17,7 @@ type DeviceService interface {
 	GetByPublicID(publicID uuid.UUID) (*dto.DeviceBase, error)
 	GetAll() ([]dto.DeviceBase, error)
 	GetPagination(before string, after string) (*dto.PaginationResult, error)
+	Update(dto dto.DeviceUpdate) (*dto.DeviceBase, error)
 }
 
 type DeviceServiceImpl struct {
@@ -181,4 +182,32 @@ func (s *DeviceServiceImpl) GetAll() ([]dto.DeviceBase, error) {
 		return nil, err
 	}
 	return mappers.MapSlice(data, mappers.ToDeviceBase), nil
+}
+
+func (s *DeviceServiceImpl) Update(dto dto.DeviceUpdate) (*dto.DeviceBase, error) {
+	device, err := s.r.GetDeviceByPublicID(dto.PublicID)
+
+	if err != nil {
+		return nil, err
+	}
+
+	if dto.MacAddress != nil {
+		device.MacAddress = *dto.MacAddress
+	}
+
+	if dto.Status != nil {
+		device.Status = *dto.Status
+	}
+
+	if dto.PekerjaID != nil {
+		device.PekerjaID = dto.PekerjaID
+	}
+
+	err = s.r.UpdateDevice(device)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return mappers.Map(device, mappers.ToDeviceBase), nil
 }

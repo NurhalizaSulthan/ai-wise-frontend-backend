@@ -16,6 +16,7 @@ type PekerjaController interface {
 	GetByPublicID(ctx fiber.Ctx) error
 	GetAll(ctx fiber.Ctx) error
 	Pagination(ctx fiber.Ctx) error
+	Update(ctx fiber.Ctx) error
 }
 
 type PekerjaControllerImpl struct {
@@ -156,4 +157,31 @@ func (a *PekerjaControllerImpl) Pagination(ctx fiber.Ctx) error {
 		"Sukses mengambil paginasi",
 		body,
 	)
+}
+
+// Update     	godoc
+// @Summary       Update
+// @Description   Endpoint untuk update data pekerja
+// @Tags          Pekerja
+// @Accept        json
+// @Produce       json
+// @Param         update  body dto.PekerjaUpdate  false  "Data update pekerja"
+// @Success       200 {object} response.SuccessResponse{data=dto.PekerjaBase}
+// @Failure       400 {object} response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure       500 {object} response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Security      ApiKeyAuth
+// @Router        /api/v1/pekerja [put]
+func (c *PekerjaControllerImpl) Update(ctx fiber.Ctx) error {
+	update := &dto.PekerjaUpdate{}
+
+	if err := ctx.Bind().Body(update); err != nil {
+		return response.BadRequest(ctx, "Gagal mengupdate pekerja", err)
+	}
+
+	resp, err := c.s.Update(update)
+	if err != nil {
+		return response.InternalError(ctx, "Gagal mengupdate pekerja", err)
+	}
+
+	return response.Success(ctx, "Sukses mengupdate pekerja", resp)
 }

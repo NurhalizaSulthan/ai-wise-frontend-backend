@@ -16,6 +16,7 @@ type DeviceController interface {
 	GetByPublicID(ctx fiber.Ctx) error
 	GetAll(ctx fiber.Ctx) error
 	Pagination(ctx fiber.Ctx) error
+	Update(ctx fiber.Ctx) error
 }
 
 type DeviceControllerImpl struct {
@@ -152,6 +153,34 @@ func (a *DeviceControllerImpl) Pagination(ctx fiber.Ctx) error {
 		"Sukses mengambil paginasi",
 		body,
 	)
+}
+
+// Update     godoc
+// @Summary       Update
+// @Description   Endpoint untuk update data device
+// @Tags          Device
+// @Accept        json
+// @Produce       json
+// @Param         update body dto.DeviceUpdate false "Data update device"
+// @Success       200 {object} response.SuccessResponse{data=dto.DeviceBase}
+// @Failure       400 {object} response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure       500 {object} response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Security      ApiKeyAuth
+// @Router        /api/v1/device [put]
+func (c *DeviceControllerImpl) Update(ctx fiber.Ctx) error {
+	data := &dto.DeviceUpdate{}
+
+	if err := ctx.Bind().Body(data); err != nil {
+		return response.BadRequest(ctx, "Gagal mengupdate device", err)
+	}
+
+	update, err := c.s.Update(*data)
+
+	if err != nil {
+		return response.InternalError(ctx, "Gagal mengupdate device", err)
+	}
+
+	return response.Success(ctx, "Sukses mengupdate device", update)
 }
 
 func NewDeviceController(s service.DeviceService) DeviceController {

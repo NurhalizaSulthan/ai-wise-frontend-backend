@@ -4,7 +4,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
       tags:
-        - kaizerd23/rikub-backend:1.1.0
+        - kaizerd23/rikub-backend:${APP_TAG}
         # platforms:
         # - linux/arm64
         # - linux/amd64
@@ -16,7 +16,7 @@ services:
         condition: service_started
 
     env_file:
-      - .env
+      - example.env
 
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"

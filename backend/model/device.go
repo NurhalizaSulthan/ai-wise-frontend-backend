@@ -3,6 +3,7 @@ package model
 import (
 	"time"
 
+	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/enum"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -10,7 +11,10 @@ import (
 type Device struct {
 	InternalID int       `gorm:"column:internal_id;primaryKey;autoIncrement"`
 	PublicID   uuid.UUID `gorm:"column:public_id;default:gen_random_uuid()"`
-	PekerjaID  *int      `gorm:"column:pekerja_id;unique"`
+
+	PekerjaID  *int              `gorm:"column:pekerja_id;unique"`
+	MacAddress string            `gorm:"column:mac_address;unique"`
+	Status     enum.DeviceStatus `gorm:"column:status;unique"`
 
 	Pekerja   Pekerja          `gorm:"foreignKey:PekerjaID"`
 	Telemetry []HyperTelemetry `gorm:"foreignKey:DeviceID"`

@@ -10,7 +10,7 @@ import (
 
 type DeviceRepository interface {
 	CreateDevice(model *model.Device) (*model.Device, error)
-	UpdateDevice(deviceID, PekerjaID int) error
+	UpdateDevice(update *model.Device) error
 	GetDeviceByPublicID(publicId uuid.UUID) (*model.Device, error)
 	GetAll() ([]model.Device, error)
 	GetWithPagination(after bool, publicID uuid.UUID, timestamp time.Time) ([]model.Device, error)
@@ -66,15 +66,15 @@ func (repo *DeviceRepositoryImpl) CreateDevice(model *model.Device) (*model.Devi
 	return model, nil
 }
 
-func (repo *DeviceRepositoryImpl) UpdateDevice(deviceID, PekerjaID int) error {
-	return repo.db.Where("internal_id = ?", deviceID).Update("Device_id", PekerjaID).Error
+func (repo *DeviceRepositoryImpl) UpdateDevice(update *model.Device) error {
+	return repo.db.Model(&model.Device{}).Where("internal_id = ?", update.InternalID).Updates(update).Error
 }
 
 func (repo *DeviceRepositoryImpl) GetDeviceByPublicID(publicID uuid.UUID) (*model.Device, error) {
 	device := &model.Device{}
 
 	if err := repo.db.
-		Preload("ListAlert").
+		// Preload("ListAlert").
 		Where("public_id = ?", publicID).
 		First(&device).
 		Error; err != nil {

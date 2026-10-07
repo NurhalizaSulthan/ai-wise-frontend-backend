@@ -18,6 +18,7 @@ type PekerjaRepository interface {
 	GetAll() ([]model.Pekerja, error)
 	GetWithPagination(after bool, publicID uuid.UUID, timestamp time.Time) ([]model.Pekerja, error)
 	GetFirstPaginatio() ([]model.Pekerja, error)
+	Update(update *model.Pekerja) error
 }
 
 type PekerjaRepositoryImpl struct {
@@ -100,4 +101,8 @@ func (repo *PekerjaRepositoryImpl) GetAll(
 	}
 
 	return list, nil
+}
+
+func (repo *PekerjaRepositoryImpl) Update(update *model.Pekerja) error {
+	return repo.db.Model(&model.Pekerja{}).Where("internal_id = ?", update.InternalID).Updates(update).Error
 }
