@@ -16,7 +16,7 @@ services:
         condition: service_started
 
     env_file:
-      - prod.env
+      - .env
 
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
