@@ -12,17 +12,17 @@ export default function () {
   const client = new Client();
 
   const data = {
-    acc_x: 0.4,
-    acc_y: 0.4,
-    acc_z: 9.4,
-    gyro_x: -0.4,
-    gyro_y: 0.4,
-    gyro_z: 1.4,
+    x: 0.4,
+    y: 0.4,
+    z: 9.4,
+    gx: -0.4,
+    gy: 0.4,
+    gz: 1.4,
     roll: -1.4,
     pitch: 0.4,
     yaw: 232.4,
-    latitude: -5.233134028576208,
-    longitude: 119.50286355589539
+    total: 1.0,
+    status: "AMAN"
   };
 
   client.on("connect", async () => {

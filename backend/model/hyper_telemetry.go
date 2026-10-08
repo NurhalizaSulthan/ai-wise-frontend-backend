@@ -8,24 +8,30 @@ import (
 )
 
 type HyperTelemetry struct {
-	InternalID int       `gorm:"column:internal_id;primaryKey;autoIncrement"`
-	PublicID   uuid.UUID `gorm:"column:public_id;default:gen_random_uuid()"`
-	DeviceID   int       `gorm:"column:device_id"`
+	InternalID int       `json:"internal_id,omitempty" gorm:"column:internal_id;primaryKey;autoIncrement"`
+	PublicID   uuid.UUID `json:"public_id,omitempty" gorm:"column:public_id;default:gen_random_uuid()"`
+	DeviceID   int       `json:"device_id,omitempty" gorm:"column:device_id"`
 
-	AccX float64 `json:"acc_x" gorm:"column:acc_x"`
-	AccY float64 `json:"acc_y" gorm:"column:acc_y"`
-	AccZ float64 `json:"acc_z" gorm:"column:acc_z"`
+	Time int `json:"time" gorm:"column:time"`
 
-	GyroX float64 `json:"gyro_x" gorm:"column:gyro_x"`
-	GyroY float64 `json:"gyro_y" gorm:"column:gyro_y"`
-	GyroZ float64 `json:"gyro_z" gorm:"column:gyro_z"`
+	AccX float64 `json:"x" gorm:"column:x"`
+	AccY float64 `json:"y" gorm:"column:y"`
+	AccZ float64 `json:"z" gorm:"column:z"`
 
-	Roll  float64 `gorm:"column:roll"`
-	Pitch float64 `gorm:"column:pitch"`
-	Yaw   float64 `gorm:"column:yaw"`
+	GyroX float64 `json:"gx" gorm:"column:gx"`
+	GyroY float64 `json:"gy" gorm:"column:gy"`
+	GyroZ float64 `json:"gz" gorm:"column:gz"`
 
-	Latitude  float64 `gorm:"column:latitude"`
-	Longitude float64 `gorm:"column:longitude"`
+	Total float64 `json:"total" gorm:"total"`
+
+	Roll  float64 `json:"roll" gorm:"column:roll"`
+	Pitch float64 `json:"pitch" gorm:"column:pitch"`
+	Yaw   float64 `json:"yaw" gorm:"column:yaw"`
+
+	Status string `gorm:"column:status"`
+
+	// Latitude  float64 `gorm:"column:latitude"`
+	// Longitude float64 `gorm:"column:longitude"`
 
 	CreatedAt time.Time      `gorm:"column:created_at"`
 	UpdatedAt time.Time      `gorm:"column:updated_at"`

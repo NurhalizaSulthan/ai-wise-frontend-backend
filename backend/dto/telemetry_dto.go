@@ -17,9 +17,13 @@ type TelemetryBase struct {
 	GyroY float64 `json:"gyro_y"`
 	GyroZ float64 `json:"gyro_z"`
 
+	Total float64 `json:"total"`
+
 	Roll  float64 `json:"roll"`
 	Pitch float64 `json:"pitch"`
 	Yaw   float64 `json:"yaw"`
+
+	Status string `json:"status"`
 
 	Latitude  float64   `json:"latitude"`
 	Longitude float64   `json:"longitude"`
