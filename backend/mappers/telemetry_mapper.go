@@ -7,34 +7,39 @@ import (
 
 func ToTelemetryBase(model *model.HyperTelemetry) *dto.TelemetryBase {
 	return &dto.TelemetryBase{
-		PublicID:  model.PublicID,
-		AccX:      model.AccX,
-		AccY:      model.AccY,
-		AccZ:      model.AccZ,
-		GyroX:     model.GyroX,
-		GyroY:     model.GyroY,
-		GyroZ:     model.GyroZ,
-		Roll:      model.Roll,
-		Pitch:     model.Pitch,
-		Yaw:       model.Yaw,
-		Latitude:  model.Latitude,
-		Longitude: model.Longitude,
+		PublicID: model.PublicID,
+		AccX:     model.AccX,
+		AccY:     model.AccY,
+		AccZ:     model.AccZ,
+		GyroX:    model.GyroX,
+		GyroY:    model.GyroY,
+		GyroZ:    model.GyroZ,
+
+		Total: model.Total,
+		Roll:  model.Roll,
+		Pitch: model.Pitch,
+		Yaw:   model.Yaw,
+
+		Status: model.Status,
+
+		// Latitude:  model.Latitude,
+		// Longitude: model.Longitude,
 		CreatedAt: model.CreatedAt,
 	}
 }
 
 func ToTelemetryModel(dto *dto.TelemetryCreate) *model.HyperTelemetry {
 	return &model.HyperTelemetry{
-		AccX:      dto.AccX,
-		AccY:      dto.AccY,
-		AccZ:      dto.AccZ,
-		GyroX:     dto.GyroX,
-		GyroY:     dto.GyroY,
-		GyroZ:     dto.GyroZ,
-		Roll:      dto.Roll,
-		Pitch:     dto.Pitch,
-		Yaw:       dto.Yaw,
-		Latitude:  dto.Latitude,
-		Longitude: dto.Longitude,
+		AccX:  dto.AccX,
+		AccY:  dto.AccY,
+		AccZ:  dto.AccZ,
+		GyroX: dto.GyroX,
+		GyroY: dto.GyroY,
+		GyroZ: dto.GyroZ,
+		Roll:  dto.Roll,
+		Pitch: dto.Pitch,
+		Yaw:   dto.Yaw,
+		// Latitude:  dto.Latitude,
+		// Longitude: dto.Longitude,
 	}
 }
