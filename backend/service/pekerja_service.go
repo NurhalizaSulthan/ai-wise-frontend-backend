@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/config"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/dto"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/mappers"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/model"
@@ -37,6 +38,7 @@ func (s *PekerjaServiceImpl) GetPagination(before string, after string) (*dto.Pa
 		}
 
 		data, err = s.r.GetWithPagination(
+			nil,
 			false,
 			*uid,
 			*timestamp,
@@ -49,13 +51,14 @@ func (s *PekerjaServiceImpl) GetPagination(before string, after string) (*dto.Pa
 		}
 
 		data, err = s.r.GetWithPagination(
+			nil,
 			true,
 			*uid,
 			*timestamp,
 		)
 
 	default:
-		data, err = s.r.GetFirstPaginatio()
+		data, err = s.r.GetFirstPaginatio(nil)
 	}
 
 	if err != nil {
@@ -93,7 +96,7 @@ func (s *PekerjaServiceImpl) GetPagination(before string, after string) (*dto.Pa
 
 	if len(data) == 0 {
 		return &dto.PaginationResult{
-			Data:           []dto.DeviceBase{},
+			Data:           []dto.PekerjaBase{},
 			NextCursor:     nil,
 			PreviousCursor: nil,
 			HasNext:        false,
@@ -147,6 +150,14 @@ func (s *PekerjaServiceImpl) Create(dto *dto.PekerjaCreate) (*dto.PekerjaBase, e
 	// 	return nil, err
 	// }
 
+	tx := config.DB.Begin()
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
 	model := &model.Pekerja{
 		Nama:         dto.Nama,
 		TanggalLahir: dto.TanggalLahir,
@@ -154,13 +165,13 @@ func (s *PekerjaServiceImpl) Create(dto *dto.PekerjaCreate) (*dto.PekerjaBase, e
 		// PengawasID: pengawas.InternalID,
 	}
 
-	data, err := s.r.CreatePekerja(model)
+	data, err := s.r.CreatePekerja(tx, model)
 
 	if err != nil {
 		return nil, err
 	}
 
-	device, err := s.dr.GetDeviceByPublicID(dto.DevicePublicID)
+	device, err := s.dr.GetDeviceByPublicID(tx, dto.DevicePublicID)
 
 	if err != nil {
 		return nil, err
@@ -168,7 +179,11 @@ func (s *PekerjaServiceImpl) Create(dto *dto.PekerjaCreate) (*dto.PekerjaBase, e
 
 	device.PekerjaID = &data.InternalID
 
-	if err := s.dr.UpdateDevice(device); err != nil {
+	if err := s.dr.UpdateDevice(tx, device); err != nil {
+		return nil, err
+	}
+
+	if err := tx.Commit().Error; err != nil {
 		return nil, err
 	}
 
@@ -176,7 +191,7 @@ func (s *PekerjaServiceImpl) Create(dto *dto.PekerjaCreate) (*dto.PekerjaBase, e
 }
 
 func (s *PekerjaServiceImpl) GetByPublicID(publicID uuid.UUID) (*dto.PekerjaBase, error) {
-	data, err := s.r.GetPekerjaByUUID(publicID)
+	data, err := s.r.GetPekerjaByUUID(nil, publicID)
 
 	if err != nil {
 		return nil, err
@@ -194,6 +209,7 @@ func (s *PekerjaServiceImpl) GetAll(
 
 	// }
 	data, err := s.r.GetAll(
+		nil,
 	// *filter
 	)
 	if err != nil {
@@ -206,14 +222,22 @@ func (s *PekerjaServiceImpl) GetAll(
 func (s *PekerjaServiceImpl) Update(
 	update *dto.PekerjaUpdate,
 ) (*dto.PekerjaBase, error) {
-	model, err := s.r.GetPekerjaByUUID(*update.PublicID)
+	tx := config.DB.Begin()
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	model, err := s.r.GetPekerjaByUUID(tx, *update.PublicID)
 
 	if err != nil {
 		return nil, err
 	}
 
 	if update.DevicePublicID != nil {
-		device, err := s.dr.GetDeviceByPublicID(*update.DevicePublicID)
+		device, err := s.dr.GetDeviceByPublicID(tx, *update.DevicePublicID)
 
 		if err != nil {
 			return nil, err
@@ -221,7 +245,7 @@ func (s *PekerjaServiceImpl) Update(
 
 		device.PekerjaID = &model.InternalID
 
-		err = s.dr.UpdateDevice(device)
+		err = s.dr.UpdateDevice(tx, device)
 		if err != nil {
 			return nil, err
 		}
@@ -239,10 +263,13 @@ func (s *PekerjaServiceImpl) Update(
 		model.JenisKelamin = *update.JenisKelamin
 	}
 
-	if err = s.r.Update(model); err != nil {
+	if err = s.r.Update(tx, model); err != nil {
 		return nil, err
 	}
 
+	if err := tx.Commit().Error; err != nil {
+		return nil, err
+	}
 	return mappers.Map(model, mappers.ToPekerjaBase), nil
 
 }

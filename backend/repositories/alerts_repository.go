@@ -8,17 +8,15 @@ import (
 )
 
 type AlertFilter struct {
-	DeviceID 		*int
-	JenisAlert		*enum.JenisAlert
-	TingkatAlert 	*enum.TingkatKeparahan
+	DeviceID     *int
+	JenisAlert   *enum.JenisAlert
+	TingkatAlert *enum.TingkatKeparahan
 }
 
 type AlertRepositories interface {
-	CreateAlert(model *model.Alert) (*model.Alert, error)
-	GetAlertByPublicId(publicId uuid.UUID) (*model.Alert, error)
-	GetAll(
-		// filter AlertFilter
-		) ([]model.Alert, error)
+	CreateAlert(tx *gorm.DB, model *model.Alert) (*model.Alert, error)
+	GetAlertByPublicId(tx *gorm.DB, publicId uuid.UUID) (*model.Alert, error)
+	GetAll(tx *gorm.DB) ([]model.Alert, error)
 }
 
 type AlertRepositoriesImpl struct {
@@ -29,18 +27,25 @@ func NewAlertRepository(db *gorm.DB) AlertRepositories {
 	return &AlertRepositoriesImpl{db: db}
 }
 
-func (repo *AlertRepositoriesImpl) CreateAlert(alert *model.Alert) (*model.Alert, error) {
-	if err := repo.db.Create(&alert).Error; err != nil {
-		return nil,err
+func (r *AlertRepositoriesImpl) getDB(tx *gorm.DB) *gorm.DB {
+	if tx != nil {
+		return tx
+	}
+	return r.db
+}
+
+func (repo *AlertRepositoriesImpl) CreateAlert(tx *gorm.DB, alert *model.Alert) (*model.Alert, error) {
+	if err := repo.getDB(tx).Create(&alert).Error; err != nil {
+		return nil, err
 	}
 
 	return alert, nil
 }
 
-func (repo *AlertRepositoriesImpl) GetAlertByPublicId(publicID uuid.UUID) (*model.Alert, error) { 
+func (repo *AlertRepositoriesImpl) GetAlertByPublicId(tx *gorm.DB, publicID uuid.UUID) (*model.Alert, error) {
 	model := &model.Alert{}
 
-	if err := repo.db.Where("public_id = ?", publicID.String()).First(&model).Error; err != nil {
+	if err := repo.getDB(tx).Where("public_id = ?", publicID.String()).First(&model).Error; err != nil {
 		return nil, err
 	}
 
@@ -48,11 +53,12 @@ func (repo *AlertRepositoriesImpl) GetAlertByPublicId(publicID uuid.UUID) (*mode
 }
 
 func (repo *AlertRepositoriesImpl) GetAll(
+	tx *gorm.DB,
 	// filter AlertFilter
-	) ([]model.Alert, error) {
+) ([]model.Alert, error) {
 	var modelList []model.Alert
 
-	query := repo.db.Model(&model.Alert{})
+	query := repo.getDB(tx).Model(&model.Alert{})
 
 	// if filter.DeviceID != nil {
 	// 	query.Where("device_id = ?", filter.DeviceID)

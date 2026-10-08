@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/config"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/dto"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/mappers"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/model"
@@ -29,19 +30,30 @@ func NewTelemetryService(
 }
 
 func (s *TelemetryServiceImpl) Create(dto *dto.TelemetryCreate) (*dto.TelemetryBase, error) {
+	tx := config.DB.Begin()
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
 	model := mappers.Map(dto, mappers.ToTelemetryModel)
 
-	telemetry, err := s.r.Create(model)
+	telemetry, err := s.r.Create(tx, model)
 
 	if err != nil {
 		return nil, err
 	}
 
+	if err := tx.Commit().Error; err != nil {
+		return nil, err
+	}
 	return mappers.Map(telemetry, mappers.ToTelemetryBase), nil
 }
 
 func (s *TelemetryServiceImpl) GetByPublicID(publicID uuid.UUID) (*dto.TelemetryBase, error) {
-	data, err := s.r.GetDetail(publicID)
+	data, err := s.r.GetDetail(nil, publicID)
 
 	if err != nil {
 		return nil, err
@@ -51,7 +63,7 @@ func (s *TelemetryServiceImpl) GetByPublicID(publicID uuid.UUID) (*dto.Telemetry
 }
 
 func (s *TelemetryServiceImpl) GetAll() ([]dto.TelemetryBase, error) {
-	data, err := s.r.GetAll()
+	data, err := s.r.GetAll(nil)
 	if err != nil {
 		return nil, err
 	}
@@ -76,6 +88,7 @@ func (s *TelemetryServiceImpl) GetPagination(
 		}
 
 		data, err = s.r.GetPagination(
+			nil,
 			*uid,
 			*timestamp,
 			false,
@@ -88,13 +101,14 @@ func (s *TelemetryServiceImpl) GetPagination(
 		}
 
 		data, err = s.r.GetPagination(
+			nil,
 			*uid,
 			*timestamp,
 			true,
 		)
 
 	default:
-		data, err = s.r.GetFirstPagination()
+		data, err = s.r.GetFirstPagination(nil)
 	}
 
 	if err != nil {

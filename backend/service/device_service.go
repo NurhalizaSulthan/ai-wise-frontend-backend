@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 
+	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/config"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/dto"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/mappers"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/model"
@@ -40,6 +41,7 @@ func (s *DeviceServiceImpl) GetPagination(before string, after string) (*dto.Pag
 		}
 
 		data, err = s.r.GetWithPagination(
+			nil,
 			false,
 			*uid,
 			*timestamp,
@@ -52,13 +54,14 @@ func (s *DeviceServiceImpl) GetPagination(before string, after string) (*dto.Pag
 		}
 
 		data, err = s.r.GetWithPagination(
+			nil,
 			true,
 			*uid,
 			*timestamp,
 		)
 
 	default:
-		data, err = s.r.GetFirstPaginatio()
+		data, err = s.r.GetFirstPaginatio(nil)
 	}
 
 	if err != nil {
@@ -144,7 +147,15 @@ func NewDeviceService(
 }
 
 func (s *DeviceServiceImpl) Create(dto *dto.DeviceCreate) (*dto.DeviceBase, error) {
-	pekerja, err := s.pr.GetPekerjaByUUID(dto.PekerjaPublicID)
+	tx := config.DB.Begin()
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	pekerja, err := s.pr.GetPekerjaByUUID(tx, dto.PekerjaPublicID)
 
 	if err != nil {
 		return nil, err
@@ -154,7 +165,7 @@ func (s *DeviceServiceImpl) Create(dto *dto.DeviceCreate) (*dto.DeviceBase, erro
 		PekerjaID: &pekerja.InternalID,
 	}
 
-	data, err := s.r.CreateDevice(model)
+	data, err := s.r.CreateDevice(tx, model)
 
 	if err != nil {
 		return nil, err
@@ -163,11 +174,14 @@ func (s *DeviceServiceImpl) Create(dto *dto.DeviceCreate) (*dto.DeviceBase, erro
 	topicString := fmt.Sprintf("telemetry/%s", data.PublicID)
 	s.mqttClient.AddTopic(data.InternalID, topicString)
 
+	if err := tx.Commit().Error; err != nil {
+		return nil, err
+	}
 	return mappers.Map(data, mappers.ToDeviceBase), nil
 }
 
 func (s *DeviceServiceImpl) GetByPublicID(publicID uuid.UUID) (*dto.DeviceBase, error) {
-	data, err := s.r.GetDeviceByPublicID(publicID)
+	data, err := s.r.GetDeviceByPublicID(nil, publicID)
 
 	if err != nil {
 		return nil, err
@@ -177,7 +191,7 @@ func (s *DeviceServiceImpl) GetByPublicID(publicID uuid.UUID) (*dto.DeviceBase, 
 }
 
 func (s *DeviceServiceImpl) GetAll() ([]dto.DeviceBase, error) {
-	data, err := s.r.GetAll()
+	data, err := s.r.GetAll(nil)
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +199,15 @@ func (s *DeviceServiceImpl) GetAll() ([]dto.DeviceBase, error) {
 }
 
 func (s *DeviceServiceImpl) Update(dto dto.DeviceUpdate) (*dto.DeviceBase, error) {
-	device, err := s.r.GetDeviceByPublicID(dto.PublicID)
+	tx := config.DB.Begin()
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	device, err := s.r.GetDeviceByPublicID(tx, dto.PublicID)
 
 	if err != nil {
 		return nil, err
@@ -203,11 +225,14 @@ func (s *DeviceServiceImpl) Update(dto dto.DeviceUpdate) (*dto.DeviceBase, error
 		device.PekerjaID = dto.PekerjaID
 	}
 
-	err = s.r.UpdateDevice(device)
+	err = s.r.UpdateDevice(tx, device)
 
 	if err != nil {
 		return nil, err
 	}
 
+	if err := tx.Commit().Error; err != nil {
+		return nil, err
+	}
 	return mappers.Map(device, mappers.ToDeviceBase), nil
 }

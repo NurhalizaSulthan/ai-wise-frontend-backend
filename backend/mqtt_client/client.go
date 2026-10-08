@@ -69,7 +69,7 @@ func NewMQTTClient(
 
 	m.client = mqtt.NewClient(opts)
 
-	dev, err := devRepo.GetAll()
+	dev, err := devRepo.GetAll(nil)
 
 	if err != nil {
 		log.Panicln("Gagal populasi mqtt")
@@ -175,7 +175,7 @@ func (m *MQTTClient) Connect() error {
 func (m *MQTTClient) StartTelemetryWorker() {
 	go func() {
 		for batch := range m.telemetryQueue {
-			if err := m.repo.BatchCreate(batch); err != nil {
+			if err := m.repo.BatchCreate(nil, batch); err != nil {
 				log.Printf(
 					"failed to insert telemetry batch: %v",
 					err,
