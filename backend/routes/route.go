@@ -4,6 +4,8 @@ import (
 	"log"
 
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/controller"
+	websocketutils "github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/ws_config"
+	"github.com/gofiber/contrib/v3/websocket"
 	"github.com/gofiber/fiber/v3"
 	"github.com/joho/godotenv"
 )
@@ -16,6 +18,7 @@ func Setup(
 	deviceCont controller.DeviceController,
 	alertCont controller.AlertController,
 	tlmtryCont controller.TelemetryController,
+	wsContr *websocketutils.WSController,
 ) {
 	err := godotenv.Load(".env")
 	if err != nil {
@@ -78,4 +81,6 @@ func Setup(
 	api.Post("/telemetry", tlmtryCont.Create)
 	api.Get("/telemetry/detail", tlmtryCont.GetByPublicID)
 	api.Get("/telemetry/pagination", tlmtryCont.Pagination)
+
+	api.Get("/ws/mobile/:mac_address", wsContr.HandleSession, websocket.New(wsContr.HandleSessionWS))
 }

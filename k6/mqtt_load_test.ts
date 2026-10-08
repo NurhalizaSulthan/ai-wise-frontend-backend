@@ -6,7 +6,7 @@ export const options = {
   duration: "30s"
 };
 
-const topic = "telemetry/90585c32-4852-426f-b984-cf75981bfed3";
+const topic = "telemetry/d5:23:6a:16:fb:82";
 
 export default function () {
   const client = new Client();
@@ -48,6 +48,7 @@ export default function () {
   });
 
   client.connect(
-    __ENV.MQTT_BROKER_ADDRESS || "mqtt://13.229.227.127:1884"
+    // __ENV.MQTT_BROKER_ADDRESS || 
+    "mqtt://localhost:1883"
   );
 }

@@ -10,6 +10,7 @@ import (
 
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/model"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/repositories"
+	websocketutils "github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/ws_config"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
@@ -23,19 +24,24 @@ type MQTTClient struct {
 
 	mu sync.RWMutex
 
-	repo repositories.TelemetryRepository
+	repo  repositories.TelemetryRepository
+	wsHub *websocketutils.Hub
 }
 
 type MQTTTopic struct {
-	DeviceID int
-	Topic    string
+	DeviceID   int
+	MacAddress string
+	Topic      string
 
 	Buffer []model.HyperTelemetry
 
 	MessageHandler mqtt.MessageHandler
 	OnBatchReady   func([]model.HyperTelemetry)
 
-	done chan struct{}
+	done     chan struct{}
+	stopOnce sync.Once
+
+	wsHub *websocketutils.Hub
 
 	mu sync.Mutex
 }
@@ -45,6 +51,7 @@ func NewMQTTClient(
 	clientID string,
 	repo repositories.TelemetryRepository,
 	devRepo repositories.DeviceRepository,
+	wsHub *websocketutils.Hub,
 ) *MQTTClient {
 
 	opts := mqtt.NewClientOptions()
@@ -61,7 +68,8 @@ func NewMQTTClient(
 			10,
 		),
 
-		repo: repo,
+		repo:  repo,
+		wsHub: wsHub,
 	}
 
 	opts.OnConnectionLost = m.ConnectionLostHandler
@@ -76,11 +84,9 @@ func NewMQTTClient(
 	}
 
 	for _, y := range dev {
-		fmt.Println(y.InternalID)
-		fmt.Println(y.PublicID)
-		topicString := fmt.Sprintf("telemetry/%s", y.PublicID)
+		topicString := fmt.Sprintf("telemetry/%s", y.MacAddress)
 		fmt.Println(topicString)
-		m.AddTopic(y.InternalID, topicString)
+		m.AddTopic(y.InternalID, y.MacAddress, topicString)
 	}
 
 	return m
@@ -88,6 +94,7 @@ func NewMQTTClient(
 
 func (m *MQTTClient) AddTopic(
 	deviceID int,
+	macAddress string,
 	topic string,
 ) error {
 
@@ -106,10 +113,12 @@ func (m *MQTTClient) AddTopic(
 
 	mqttTopic := NewMQTTTopic(
 		deviceID,
+		macAddress,
 		topic,
 		func(batch []model.HyperTelemetry) {
 			m.telemetryQueue <- batch
 		},
+		m.wsHub,
 	)
 
 	m.mu.Lock()
@@ -276,16 +285,20 @@ func (m *MQTTClient) RemoveTopic(topic string) error {
 }
 func NewMQTTTopic(
 	deviceID int,
+	macAddress string,
 	topic string,
 	onBatchReady func([]model.HyperTelemetry),
+	wsHub *websocketutils.Hub,
 ) *MQTTTopic {
 
 	t := &MQTTTopic{
 		DeviceID:     deviceID,
+		MacAddress:   macAddress,
 		Topic:        topic,
 		Buffer:       make([]model.HyperTelemetry, 0, MaxBatchSize),
 		OnBatchReady: onBatchReady,
 		done:         make(chan struct{}),
+		wsHub:        wsHub,
 	}
 
 	t.MessageHandler = func(
@@ -304,6 +317,10 @@ func NewMQTTTopic(
 				err,
 			)
 			return
+		}
+
+		if t.wsHub != nil {
+			t.wsHub.Broadcast(t.MacAddress, telemetry)
 		}
 
 		telemetry.DeviceID = deviceID
@@ -396,5 +413,13 @@ func (t *MQTTTopic) startFlushWorker() {
 }
 
 func (t *MQTTTopic) Stop() {
-	close(t.done)
+	t.stopOnce.Do(func() {
+		if batch := t.Flush(); batch != nil {
+			if t.OnBatchReady != nil {
+				t.OnBatchReady(batch)
+			}
+		}
+		close(t.done)
+	})
+
 }

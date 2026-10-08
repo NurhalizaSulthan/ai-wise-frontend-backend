@@ -172,7 +172,7 @@ func (s *DeviceServiceImpl) Create(dto *dto.DeviceCreate) (*dto.DeviceBase, erro
 	}
 
 	topicString := fmt.Sprintf("telemetry/%s", data.PublicID)
-	s.mqttClient.AddTopic(data.InternalID, topicString)
+	s.mqttClient.AddTopic(data.InternalID, data.MacAddress, topicString)
 
 	if err := tx.Commit().Error; err != nil {
 		return nil, err

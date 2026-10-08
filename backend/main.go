@@ -10,6 +10,7 @@ import (
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/repositories"
 	route "github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/routes"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/service"
+	websocketutils "github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/ws_config"
 	fiberprometheus "github.com/gofiber/contrib/v3/prometheus"
 	"github.com/gofiber/contrib/v3/swaggo"
 	"github.com/gofiber/fiber/v3"
@@ -78,12 +79,18 @@ func main() {
 	pengawRepo := repositories.NewPengawasRepository(config.DB)
 	tlmtryRepo := repositories.NewTelemetryRepository(config.DB)
 
+	wsHub := websocketutils.NewHub()
+	go wsHub.Run()
+
+	wsController := websocketutils.NewWSController(wsHub)
+
 	brokerString := fmt.Sprintf("tcp://%s:%s", config.AppConfig.MQTT_HOST, config.AppConfig.MQTT_PORT)
 	mqttClient := mqttclient.NewMQTTClient(
 		brokerString,
 		config.AppConfig.MQTT_CLIENT,
 		tlmtryRepo,
 		deviceRepo,
+		wsHub,
 	)
 
 	mqttClient.StartTelemetryWorker()
@@ -112,6 +119,7 @@ func main() {
 		deviceCont,
 		alertCont,
 		tlmtryCont,
+		wsController,
 	)
 
 	port := config.AppConfig.APPPort
