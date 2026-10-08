@@ -5,9 +5,9 @@ services:
       dockerfile: Dockerfile
       tags:
         - kaizerd23/rikub-backend:${APP_TAG}
-        # platforms:
-        # - linux/arm64
-        # - linux/amd64
+      platforms:
+        - linux/arm64
+        - linux/amd64
 
     depends_on:
       migrate:
@@ -16,7 +16,7 @@ services:
         condition: service_started
 
     env_file:
-      - example.env
+      - prod.env
 
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
