@@ -13,3 +13,5 @@ mqtt
 mqtt/
 k6/*
 node_exporter
+
+k6/node_modules
