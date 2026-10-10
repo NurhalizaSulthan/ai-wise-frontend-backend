@@ -5,6 +5,7 @@ import (
 
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/config"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/dto"
+	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/enum"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/mappers"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/model"
 	mqttclient "github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/mqtt_client"
@@ -148,21 +149,26 @@ func NewDeviceService(
 
 func (s *DeviceServiceImpl) Create(dto *dto.DeviceCreate) (*dto.DeviceBase, error) {
 	tx := config.DB.Begin()
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	committed := false
 
 	defer func() {
 		if r := recover(); r != nil {
 			tx.Rollback()
+			panic(r)
+		}
+		if !committed {
+			tx.Rollback()
 		}
 	}()
 
-	pekerja, err := s.pr.GetPekerjaByUUID(tx, dto.PekerjaPublicID)
-
-	if err != nil {
-		return nil, err
-	}
-
 	model := &model.Device{
-		PekerjaID: &pekerja.InternalID,
+		Nama:       dto.Nama,
+		MacAddress: dto.MacAddress,
+		Status:     enum.Aktif,
 	}
 
 	data, err := s.r.CreateDevice(tx, model)
@@ -171,12 +177,15 @@ func (s *DeviceServiceImpl) Create(dto *dto.DeviceCreate) (*dto.DeviceBase, erro
 		return nil, err
 	}
 
-	topicString := fmt.Sprintf("telemetry/%s", data.PublicID)
-	s.mqttClient.AddTopic(data.InternalID, data.MacAddress, topicString)
-
 	if err := tx.Commit().Error; err != nil {
 		return nil, err
 	}
+
+	committed = true
+
+	topicString := fmt.Sprintf("telemetry/%s", data.PublicID)
+	s.mqttClient.AddTopic(data.InternalID, data.MacAddress, topicString)
+
 	return mappers.Map(data, mappers.ToDeviceBase), nil
 }
 
@@ -200,9 +209,18 @@ func (s *DeviceServiceImpl) GetAll() ([]dto.DeviceBase, error) {
 
 func (s *DeviceServiceImpl) Update(dto dto.DeviceUpdate) (*dto.DeviceBase, error) {
 	tx := config.DB.Begin()
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	committed := false
 
 	defer func() {
 		if r := recover(); r != nil {
+			tx.Rollback()
+			panic(r)
+		}
+		if !committed {
 			tx.Rollback()
 		}
 	}()
@@ -221,10 +239,9 @@ func (s *DeviceServiceImpl) Update(dto dto.DeviceUpdate) (*dto.DeviceBase, error
 		device.Status = *dto.Status
 	}
 
-	if dto.PekerjaID != nil {
-		device.PekerjaID = dto.PekerjaID
+	if dto.Nama != nil {
+		device.Nama = *dto.Nama
 	}
-
 	err = s.r.UpdateDevice(tx, device)
 
 	if err != nil {
@@ -234,5 +251,8 @@ func (s *DeviceServiceImpl) Update(dto dto.DeviceUpdate) (*dto.DeviceBase, error
 	if err := tx.Commit().Error; err != nil {
 		return nil, err
 	}
+
+	committed = true
+
 	return mappers.Map(device, mappers.ToDeviceBase), nil
 }

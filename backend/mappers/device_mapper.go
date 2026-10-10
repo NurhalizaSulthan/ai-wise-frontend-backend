@@ -13,6 +13,7 @@ func ToDeviceBase(d *model.Device) *dto.DeviceBase {
 
 	base := &dto.DeviceBase{
 		PublicID:   d.PublicID,
+		Nama:       d.Nama,
 		PekerjaID:  d.PekerjaID,
 		MacAddress: d.MacAddress,
 		Status:     d.Status,

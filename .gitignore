@@ -11,4 +11,5 @@ prometheus
 prometheus/
 mqtt
 mqtt/
+k6/*
 node_exporter

@@ -12,7 +12,9 @@ type Device struct {
 	InternalID int       `gorm:"column:internal_id;primaryKey;autoIncrement"`
 	PublicID   uuid.UUID `gorm:"column:public_id;default:gen_random_uuid()"`
 
-	PekerjaID  *int              `gorm:"column:pekerja_id;unique"`
+	PekerjaID *int `gorm:"column:pekerja_id;unique"`
+
+	Nama       string            `gorm:"column:nama"`
 	MacAddress string            `gorm:"column:mac_address;unique"`
 	Status     enum.DeviceStatus `gorm:"column:status;unique"`
 

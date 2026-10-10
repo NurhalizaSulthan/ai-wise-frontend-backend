@@ -13,6 +13,7 @@ type DeviceRepository interface {
 	CreateDevice(tx *gorm.DB, model *model.Device) (*model.Device, error)
 	UpdateDevice(tx *gorm.DB, update *model.Device) error
 	GetDeviceByPublicID(tx *gorm.DB, publicId uuid.UUID) (*model.Device, error)
+	RemoveByPekerja(tx *gorm.DB, pekerjaID int) error
 	GetAll(tx *gorm.DB) ([]model.Device, error)
 	GetWithPagination(tx *gorm.DB, after bool, publicID uuid.UUID, timestamp time.Time) ([]model.Device, error)
 	GetFirstPaginatio(tx *gorm.DB) ([]model.Device, error)
@@ -40,8 +41,15 @@ func (repo *DeviceRepositoryImpl) CreateDevice(tx *gorm.DB, model *model.Device)
 	return model, nil
 }
 
-func (repo *DeviceRepositoryImpl) UpdateDevice(tx *gorm.DB, update *model.Device) error {
-	return repo.getDB(tx).Model(&model.Device{}).Where("internal_id = ?", update.InternalID).Updates(update).Error
+func (repo *DeviceRepositoryImpl) UpdateDevice(
+	tx *gorm.DB,
+	update *model.Device,
+) error {
+	return repo.getDB(tx).
+		Model(&model.Device{}).
+		Where("internal_id = ?", update.InternalID).
+		Select("PekerjaID", "Nama", "MacAddress", "Status").
+		Updates(update).Error
 }
 
 func (repo *DeviceRepositoryImpl) GetDeviceByPublicID(tx *gorm.DB, publicID uuid.UUID) (*model.Device, error) {
@@ -56,6 +64,14 @@ func (repo *DeviceRepositoryImpl) GetDeviceByPublicID(tx *gorm.DB, publicID uuid
 	}
 
 	return device, nil
+}
+
+func (repo *DeviceRepositoryImpl) RemoveByPekerja(tx *gorm.DB, pekerjaID int) error {
+
+	if err := repo.getDB(tx).Model(&model.Device{}).Where("pekerja_id = ?", pekerjaID).Update("pekerja_id", nil).Error; err != nil {
+		return err
+	}
+	return nil
 }
 
 func (repo *DeviceRepositoryImpl) GetAll(tx *gorm.DB) ([]model.Device, error) {

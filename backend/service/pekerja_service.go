@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/config"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/dto"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/mappers"
@@ -144,16 +146,25 @@ func NewPekerjaService(
 }
 
 func (s *PekerjaServiceImpl) Create(dto *dto.PekerjaCreate) (*dto.PekerjaBase, error) {
-	// pengawas, err := s.pr.GetPengawasByUUID(dto.PengawasPublicID)
+	pengawas, err := s.pr.GetPengawasByUUID(nil, dto.PengawasPublicID)
 
-	// if err != nil {
-	// 	return nil, err
-	// }
+	if err != nil {
+		return nil, err
+	}
 
 	tx := config.DB.Begin()
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	committed := false
 
 	defer func() {
 		if r := recover(); r != nil {
+			tx.Rollback()
+			panic(r)
+		}
+		if !committed {
 			tx.Rollback()
 		}
 	}()
@@ -162,7 +173,7 @@ func (s *PekerjaServiceImpl) Create(dto *dto.PekerjaCreate) (*dto.PekerjaBase, e
 		Nama:         dto.Nama,
 		TanggalLahir: dto.TanggalLahir,
 		JenisKelamin: dto.JenisKelamin,
-		// PengawasID: pengawas.InternalID,
+		PengawasID:   pengawas.InternalID,
 	}
 
 	data, err := s.r.CreatePekerja(tx, model)
@@ -183,9 +194,13 @@ func (s *PekerjaServiceImpl) Create(dto *dto.PekerjaCreate) (*dto.PekerjaBase, e
 		return nil, err
 	}
 
+	data.Device = device
+
 	if err := tx.Commit().Error; err != nil {
 		return nil, err
 	}
+
+	committed = true
 
 	return mappers.Map(data, mappers.ToPekerjaBase), nil
 }
@@ -223,9 +238,18 @@ func (s *PekerjaServiceImpl) Update(
 	update *dto.PekerjaUpdate,
 ) (*dto.PekerjaBase, error) {
 	tx := config.DB.Begin()
+	if tx.Error != nil {
+		return nil, tx.Error
+	}
+
+	committed := false
 
 	defer func() {
 		if r := recover(); r != nil {
+			tx.Rollback()
+			panic(r)
+		}
+		if !committed {
 			tx.Rollback()
 		}
 	}()
@@ -236,21 +260,39 @@ func (s *PekerjaServiceImpl) Update(
 		return nil, err
 	}
 
-	if update.DevicePublicID != nil {
-		device, err := s.dr.GetDeviceByPublicID(tx, *update.DevicePublicID)
-
-		if err != nil {
-			return nil, err
-		}
-
-		device.PekerjaID = &model.InternalID
-
-		err = s.dr.UpdateDevice(tx, device)
-		if err != nil {
-			return nil, err
-		}
+	if model == nil {
+		return nil, errors.New("Pekerja not found")
 	}
 
+	if update.DevicePublicID != nil {
+		if model.Device == nil ||
+			model.Device.PublicID != *update.DevicePublicID {
+
+			if model.Device != nil {
+				model.Device.PekerjaID = nil
+
+				if err := s.dr.UpdateDevice(tx, model.Device); err != nil {
+					return nil, err
+				}
+			}
+
+			device, err := s.dr.GetDeviceByPublicID(
+				tx,
+				*update.DevicePublicID,
+			)
+			if err != nil {
+				return nil, err
+			}
+
+			device.PekerjaID = &model.InternalID
+
+			if err := s.dr.UpdateDevice(tx, device); err != nil {
+				return nil, err
+			}
+
+			model.Device = device
+		}
+	}
 	if update.Nama != nil {
 		model.Nama = *update.Nama
 	}
@@ -270,6 +312,9 @@ func (s *PekerjaServiceImpl) Update(
 	if err := tx.Commit().Error; err != nil {
 		return nil, err
 	}
+
+	committed = true
+
 	return mappers.Map(model, mappers.ToPekerjaBase), nil
 
 }
