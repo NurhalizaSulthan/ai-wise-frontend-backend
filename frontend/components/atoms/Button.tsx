@@ -1,15 +1,17 @@
 import React, { ReactNode } from "react";
 
 interface ButtonProps {
-  children?: ReactNode; // Button text or content
-  size?: "sm" | "md"; // Button size
-  variant?: "primary" | "secondary" | "outline"; // Button variant
-  startIcon?: ReactNode; // Icon before the text
-  endIcon?: ReactNode; // Icon after the text
-  onClick?: () => void; // Click handler
-  disabled?: boolean; // Disabled state
-  className?: string; // Disabled state
-  type?: "button" | "submit" | "reset";
+  children?: ReactNode;
+  size?: "sm" | "md";
+  variant?: "primary" | "secondary" | "outline";
+  startIcon?: ReactNode;
+  endIcon?: ReactNode;
+  onClick?: () => void;
+  active?: boolean;
+  activeClassName?: string;
+  inactiveClassName?: string;
+  disabled?: boolean;
+  className?: string;
 }
 
 const Button: React.FC<ButtonProps> = ({
@@ -19,17 +21,18 @@ const Button: React.FC<ButtonProps> = ({
   startIcon,
   endIcon,
   onClick,
+  active,
+  activeClassName = "bg-primary/30 text-primary shadow-lg",
+  inactiveClassName = "bg-background text-foreground hover:bg-muted/30",
   className = "",
   disabled = false,
 }) => {
-  // Size Classes
   const sizeClasses = {
     sm: "h-10 px-3 text-sm",
     md: "h-12 px-4 text-base",
     lg: "h-13 px-5 text-lg",
   };
 
-  // Variant Classes
   const variantClasses = {
     primary:
       "bg-primary text-background shadow-lg hover:bg-secondary disabled:bg-muted",
@@ -39,11 +42,18 @@ const Button: React.FC<ButtonProps> = ({
       "border-2 border-muted/50 text-muted",
   };
 
+  const stateClasses =
+    active === undefined
+      ? variantClasses[variant]
+      : active
+      ? activeClassName
+      : inactiveClassName;
+
   return (
     <button
-      className={`inline-flex items-center justify-center font-semibold gap-2 cursor-pointer rounded-lg tracking-widest transition ${className} ${sizeClasses[size]
-        } ${variantClasses[variant]} ${disabled ? "cursor-not-allowed opacity-50" : ""
-        }`}
+      className={`inline-flex items-center justify-center font-semibold gap-2 cursor-pointer rounded-lg tracking-widest transition ${className} ${sizeClasses[size]} ${stateClasses} ${
+        disabled ? "cursor-not-allowed opacity-50" : ""
+      }`}
       onClick={onClick}
       disabled={disabled}
     >
