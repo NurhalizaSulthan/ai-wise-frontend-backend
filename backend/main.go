@@ -6,9 +6,12 @@ import (
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/config"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/controller"
 	_ "github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/docs"
+	mqttclient "github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/mqtt_client"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/repositories"
 	route "github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/routes"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/service"
+	websocketutils "github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/ws_config"
+	fiberprometheus "github.com/gofiber/contrib/v3/prometheus"
 	"github.com/gofiber/contrib/v3/swaggo"
 	"github.com/gofiber/fiber/v3"
 	"github.com/gofiber/fiber/v3/log"
@@ -34,6 +37,7 @@ import (
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
+
 	config.LoadEnv()
 	config.ConnectToDB()
 
@@ -59,14 +63,43 @@ func main() {
 		},
 	))
 
+	prometheusConfig := fiberprometheus.Config{
+		ServiceName:         "backend-service",
+		MetricsPath:         "/metrics",
+		UnmatchedRouteLabel: "/__unmatched__",
+	}
+
+	prometheus := fiberprometheus.New(prometheusConfig)
+
+	app.Use(prometheus)
+
 	alertRepo := repositories.NewAlertRepository(config.DB)
 	deviceRepo := repositories.NewDeviceRepository(config.DB)
 	pekerjRepo := repositories.NewPekerjaRepository(config.DB)
 	pengawRepo := repositories.NewPengawasRepository(config.DB)
 	tlmtryRepo := repositories.NewTelemetryRepository(config.DB)
 
+	wsHub := websocketutils.NewHub()
+	go wsHub.Run()
+
+	wsController := websocketutils.NewWSController(wsHub)
+
+	brokerString := fmt.Sprintf("tcp://%s:%s", config.AppConfig.MQTT_HOST, config.AppConfig.MQTT_PORT)
+	mqttClient := mqttclient.NewMQTTClient(
+		brokerString,
+		config.AppConfig.MQTT_CLIENT,
+		tlmtryRepo,
+		deviceRepo,
+		wsHub,
+	)
+
+	mqttClient.StartTelemetryWorker()
+
+	if err := mqttClient.Connect(); err != nil {
+		log.Fatalf("Gagal terhubung ke MQTT broker: %v", err)
+	}
 	alertServ := service.NewAlertService(alertRepo, deviceRepo)
-	deviceServ := service.NewDeviceService(deviceRepo, pekerjRepo)
+	deviceServ := service.NewDeviceService(deviceRepo, pekerjRepo, mqttClient)
 	pekerjServ := service.NewPekerjaService(pekerjRepo, pengawRepo, deviceRepo)
 	pengawServ := service.NewPengawasService(pengawRepo)
 	tlmtryServ := service.NewTelemetryService(tlmtryRepo)
@@ -86,6 +119,7 @@ func main() {
 		deviceCont,
 		alertCont,
 		tlmtryCont,
+		wsController,
 	)
 
 	port := config.AppConfig.APPPort

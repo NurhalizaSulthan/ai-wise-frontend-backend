@@ -4,6 +4,8 @@ import (
 	"log"
 
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/controller"
+	websocketutils "github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/ws_config"
+	"github.com/gofiber/contrib/v3/websocket"
 	"github.com/gofiber/fiber/v3"
 	"github.com/joho/godotenv"
 )
@@ -16,10 +18,11 @@ func Setup(
 	deviceCont controller.DeviceController,
 	alertCont controller.AlertController,
 	tlmtryCont controller.TelemetryController,
+	wsContr *websocketutils.WSController,
 ) {
 	err := godotenv.Load(".env")
 	if err != nil {
-		log.Println("File ENV tidak ditemukan menggunakna konfigurasi awal")
+		log.Println("File ENV tidak ditemukan menggunakan konfigurasi awal")
 	}
 
 	auth := app.Group("/auth/v1")
@@ -60,11 +63,15 @@ func Setup(
 	api.Get("/pekerja", kerjaCont.GetAll)
 	api.Get("/pekerja/detail", kerjaCont.GetByPublicID)
 	api.Post("/pekerja", kerjaCont.Create)
+	api.Get("/pekerja/pagination", kerjaCont.Pagination)
+	api.Put("/pekerja", kerjaCont.Update)
 
 	// Device endpoint
 	api.Get("/device", deviceCont.GetAll)
 	api.Get("/device/detail", deviceCont.GetByPublicID)
 	api.Post("/device", deviceCont.Create)
+	api.Get("/device/pagination", deviceCont.Pagination)
+	api.Put("/device", deviceCont.Update)
 
 	api.Get("/alert", alertCont.GetAll)
 	api.Post("/alert", alertCont.Create)
@@ -74,4 +81,6 @@ func Setup(
 	api.Post("/telemetry", tlmtryCont.Create)
 	api.Get("/telemetry/detail", tlmtryCont.GetByPublicID)
 	api.Get("/telemetry/pagination", tlmtryCont.Pagination)
+
+	api.Get("/ws/mobile/:mac_address", wsContr.HandleSession, websocket.New(wsContr.HandleSessionWS))
 }

@@ -15,6 +15,8 @@ type PekerjaController interface {
 	Create(ctx fiber.Ctx) error
 	GetByPublicID(ctx fiber.Ctx) error
 	GetAll(ctx fiber.Ctx) error
+	Pagination(ctx fiber.Ctx) error
+	Update(ctx fiber.Ctx) error
 }
 
 type PekerjaControllerImpl struct {
@@ -52,14 +54,14 @@ func (a *PekerjaControllerImpl) Create(ctx fiber.Ctx) error {
 // @Description 	Endpoint untuk mengambil detail pekerja
 // @Tags 			Pekerja
 // @Produce 		json
-// @Param         	public_id query int true "Public ID anak"
+// @Param         	public_id query string true "Public ID anak"
 // @Success       	200 {object}   response.SuccessResponse{status=string, status_code=int, message=string, data=dto.PekerjaBase}
 // @Failure       	400 {object}   response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
 // @Failure       	500 {object}   response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security      	ApiKeyAuth
 // @Router 			/api/v1/pekerja/detail [get]
 func (a *PekerjaControllerImpl) GetByPublicID(ctx fiber.Ctx) error {
-	publicID := ctx.Params("public_id")
+	publicID := ctx.Query("public_id", "")
 	if publicID == "" {
 		return response.BadRequest(ctx, constants.RetrievalError, errors.New(constants.PublicIDMissingError))
 	}
@@ -101,4 +103,85 @@ func (a *PekerjaControllerImpl) GetAll(ctx fiber.Ctx) error {
 
 func NewPekerjaController(s service.PekerjaService) PekerjaController {
 	return &PekerjaControllerImpl{s: s}
+}
+
+// Pagination     godoc
+// @Summary       Pagination
+// @Description   Endpoint untuk paginasi data pekerja
+// @Tags          Pekerja
+// @Accept        json
+// @Produce       json
+// @Param         before  query  string  false  "Cursor untuk data sebelumnya"
+// @Param         after   query  string  false  "Cursor untuk data berikutnya"
+// @Success       200 {object} response.SuccessResponse{data=dto.PaginationDTO}
+// @Failure       400 {object} response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure       500 {object} response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Security      ApiKeyAuth
+// @Router        /api/v1/pekerja/pagination [get]
+func (a *PekerjaControllerImpl) Pagination(ctx fiber.Ctx) error {
+
+	before := ctx.Query("before")
+	after := ctx.Query("after")
+
+	if before != "" && after != "" {
+		return response.BadRequest(
+			ctx,
+			"Parameter before dan after tidak dapat digunakan bersamaan",
+			errors.New("Double Query"),
+		)
+	}
+
+	result, err := a.s.GetPagination(
+		before,
+		after,
+	)
+
+	if err != nil {
+		return response.InternalError(
+			ctx,
+			"Gagal mengambil paginasi",
+			err,
+		)
+	}
+
+	body := &dto.PaginationDTO{
+		Data:           result.Data,
+		NextCursor:     result.NextCursor,
+		PreviousCursor: result.PreviousCursor,
+		HasNext:        result.HasNext,
+		HasPrevious:    result.HasPrevious,
+	}
+
+	return response.Success(
+		ctx,
+		"Sukses mengambil paginasi",
+		body,
+	)
+}
+
+// Update     	godoc
+// @Summary       Update
+// @Description   Endpoint untuk update data pekerja
+// @Tags          Pekerja
+// @Accept        json
+// @Produce       json
+// @Param         update  body dto.PekerjaUpdate  false  "Data update pekerja"
+// @Success       200 {object} response.SuccessResponse{data=dto.PekerjaBase}
+// @Failure       400 {object} response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
+// @Failure       500 {object} response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
+// @Security      ApiKeyAuth
+// @Router        /api/v1/pekerja [put]
+func (c *PekerjaControllerImpl) Update(ctx fiber.Ctx) error {
+	update := &dto.PekerjaUpdate{}
+
+	if err := ctx.Bind().Body(update); err != nil {
+		return response.BadRequest(ctx, "Gagal mengupdate pekerja", err)
+	}
+
+	resp, err := c.s.Update(update)
+	if err != nil {
+		return response.InternalError(ctx, "Gagal mengupdate pekerja", err)
+	}
+
+	return response.Success(ctx, "Sukses mengupdate pekerja", resp)
 }

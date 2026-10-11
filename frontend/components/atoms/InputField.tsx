@@ -44,7 +44,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
     ref
   ) => {
     const baseClasses =
-      "w-full rounded-lg border-2 border-border px-5 py-3 text-base text-primary placeholder:text-muted outline-none transition focus:ring-2";
+      "w-full rounded-lg border-2 border-border bg-transparent px-5 py-3 text-base text-foreground placeholder:text-muted outline-none transition focus:ring-2";
 
     const iconPadding = `${startIcon ? "pl-11" : ""} ${endIcon ? "pr-11" : ""}`;
 
@@ -53,7 +53,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>(
       : error
         ? "border-danger/50 text-danger focus:border-danger focus:ring-danger/20"
         : success
-          ? "border-primary/50 text-primary focus:border-primary focus:ring-primary/20"
+          ? "border-primary/50 focus:border-primary focus:ring-primary/20"
           : "border-muted/50 focus:border-primary focus:ring-primary/20";
 
     const hintClasses = error

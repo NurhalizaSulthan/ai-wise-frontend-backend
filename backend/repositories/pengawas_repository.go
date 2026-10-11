@@ -7,34 +7,40 @@ import (
 )
 
 type PengawasRepository interface {
-	CreatePengawas(model *model.Pengawas) (*model.Pengawas, error)
-	GetPengawasByUUID(public_id uuid.UUID) (*model.Pengawas, error)
-	GetByPengawasNama(nama string)(*model.Pengawas, error)
-	GetAll() ([]model.Pengawas, error)
-
+	CreatePengawas(tx *gorm.DB, model *model.Pengawas) (*model.Pengawas, error)
+	GetPengawasByUUID(tx *gorm.DB, public_id uuid.UUID) (*model.Pengawas, error)
+	GetByPengawasNama(tx *gorm.DB, nama string) (*model.Pengawas, error)
+	GetAll(tx *gorm.DB) ([]model.Pengawas, error)
 }
 
 type PengawasRepositoryImpl struct {
 	db *gorm.DB
 }
 
-func NewPengawasRepository (db *gorm.DB) PengawasRepository{
+func (r *PengawasRepositoryImpl) getDB(tx *gorm.DB) *gorm.DB {
+	if tx != nil {
+		return tx
+	}
+	return r.db
+}
+
+func NewPengawasRepository(db *gorm.DB) PengawasRepository {
 	return &PengawasRepositoryImpl{db: db}
 }
 
-func (repo *PengawasRepositoryImpl)	CreatePengawas(model *model.Pengawas) (*model.Pengawas, error) {
+func (repo *PengawasRepositoryImpl) CreatePengawas(tx *gorm.DB, model *model.Pengawas) (*model.Pengawas, error) {
 
-	if err := repo.db.Create(&model).Error; err != nil {
+	if err := repo.getDB(tx).Create(&model).Error; err != nil {
 		return nil, err
 	}
 
 	return model, nil
 }
 
-func (repo *PengawasRepositoryImpl) GetPengawasByUUID(public_id uuid.UUID) (*model.Pengawas, error) {
+func (repo *PengawasRepositoryImpl) GetPengawasByUUID(tx *gorm.DB, public_id uuid.UUID) (*model.Pengawas, error) {
 	gormModel := &model.Pengawas{}
 
-	if err := repo.db.
+	if err := repo.getDB(tx).
 		Preload("ListPekerja").Where("public_id = ?", public_id).First(&gormModel).Error; err != nil {
 		return nil, err
 	}
@@ -42,23 +48,22 @@ func (repo *PengawasRepositoryImpl) GetPengawasByUUID(public_id uuid.UUID) (*mod
 	return gormModel, nil
 }
 
-func (repo *PengawasRepositoryImpl) GetByPengawasNama(nama string)(*model.Pengawas, error) {
+func (repo *PengawasRepositoryImpl) GetByPengawasNama(tx *gorm.DB, nama string) (*model.Pengawas, error) {
 	gormModel := &model.Pengawas{}
 
-	if err := repo.db.Where("nama = ?", nama).First(gormModel).Error; err != nil {
+	if err := repo.getDB(tx).Where("nama = ?", nama).First(gormModel).Error; err != nil {
 		return nil, err
 	}
 
 	return gormModel, nil
 }
 
-func (repo *PengawasRepositoryImpl) GetAll() ([]model.Pengawas, error) {
+func (repo *PengawasRepositoryImpl) GetAll(tx *gorm.DB) ([]model.Pengawas, error) {
 	var list []model.Pengawas
 
-	if err := repo.db.Find(&list).Error; err != nil {
+	if err := repo.getDB(tx).Find(&list).Error; err != nil {
 		return nil, err
 	}
 
 	return list, nil
-} 
-
+}

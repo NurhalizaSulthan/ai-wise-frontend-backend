@@ -6,10 +6,10 @@ import (
 )
 
 func ToPekerjaBase(p *model.Pekerja) *dto.PekerjaBase {
-	if p ==  nil {
+	if p == nil {
 		return nil
 	}
-	
+
 	base := &dto.PekerjaBase{
 		PublicID:     p.PublicID,
 		Nama:         p.Nama,
@@ -19,7 +19,7 @@ func ToPekerjaBase(p *model.Pekerja) *dto.PekerjaBase {
 	}
 
 	if device := Map(p.Device, ToDeviceBase); device != nil {
-		base.Device = *device
+		base.Device = device
 	}
 
 	return base
@@ -31,10 +31,10 @@ func ToPekerjaModel(p *dto.PekerjaBase) *model.Pekerja {
 	}
 
 	base := &model.Pekerja{
-		Nama: p.Nama,
+		Nama:         p.Nama,
 		TanggalLahir: p.TanggalLahir,
 		JenisKelamin: p.JenisKelamin,
-		PengawasID: p.PengawasID,
+		PengawasID:   p.PengawasID,
 	}
 
 	return base

@@ -22,6 +22,10 @@ type Config struct {
 	JWTSecret       string
 	JWTTokenExpiry  string
 	JWTRefreshToken string
+
+	MQTT_HOST   string
+	MQTT_PORT   string
+	MQTT_CLIENT string
 }
 
 var (
@@ -47,6 +51,10 @@ func LoadEnv() {
 		JWTSecret:       getEnv("JWT_SECRET", "secretkey"),
 		JWTTokenExpiry:  getEnv("JWT_TOKEN_EXPIRY", "900"),
 		JWTRefreshToken: getEnv("JWT_REFRESH_TOKEN", "1800"),
+
+		MQTT_HOST:   getEnv("MQTT_HOST", "localhost"),
+		MQTT_PORT:   getEnv("MQTT_PORT", "1883"),
+		MQTT_CLIENT: getEnv("MQTT_CLIET", "rikub_backend"),
 	}
 }
 

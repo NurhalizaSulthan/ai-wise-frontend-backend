@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/config"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/dto"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/mappers"
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/model"
@@ -9,46 +10,54 @@ import (
 )
 
 type AlertService interface {
-	Create(dto *dto.AlertCreate)(*dto.AlertBase, error)
+	Create(dto *dto.AlertCreate) (*dto.AlertBase, error)
 	GetByPublicID(publicID uuid.UUID) (*dto.AlertBase, error)
-	GetAll(
-		// deviceID *int, 
-		// jenisAlert *enum.JenisAlert, 
-		// tingkatAlert *enum.TingkatKeparahan
-		)([]dto.AlertBase, error)
+	GetAll() ([]dto.AlertBase, error)
 }
 
 type AlertServiceImpl struct {
-	r repositories.AlertRepositories
+	r  repositories.AlertRepositories
 	dr repositories.DeviceRepository
 }
 
 func NewAlertService(
-		r repositories.AlertRepositories,
-		dr repositories.DeviceRepository,
-	) AlertService {
+	r repositories.AlertRepositories,
+	dr repositories.DeviceRepository,
+) AlertService {
 	return &AlertServiceImpl{
-		r: r,
+		r:  r,
 		dr: dr,
 	}
 }
 
+func (s *AlertServiceImpl) Create(dto *dto.AlertCreate) (*dto.AlertBase, error) {
 
-func (s *AlertServiceImpl) Create(dto *dto.AlertCreate)(*dto.AlertBase, error) {
-	device, err := s.dr.GetDeviceByPublicID(dto.DevicePublicID)
+	tx := config.DB.Begin()
+
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+
+	device, err := s.dr.GetDeviceByPublicID(tx, dto.DevicePublicID)
 	if err != nil {
 		return nil, err
-	} 
+	}
 
 	model := &model.Alert{
-		DeviceID: device.InternalID,
-		JenisAlert: dto.JenisAlert,
+		DeviceID:     device.InternalID,
+		JenisAlert:   dto.JenisAlert,
 		TingkatAlert: dto.TingkatAlert,
 	}
 
-	data, err := s.r.CreateAlert(model)
+	data, err := s.r.CreateAlert(tx, model)
 
 	if err != nil {
+		return nil, err
+	}
+
+	if err := tx.Commit().Error; err != nil {
 		return nil, err
 	}
 
@@ -56,7 +65,7 @@ func (s *AlertServiceImpl) Create(dto *dto.AlertCreate)(*dto.AlertBase, error) {
 }
 
 func (s *AlertServiceImpl) GetByPublicID(publicID uuid.UUID) (*dto.AlertBase, error) {
-	data, err := s.r.GetAlertByPublicId(publicID)
+	data, err := s.r.GetAlertByPublicId(nil, publicID)
 
 	if err != nil {
 		return nil, err
@@ -66,19 +75,18 @@ func (s *AlertServiceImpl) GetByPublicID(publicID uuid.UUID) (*dto.AlertBase, er
 }
 
 func (s *AlertServiceImpl) GetAll(
-	// deviceID *int, 
-	// jenisAlert *enum.JenisAlert,
-	// tingkatAlert *enum.TingkatKeparahan
-	 )([]dto.AlertBase, error) {
+// deviceID *int,
+// jenisAlert *enum.JenisAlert,
+// tingkatAlert *enum.TingkatKeparahan
+) ([]dto.AlertBase, error) {
 	// filter := &repositories.AlertFilter{
 	// 	DeviceID: deviceID,
 	// 	JenisAlert: jenisAlert,
 	// 	TingkatAlert: tingkatAlert,
 	// }
 
-	data, err := s.r.GetAll(
-		// *filter
-	)
+	data, err := s.r.GetAll(nil) // *filter
+
 	if err != nil {
 		return nil, err
 	}

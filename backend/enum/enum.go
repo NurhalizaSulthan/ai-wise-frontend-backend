@@ -19,50 +19,67 @@ func scanStringLike(dst *string, value interface{}) error {
 		return errors.New(constants.EnumParsingError)
 	}
 
-	return  nil
+	return nil
 }
 
 type JenisAlert string
 
 const (
-	Jatuh JenisAlert = "Jatuh"
-	Postur	JenisAlert = "Postur Tubuh"
-	Cuaca	JenisAlert	= "Cuaca Ekstrem"
+	Jatuh  JenisAlert = "Jatuh"
+	Postur JenisAlert = "Postur Tubuh"
+	Cuaca  JenisAlert = "Cuaca Ekstrem"
 )
 
 func (j *JenisAlert) Scan(value interface{}) error {
 	return scanStringLike((*string)(j), value)
-} 
+}
 
 func (j JenisAlert) Value() (driver.Value, error) {
 	return string(j), nil
 }
 
 type TingkatKeparahan string
+
 const (
-	Tinggi TingkatKeparahan = "Tinggi"
-	Menengah	TingkatKeparahan = "Menengah"
-	Rendah	TingkatKeparahan	= "Rendah"
+	Tinggi   TingkatKeparahan = "Tinggi"
+	Menengah TingkatKeparahan = "Menengah"
+	Rendah   TingkatKeparahan = "Rendah"
 )
 
 func (t *TingkatKeparahan) Scan(value interface{}) error {
 	return scanStringLike((*string)(t), value)
-} 
+}
 
 func (t TingkatKeparahan) Value() (driver.Value, error) {
 	return string(t), nil
 }
 
 type PengawasRole string
+
 const (
-	Admin PengawasRole = "Admin"
-	Pengawas	PengawasRole = "Pengawas"
+	Admin    PengawasRole = "Admin"
+	Pengawas PengawasRole = "Pengawas"
 )
 
 func (t *PengawasRole) Scan(value interface{}) error {
 	return scanStringLike((*string)(t), value)
-} 
+}
 
 func (t PengawasRole) Value() (driver.Value, error) {
+	return string(t), nil
+}
+
+type DeviceStatus string
+
+const (
+	Aktif      DeviceStatus = "aktif"
+	TidakAktif DeviceStatus = "tidak aktif"
+)
+
+func (t *DeviceStatus) Scan(value interface{}) error {
+	return scanStringLike((*string)(t), value)
+}
+
+func (t DeviceStatus) Value() (driver.Value, error) {
 	return string(t), nil
 }
