@@ -1,3 +1,52 @@
+import apiFetch from '@/lib/api/client';
+import { endpoints } from '@/lib/api/endpoints';
+import { FetchDevicesResponse, FetchDevicesPageResponse, CreateDevice, CreateDeviceResponse, UpdateDeviceResponse, UpdateDevice } from '@/types/device';
+
+// GET ALL DEVICES
+const fetchDevices = (signal?: AbortSignal) => {
+  return apiFetch<FetchDevicesResponse>(endpoints.devices, { signal });
+};
+
+interface PageParams {
+  after?: string;
+  before?: string;
+}
+
+// GET ALL DEVICES WITH PAGINATION
+const fetchDevicesPage = (params: PageParams = {}, signal?: AbortSignal) => {
+  const qs = new URLSearchParams();
+
+  if (params.after) qs.set('after', params.after);
+  else if (params.before) qs.set('before', params.before);
+
+  const query = qs.toString();
+  const url = `${endpoints.devices}/pagination${query ? `?${query}` : ''}`;
+  return apiFetch<FetchDevicesPageResponse>(url, { signal });
+};
+
+
+// CREATE DEVICE
+const createDevice = (payload: CreateDevice, signal?: AbortSignal) => {
+  return apiFetch<CreateDeviceResponse>(endpoints.devices, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+    signal,
+  })
+}
+
+// UPDATE DEVICE
+const updateDevice = (payload: UpdateDevice, signal?: AbortSignal) =>
+  apiFetch<UpdateDeviceResponse>(endpoints.devices, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+    signal,
+  });
+
+export { fetchDevices, fetchDevicesPage, createDevice, updateDevice };
+
+
 // Suggested location in your project: lib/devices.ts
 //
 // ---------------------------------------------------------------
