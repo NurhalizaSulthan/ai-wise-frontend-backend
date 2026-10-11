@@ -6,7 +6,6 @@ import dynamic from "next/dynamic";
 import { Dropdown } from "../atoms/Dropdown";
 import { DropdownItem } from "../atoms/DropdownItem";
 import { Icon } from "@iconify/react";
-// import { MoreDotIcon } from "@/icons";
 
 const ReactECharts = dynamic(() => import("echarts-for-react"), { ssr: false });
 
@@ -21,33 +20,20 @@ export default function PieChart() {
     setIsOpen(false);
   };
 
+  // Hanya membandingkan 2 jenis risiko
   const data = [
     {
-      value: 20,
-      name: "	Fall Risk",
+      value: 40,
+      name: "Fall Risk",
       itemStyle: {
         color: "#46C0D9",
       },
     },
     {
-      value: 15,
-      name: "	Hazardous Work Posture",
+      value: 60,
+      name: "Hazardous Work Posture",
       itemStyle: {
         color: "#F5AE4B",
-      },
-    },
-    {
-      value: 35,
-      name: "	Fatigue",
-      itemStyle: {
-        color: "#7C6CF5",
-      },
-    },
-    {
-      value: 30,
-      name: "	Heat Exposure",
-      itemStyle: {
-        color: "#F38A84",
       },
     },
   ];
@@ -113,6 +99,7 @@ export default function PieChart() {
   return (
     <div className="rounded-2xl border border-border bg-surface dark:border-border dark:bg-surface">
       <div className="px-5 pt-5 sm:px-6">
+
         {/* Header */}
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-foreground dark:text-foreground">
@@ -161,6 +148,7 @@ export default function PieChart() {
             }}
           />
         </div>
+
       </div>
     </div>
   );

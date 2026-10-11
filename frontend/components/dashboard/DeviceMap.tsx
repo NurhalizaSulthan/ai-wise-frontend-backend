@@ -70,8 +70,6 @@ export default function DeviceMap() {
     import("leaflet").then((L) => {
       if (!mounted) return;
 
-      // [DITAMBAHKAN] Path SVG asli ikon "mdi:map-marker" (Material Design Icons),
-      // ditulis langsung sebagai string statis — tidak perlu fetch API, pasti render.
       const buildIcon = (color: string) => {
         const svg = `
           <svg xmlns="http://www.w3.org/2000/svg" width="38" height="38" viewBox="0 0 24 24"
@@ -105,21 +103,21 @@ export default function DeviceMap() {
       <div className="mb-4 flex items-center justify-between">
         <div>
           <h3 className="text-lg font-semibold text-foreground">
-            Peta Lokasi Alat
+            Device Location Map
           </h3>
           <p className="mt-1 text-sm text-muted">
-            Status posisi perangkat secara real-time
+            Real-time device position status
           </p>
         </div>
 
         <div className="flex items-center gap-4 text-sm text-muted">
           <div className="flex items-center gap-2">
             <span className="size-3 rounded-full bg-[#22C55E]" />
-            Aktif
+           Active
           </div>
           <div className="flex items-center gap-2">
             <span className="size-3 rounded-full bg-[#9CA3AF]" />
-            Tidak Aktif
+            Inactive
           </div>
         </div>
       </div>
@@ -148,11 +146,11 @@ export default function DeviceMap() {
                     <p className="font-semibold">{device.name}</p>
                     <p>
                       Status:{" "}
-                      {device.status === "active" ? "Aktif" : "Tidak Aktif"}
+                      {device.status === "active" ? "Active" : "Inactive"}
                     </p>
                     {device.status === "inactive" && device.lastActiveAt && (
                       <p className="text-muted">
-                        Terakhir aktif: {device.lastActiveAt}
+                        Last active: {device.lastActiveAt}
                       </p>
                     )}
                   </div>
@@ -162,7 +160,7 @@ export default function DeviceMap() {
           </MapContainer>
         ) : (
           <div className="flex h-full w-full items-center justify-center text-sm text-muted">
-            Memuat peta...
+            Loading map...
           </div>
         )}
       </div>
