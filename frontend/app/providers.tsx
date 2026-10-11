@@ -1,7 +1,21 @@
 "use client";
 
 import React from "react";
-import { ThemeProvider } from "next-themes";
+import { ThemeProvider, useTheme } from "next-themes";
+import { Toaster } from "sonner";
+
+const ThemedToaster = () => {
+    const { resolvedTheme } = useTheme();
+    return (
+        <Toaster
+            theme={resolvedTheme as "light" | "dark"}
+            position="bottom-right"
+            richColors
+            closeButton
+            toastOptions={{ duration: 4000 }}
+        />
+    );
+};
 
 const Providers = ({ children }: { children: React.ReactNode }) => {
     return (
@@ -13,6 +27,7 @@ const Providers = ({ children }: { children: React.ReactNode }) => {
             storageKey="ai-wise-theme"
         >
             {children}
+            <ThemedToaster />
         </ThemeProvider>
     );
 };
