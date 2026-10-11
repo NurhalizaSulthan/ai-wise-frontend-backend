@@ -1,0 +1,1 @@
+DROP INDEX telemetries.idx_telemetry_uid_created_at;

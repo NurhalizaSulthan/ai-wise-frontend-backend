@@ -1,2 +1,17 @@
 API CONTRACT- GoReact - Project Management System.pdf
 API%20Contract%20Example%20Spec.md
+
+.env
+postgres
+grafana/*
+grafana/*/grafana.db
+grafana/grafana-data/grafana.db
+grafana/grafana-data/plugins/grafana-lokiexplore-app/*
+prometheus
+prometheus/
+mqtt
+mqtt/
+k6/*
+node_exporter
+
+k6/node_modules

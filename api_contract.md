@@ -1,10 +1,13 @@
 # RIKUB AI-Wise — Sistem Monitoring Kesehatan dan Keselamatan Kerja (K3)
+
 **Version 1**
 
 **Base URL**
-- Development: `http://192.168.1.101:5000`
+
+- Development: `http://192.168.1.101:4000`
 
 **Authentication**
+
 - HTTP Authorization, Schema: `Bearer`
 
 ---
@@ -17,15 +20,15 @@ Login dan mendapatkan bearer token.
 
 **Headers**
 
-| Key | Value |
-|---|---|
+| Key          | Value            |
+| ------------ | ---------------- |
 | Content-Type | application/json |
 
 **Request Body**
 
 ```json
 {
-  "public_id": "string",
+  "nama": "string",
   "password": "string"
 }
 ```
@@ -33,6 +36,7 @@ Login dan mendapatkan bearer token.
 **Responses**
 
 `200 OK`
+
 ```json
 {
   "Status": "200 Status OK",
@@ -43,6 +47,7 @@ Login dan mendapatkan bearer token.
 ```
 
 `401 Unauthorized`
+
 ```json
 {
   "Status": "401 Unauthorized",
@@ -57,6 +62,7 @@ Login dan mendapatkan bearer token.
 ## Pengawas
 
 **Object**
+
 ```json
 {
   "public_id": "string",
@@ -71,14 +77,14 @@ Mendapatkan daftar seluruh pengawas.
 
 **Headers**
 
-| Key | Value |
-|---|---|
+| Key          | Value            |
+| ------------ | ---------------- |
 | Content-Type | application/json |
-| Authorization | Bearer `<token>` |
 
 **Responses**
 
 `200 OK`
+
 ```json
 {
   "Status": "200 Status OK",
@@ -95,6 +101,7 @@ Mendapatkan daftar seluruh pengawas.
 ```
 
 `400 Bad Request`
+
 ```json
 {
   "Status": "400 Bad Request",
@@ -105,6 +112,7 @@ Mendapatkan daftar seluruh pengawas.
 ```
 
 `401 Unauthorized`
+
 ```json
 {
   "Status": "401 Unauthorized",
@@ -115,6 +123,139 @@ Mendapatkan daftar seluruh pengawas.
 ```
 
 `404 Not Found`
+
+```json
+{
+  "Status": "404 Not Found",
+  "StatusCode": 404,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+### POST `/api/v1/pengawas`
+
+Mendaftarkan pengawas.
+
+**Headers**
+
+| Key          | Value            |
+| ------------ | ---------------- |
+| Content-Type | application/json |
+
+**Request Body**
+
+```json
+{
+  "nama": "string",
+  "role": "string",
+  "password": "string"
+}
+```
+
+**Responses**
+
+`200 OK`
+
+```json
+{
+  "Status": "200 Status OK",
+  "StatusCode": 200,
+  "Message": "string",
+  "Data": [
+    {
+      "public_id": "string",
+      "nama": "string",
+      "role": "string"
+    }
+  ]
+}
+```
+
+`400 Bad Request`
+
+```json
+{
+  "Status": "400 Bad Request",
+  "StatusCode": 400,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+`401 Unauthorized`
+
+```json
+{
+  "Status": "401 Unauthorized",
+  "StatusCode": 401,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+`404 Not Found`
+
+```json
+{
+  "Status": "404 Not Found",
+  "StatusCode": 404,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+### GET `/api/v1/pengawas?public_id=`
+
+Mendapatkan detail pengawas.
+
+**Headers**
+
+| Key          | Value            |
+| ------------ | ---------------- |
+| Content-Type | application/json |
+
+**Responses**
+
+`200 OK`
+
+```json
+{
+  "Status": "200 Status OK",
+  "StatusCode": 200,
+  "Message": "string",
+  "Data": {
+    "public_id": "string",
+    "nama": "string",
+    "role": "string"
+  }
+}
+```
+
+`400 Bad Request`
+
+```json
+{
+  "Status": "400 Bad Request",
+  "StatusCode": 400,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+`401 Unauthorized`
+
+```json
+{
+  "Status": "401 Unauthorized",
+  "StatusCode": 401,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+`404 Not Found`
+
 ```json
 {
   "Status": "404 Not Found",
@@ -129,6 +270,7 @@ Mendapatkan daftar seluruh pengawas.
 ## Pekerja
 
 **Object**
+
 ```json
 {
   "public_id": "string",
@@ -145,14 +287,14 @@ Mendapatkan daftar seluruh pekerja.
 
 **Headers**
 
-| Key | Value |
-|---|---|
+| Key          | Value            |
+| ------------ | ---------------- |
 | Content-Type | application/json |
-| Authorization | Bearer `<token>` |
 
 **Responses**
 
 `200 OK`
+
 ```json
 {
   "Status": "200 Status OK",
@@ -171,6 +313,7 @@ Mendapatkan daftar seluruh pekerja.
 ```
 
 `400 Bad Request`
+
 ```json
 {
   "Status": "400 Bad Request",
@@ -181,6 +324,7 @@ Mendapatkan daftar seluruh pekerja.
 ```
 
 `401 Unauthorized`
+
 ```json
 {
   "Status": "401 Unauthorized",
@@ -191,6 +335,142 @@ Mendapatkan daftar seluruh pekerja.
 ```
 
 `404 Not Found`
+
+```json
+{
+  "Status": "404 Not Found",
+  "StatusCode": 404,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+### POST `/api/v1/pekerja`
+
+Mendaftarkan pekerja.
+
+**Headers**
+
+| Key          | Value            |
+| ------------ | ---------------- |
+| Content-Type | application/json |
+
+**Request Body**
+
+```json
+{
+  "nama": "string",
+  "tanggal_lahir": "00:00:0000T00:00Z",
+  "jenis_kelamin": "string",
+  "device_public_id": "string"
+}
+```
+
+**Responses**
+
+`200 OK`
+
+```json
+{
+  "Status": "200 Status OK",
+  "StatusCode": 200,
+  "Message": "string",
+  "Data": [
+    {
+      "public_id": "string",
+      "nama": "string",
+      "tanggal_lahir": "00:00:0000T00:00Z",
+      "jenis_kelamin": "L | P"
+    }
+  ]
+}
+```
+
+`400 Bad Request`
+
+```json
+{
+  "Status": "400 Bad Request",
+  "StatusCode": 400,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+`401 Unauthorized`
+
+```json
+{
+  "Status": "401 Unauthorized",
+  "StatusCode": 401,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+`404 Not Found`
+
+```json
+{
+  "Status": "404 Not Found",
+  "StatusCode": 404,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+### GET `/api/v1/pekerja?public_id=`
+
+Mendapatkan detail pekerja
+
+**Headers**
+
+| Key          | Value            |
+| ------------ | ---------------- |
+| Content-Type | application/json |
+
+**Responses**
+
+`200 OK`
+
+```json
+{
+  "Status": "200 Status OK",
+  "StatusCode": 200,
+  "Message": "string",
+  "Data": {
+    "public_id": "string",
+    "nama": "string",
+    "tanggal_lahir": "00:00:0000T00:00Z",
+    "jenis_kelamin": "L | P"
+  }
+}
+```
+
+`400 Bad Request`
+
+```json
+{
+  "Status": "400 Bad Request",
+  "StatusCode": 400,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+`401 Unauthorized`
+
+```json
+{
+  "Status": "401 Unauthorized",
+  "StatusCode": 401,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+`404 Not Found`
+
 ```json
 {
   "Status": "404 Not Found",
@@ -205,10 +485,28 @@ Mendapatkan daftar seluruh pekerja.
 ## Device
 
 **Object**
+
 ```json
 {
   "public_id": "string",
-  "pekerja_id": 0
+  "pekerja_id": 0,
+  "telemetry": [
+    {
+      "public_id": "string",
+      "acc_x": 0.0,
+      "acc_y": 0.0,
+      "acc_z": 0.0,
+      "gyro_x": 0.0,
+      "gyro_y": 0.0,
+      "gyro_z": 0.0,
+      "roll": 0.0,
+      "pitch": 0.0,
+      "yaw": 0.0,
+      "latitude": 0.0,
+      "longitude": 0.0,
+      "created_at": "00:00:0000T00:00Z"
+    }
+  ]
 }
 ```
 
@@ -218,14 +516,14 @@ Mendapatkan daftar seluruh device.
 
 **Headers**
 
-| Key | Value |
-|---|---|
+| Key          | Value            |
+| ------------ | ---------------- |
 | Content-Type | application/json |
-| Authorization | Bearer `<token>` |
 
 **Responses**
 
 `200 OK`
+
 ```json
 {
   "Status": "200 Status OK",
@@ -241,6 +539,7 @@ Mendapatkan daftar seluruh device.
 ```
 
 `400 Bad Request`
+
 ```json
 {
   "Status": "400 Bad Request",
@@ -251,6 +550,7 @@ Mendapatkan daftar seluruh device.
 ```
 
 `401 Unauthorized`
+
 ```json
 {
   "Status": "401 Unauthorized",
@@ -261,6 +561,75 @@ Mendapatkan daftar seluruh device.
 ```
 
 `404 Not Found`
+
+```json
+{
+  "Status": "404 Not Found",
+  "StatusCode": 404,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+### GET `/api/v1/device/detail?public_id=xxxxxxxxxxxxxx`
+
+Mendapatkan detail sebuah device.
+
+**Headers**
+
+| Key          | Value            |
+| ------------ | ---------------- |
+| Content-Type | application/json |
+
+**Query**
+`public_id` ID Publik dari device
+
+**Responses**
+
+`200 OK`
+
+```json
+{
+  "Status": "200 Status OK",
+  "StatusCode": 200,
+  "Message": "string",
+  "Data": {
+    "public_id": "string",
+    "pekerja_id": 0,
+    "telemetry": [
+      {
+        "public_id": "string",
+        "acc_x": 0.0,
+        "acc_y": 0.0,
+        "acc_z": 0.0,
+        "gyro_x": 0.0,
+        "gyro_y": 0.0,
+        "gyro_z": 0.0,
+        "roll": 0.0,
+        "pitch": 0.0,
+        "yaw": 0.0,
+        "latitude": 0.0,
+        "longitude": 0.0,
+        "created_at": "00:00:0000T00:00Z"
+      }
+    ]
+  }
+}
+```
+
+`400 Bad Request`
+
+```json
+{
+  "Status": "400 Bad Request",
+  "StatusCode": 400,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+`500 Internal Server Error`
+
 ```json
 {
   "Status": "404 Not Found",
@@ -275,7 +644,17 @@ Mendapatkan daftar seluruh device.
 ## Alert
 
 **Object**
-```json
+
+```base
+{
+  "public_id": "string",
+  "device_id": 0,
+  "jenis_alert": "Jatuh | Postur Tubuh | Cuaca Ekstrem",
+  "tingkat_keparahan": "Tinggi | Menengah | Rendah"
+}
+```
+
+```create
 {
   "public_id": "string",
   "device_id": 0,
@@ -290,14 +669,14 @@ Mendapatkan daftar seluruh alert.
 
 **Headers**
 
-| Key | Value |
-|---|---|
+| Key          | Value            |
+| ------------ | ---------------- |
 | Content-Type | application/json |
-| Authorization | Bearer `<token>` |
 
 **Responses**
 
 `200 OK`
+
 ```json
 {
   "Status": "200 Status OK",
@@ -315,6 +694,7 @@ Mendapatkan daftar seluruh alert.
 ```
 
 `400 Bad Request`
+
 ```json
 {
   "Status": "400 Bad Request",
@@ -325,6 +705,7 @@ Mendapatkan daftar seluruh alert.
 ```
 
 `401 Unauthorized`
+
 ```json
 {
   "Status": "401 Unauthorized",
@@ -335,6 +716,343 @@ Mendapatkan daftar seluruh alert.
 ```
 
 `404 Not Found`
+
+```json
+{
+  "Status": "404 Not Found",
+  "StatusCode": 404,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+### GET `/api/v1/alert/detail?public_id=xxxxxxxxxxxxxx`
+
+Mendapatkan detail sebuah alert.
+
+**Headers**
+
+| Key          | Value            |
+| ------------ | ---------------- |
+| Content-Type | application/json |
+
+**Query**
+`public_id` ID Publik dari alert
+
+**Responses**
+
+`200 OK`
+
+```json
+{
+  "Status": "200 Status OK",
+  "StatusCode": 200,
+  "Message": "string",
+  "Data": {
+    "public_id": "string",
+    "device_id": 0,
+    "jenis_alert": "Jatuh | Postur Tubuh | Cuaca Ekstrem",
+    "tingkat_keparahan": "Tinggi | Menengah | Rendah"
+  }
+}
+```
+
+`400 Bad Request`
+
+```json
+{
+  "Status": "400 Bad Request",
+  "StatusCode": 400,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+`500 Internal Server Error`
+
+```json
+{
+  "Status": "404 Not Found",
+  "StatusCode": 404,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+### POST `/api/v1/alert/`
+
+Menambahkan alert baru
+
+**Headers**
+
+| Key          | Value            |
+| ------------ | ---------------- |
+| Content-Type | application/json |
+| Payload      | alert-create     |
+
+**Responses**
+
+`200 OK`
+
+```json
+{
+  "Status": "200 Status OK",
+  "StatusCode": 200,
+  "Message": "string",
+  "Data": {
+    "public_id": "string",
+    "device_id": 0,
+    "jenis_alert": "Jatuh | Postur Tubuh | Cuaca Ekstrem",
+    "tingkat_keparahan": "Tinggi | Menengah | Rendah"
+  }
+}
+```
+
+`400 Bad Request`
+
+```json
+{
+  "Status": "400 Bad Request",
+  "StatusCode": 400,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+`500 Internal Server Error`
+
+```json
+{
+  "Status": "404 Not Found",
+  "StatusCode": 404,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+## Telemetry
+
+**Object**
+
+```base
+{
+  "public_id": "string",
+  "acc_x" : 0.0,
+  "acc_y" : 0.0,
+  "acc_z" : 0.0,
+  "gyro_x": 0.0,
+  "gyro_y": 0.0,
+  "gyro_z": 0.0,
+  "roll"  : 0.0,
+  "pitch" : 0.0,
+  "yaw"   : 0.0,
+  "latitude" : 0.0,
+  "longitude" : 0.0,
+  "created_at" : "00:00:0000T00:00Z"
+}
+```
+
+```create
+{
+  "acc_x" : 0.0,
+  "acc_y" : 0.0,
+  "acc_z" : 0.0,
+  "gyro_x": 0.0,
+  "gyro_y": 0.0,
+  "gyro_z": 0.0,
+  "roll"  : 0.0,
+  "pitch" : 0.0,
+  "yaw"   : 0.0,
+  "latitude" : 0.0,
+  "longitude" : 0.0
+}
+```
+
+### GET `/api/v1/telemetry`
+
+Mendapatkan daftar seluruh alert.
+
+**Headers**
+
+| Key          | Value            |
+| ------------ | ---------------- |
+| Content-Type | application/json |
+
+**Responses**
+
+`200 OK`
+
+```json
+{
+  "Status": "200 Status OK",
+  "StatusCode": 200,
+  "Message": "string",
+  "Data": [
+    {
+      "public_id": "string",
+      "acc_x": 0.0,
+      "acc_y": 0.0,
+      "acc_z": 0.0,
+      "gyro_x": 0.0,
+      "gyro_y": 0.0,
+      "gyro_z": 0.0,
+      "roll": 0.0,
+      "pitch": 0.0,
+      "yaw": 0.0,
+      "latitude": 0.0,
+      "longitude": 0.0,
+      "created_at": "00:00:0000T00:00Z"
+    }
+  ]
+}
+```
+
+`400 Bad Request`
+
+```json
+{
+  "Status": "400 Bad Request",
+  "StatusCode": 400,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+`401 Unauthorized`
+
+```json
+{
+  "Status": "401 Unauthorized",
+  "StatusCode": 401,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+`404 Not Found`
+
+```json
+{
+  "Status": "404 Not Found",
+  "StatusCode": 404,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+### GET `/api/v1/telemetry/detail?public_id=xxxxxxxxxxxxxx`
+
+Mendapatkan detail sebuah telemetry.
+
+**Headers**
+
+| Key          | Value            |
+| ------------ | ---------------- |
+| Content-Type | application/json |
+
+**Query**
+`public_id` ID Publik dari telemetry
+
+**Responses**
+
+`200 OK`
+
+```json
+{
+  "Status": "200 Status OK",
+  "StatusCode": 200,
+  "Message": "string",
+  "Data": {
+    "public_id": "string",
+    "acc_x": 0.0,
+    "acc_y": 0.0,
+    "acc_z": 0.0,
+    "gyro_x": 0.0,
+    "gyro_y": 0.0,
+    "gyro_z": 0.0,
+    "roll": 0.0,
+    "pitch": 0.0,
+    "yaw": 0.0,
+    "latitude": 0.0,
+    "longitude": 0.0,
+    "created_at": "00:00:0000T00:00Z"
+  }
+}
+```
+
+`400 Bad Request`
+
+```json
+{
+  "Status": "400 Bad Request",
+  "StatusCode": 400,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+`500 Internal Server Error`
+
+```json
+{
+  "Status": "404 Not Found",
+  "StatusCode": 404,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+### POST `/api/v1/telemetry`
+
+Menambahkan telemetry baru
+
+**Headers**
+
+| Key          | Value            |
+| ------------ | ---------------- |
+| Content-Type | application/json |
+| Payload      | telemetry-create |
+
+**Responses**
+
+`200 OK`
+
+```json
+{
+  "Status": "200 Status OK",
+  "StatusCode": 200,
+  "Message": "string",
+  "Data": {
+    "public_id": "string",
+    "acc_x": 0.0,
+    "acc_y": 0.0,
+    "acc_z": 0.0,
+    "gyro_x": 0.0,
+    "gyro_y": 0.0,
+    "gyro_z": 0.0,
+    "roll": 0.0,
+    "pitch": 0.0,
+    "yaw": 0.0,
+    "latitude": 0.0,
+    "longitude": 0.0,
+    "created_at": "00:00:0000T00:00Z"
+  }
+}
+```
+
+`400 Bad Request`
+
+```json
+{
+  "Status": "400 Bad Request",
+  "StatusCode": 400,
+  "Message": "string",
+  "Error": "string"
+}
+```
+
+`500 Internal Server Error`
+
 ```json
 {
   "Status": "404 Not Found",

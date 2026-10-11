@@ -1,0 +1,1 @@
+CREATE INDEX idx_telemetry_uid_created_at ON telemetries (public_id, created_at);

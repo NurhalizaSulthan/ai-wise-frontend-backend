@@ -1,26 +1,166 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+	/* Font family */
+	--font-sans: var(--font-instrument-sans), Helvetica, Arial, sans-serif;
+
+	/* Font size */
+	--text-xs: 12px;
+	--text-xs--line-height: 16px;
+
+	--text-sm: 14px;
+	--text-sm--line-height: 20px;
+
+	--text-base: 16px;
+	--text-base--line-height: 24px;
+
+	--text-lg: 18px;
+	--text-lg--line-height: 28px;
+
+	--text-xl: 20px;
+	--text-xl--line-height: 28px;
+
+	--text-2xl: 24px;
+	--text-2xl--line-height: 32px;
+
+	--text-3xl: 30px;
+	--text-3xl--line-height: 36px;
+
+	--text-4xl: 36px;
+	--text-4xl--line-height: 40px;
+
+	/* Spacing */
+	--spacing-18: 72px;
+	--spacing-22: 88px;
+	--spacing-26: 104px;
+
+	/* Radius */
+	--radius-5xl: 40px;
+
+	/* Shadow */
+	--shadow-soft: 0 10px 30px rgba(22, 49, 114, 0.08);
+	--shadow-card: 0 8px 24px rgba(0, 0, 0, 0.08);
+
+	/* Theme */
+	--color-brand: var(--brand);
+	--color-primary: var(--primary);
+	--color-secondary: var(--secondary);
+	--color-tertiary: var(--tertiary);
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-surface: var(--surface);
+	--color-muted: var(--muted);
+	--color-border: var(--border);
+	--color-success: var(--success);
+	--color-warning: var(--warning);
+	--color-danger: var(--danger);
+}
+
+/* LIGHT */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+	--brand: #ffffff;
+	--primary: #157138;
+	--secondary: #1c7e41;
+	--tertiary: #fb8716;
+	--background: #f6f6f6;
+	--foreground: #0d0907;
+
+	--surface: #ffffff;
+	--muted: #6b7280;
+	--border: #e2e8f0;
+	--success: #16a34a;
+	--warning: #f59e0b;
+	--danger: #dc2626;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* DARK */
+.dark {
+	--brand: #ffffff;
+	--primary: #157138;
+	--secondary: #1c7e41;
+	--tertiary: #fb8716;
+	--background: #0d0907;
+	--foreground: #f9fafb;
+	--surface: 	#0e1111;
+	--muted: #94a3b8;
+	--border: rgba(148, 163, 184, 0.18);
+	--success: #22c55e;
+	--warning: #f59e0b;
+	--danger: #f87171;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+	font-family: var(--font-sans);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+	background: var(--background);
+	color: var(--foreground);
+	font-family: var(--font-sans);
+}
+
+.flatpickr-calendar {
+	border: 1px solid var(--border) !important;
+	background: var(--surface) !important;
+	color: var(--foreground) !important;
+	box-shadow: var(--shadow-card) !important;
+	border-radius: 16px !important;
+	font-family: var(--font-sans) !important;
+}
+
+.flatpickr-months,
+.flatpickr-weekdays {
+	background: var(--surface) !important;
+}
+
+.flatpickr-current-month,
+.flatpickr-current-month input.cur-year,
+.flatpickr-monthDropdown-months,
+.flatpickr-weekday,
+.flatpickr-day {
+	color: var(--foreground) !important;
+}
+
+.flatpickr-day:hover {
+	background: color-mix(in srgb, var(--primary) 12%, transparent) !important;
+	border-color: transparent !important;
+}
+
+.flatpickr-day.selected,
+.flatpickr-day.startRange,
+.flatpickr-day.endRange {
+	background: var(--primary) !important;
+	border-color: var(--primary) !important;
+	color: white !important;
+}
+
+.flatpickr-day.inRange {
+	background: color-mix(in srgb, var(--primary) 14%, transparent) !important;
+	border-color: transparent !important;
+	box-shadow: none !important;
+}
+
+@utility no-scrollbar {
+	/* Chrome, Safari and Opera */
+	&::-webkit-scrollbar {
+		display: none;
+	}
+	-ms-overflow-style: none; /* IE and Edge */
+	scrollbar-width: none; /* Firefox */
+}
+
+@utility custom-scrollbar {
+	&::-webkit-scrollbar {
+		@apply size-1.5;
+	}
+
+	&::-webkit-scrollbar-track {
+		@apply rounded-full;
+	}
+
+	&::-webkit-scrollbar-thumb {
+		@apply bg-surface rounded-full dark:bg-muted;
+	}
 }
