@@ -7,7 +7,7 @@ import Backdrop from "@/components/layout/Backdrop";
 import {
   SidebarProvider,
   useSidebar,
-} from "@/components/contex/SidebarContex";
+} from "@/components/context/SidebarContex";
 
 function AdminLayoutContent({ children }: { children: React.ReactNode }) {
   const { isExpanded, isHovered } = useSidebar();
