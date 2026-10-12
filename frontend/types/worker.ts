@@ -1,38 +1,16 @@
 import { formatDate } from "@/lib/utils";
 import { ApiSuccessResponse, CursorPage } from "./api";
-
-interface Telemetry {
-    public_id: string;
-    latitude: number;
-    longitude: number;
-    acc_x: number;
-    acc_y: number;
-    acc_z: number;
-    gyro_x: number;
-    gyro_y: number;
-    gyro_z: number;
-    pitch: number;
-    roll: number;
-    yaw: number;
-    created_at: string;
-}
-
-interface ApiWorkerDevice {
-    public_id: string;
-    nama?: string;
-    mac_address?: string;
-    status?: string;
-    telemetry?: Telemetry[];
-}
+import { ApiDevice } from "./device";
 
 type Gender = "L" | "P";
 
 interface ApiWorker {
     public_id: string;
+    pengawas_id?: number;
     nama: string;
     jenis_kelamin: Gender;
-    tanggal_lahir: string; // ISO
-    device?: ApiWorkerDevice | null;
+    tanggal_lahir: string;
+    device?: ApiDevice | null;
 }
 
 type WorkersPage = CursorPage<ApiWorker>;
@@ -51,6 +29,7 @@ type UpdateWorkerPayload = Omit<CreateWorkerPayload, "pengawas_public_id"> & {
 
 type FetchWorkersResponse = ApiSuccessResponse<ApiWorker[]>;
 type FetchWorkersPageResponse = ApiSuccessResponse<WorkersPage>;
+type FetchWorkerDetailResponse = ApiSuccessResponse<ApiWorker>;
 type CreateWorkerResponse = ApiSuccessResponse<ApiWorker | null>;
 type UpdateWorkerResponse = ApiSuccessResponse<ApiWorker>;
 
@@ -96,8 +75,6 @@ const mapWorker = (w: ApiWorker): Worker => ({
 });
 
 export type {
-    Telemetry,
-    ApiWorkerDevice,
     ApiWorker,
     Gender,
     WorkersPage,
@@ -105,6 +82,7 @@ export type {
     UpdateWorkerPayload,
     FetchWorkersResponse,
     FetchWorkersPageResponse,
+    FetchWorkerDetailResponse,
     CreateWorkerResponse,
     UpdateWorkerResponse,
     WorkerDevice,

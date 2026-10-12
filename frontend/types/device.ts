@@ -23,6 +23,7 @@ interface Device {
 
 type FetchDevicesResponse = ApiSuccessResponse<ApiDevice[]>;
 type FetchDevicesPageResponse = ApiSuccessResponse<DevicesPage>;
+type FetchDeviceDetailResponse = ApiSuccessResponse<ApiDevice>;
 type CreateDeviceResponse = ApiSuccessResponse<null>;
 type UpdateDeviceResponse = ApiSuccessResponse<ApiDevice>;
 
@@ -39,6 +40,7 @@ export type {
     ApiDevice,
     FetchDevicesResponse,
     FetchDevicesPageResponse,
+    FetchDeviceDetailResponse,
     DevicesPage,
     Device,
     CreateDevice,
