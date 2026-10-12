@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
-import { createDevice, fetchDevices, fetchDevicesPage, updateDevice } from "@/lib/devices";
+import { createDevice, fetchDetailDevice, fetchDevices, fetchDevicesPage, updateDevice } from "@/lib/devices";
 import { mapDevice } from "@/types/device";
-import type { Device, CreateDevice, UpdateDevice } from "@/types/device";
+import type { Device, CreateDevice, UpdateDevice, ApiDevice } from "@/types/device";
 import { ApiError } from "@/lib/api/errors";
 
 // GET ALL DEVICE
@@ -96,52 +96,87 @@ const useDevicesPagination = () => {
     return { data, isLoading, error, hasNext, hasPrevious, goNext, goPrevious, retry, refresh };
 };
 
+// GET DETAIL DEVICE
+const useDeviceDetail = (publicId?: string) => {
+    const [data, setData] = useState<ApiDevice | null>(null);
+    const [isLoading, setIsLoading] = useState(!!publicId);
+    const [error, setError] = useState<string | null>(null);
+    const [tick, setTick] = useState(0);
+
+    const refetch = useCallback(() => setTick((t) => t + 1), []);
+
+    useEffect(() => {
+        if (!publicId) return;
+        const controller = new AbortController();
+
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setIsLoading(true);
+        setError(null);
+
+        fetchDetailDevice(publicId, controller.signal)
+            .then((res) => setData(res.data))
+            .catch((e) => {
+                if ((e as Error).name === "AbortError") return;
+                setError(e instanceof ApiError ? e.message : "Gagal memuat data perangkat");
+            })
+            .finally(() => {
+                if (!controller.signal.aborted) setIsLoading(false);
+            });
+
+        return () => controller.abort();
+    }, [publicId, tick]);
+
+    return { data, isLoading, error, refetch };
+}
+
 // CREATE DEVICE
-const useCreateDevice = () => {
-    const [isPending, setIsPending] = useState(false);
+const useCreateDevice = (onSuccess?: () => void) => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const create = useCallback(async (payload: CreateDevice): Promise<boolean> => {
-        setIsPending(true);
+        setIsSubmitting(true);
         setError(null);
         try {
             await createDevice(payload);
+            onSuccess?.();
             return true;
         } catch (err) {
             setError(err instanceof ApiError ? err.message : "Gagal menambah perangkat");
             return false;
         } finally {
-            setIsPending(false);
+            setIsSubmitting(false);
         }
-    }, []);
+    }, [onSuccess]);
 
     const resetError = useCallback(() => setError(null), []);
 
-    return { create, isPending, error, resetError };
+    return { create, isSubmitting, error, resetError };
 };
 
 //UPDATE DEVICE
-const useUpdateDevice = () => {
-    const [isPending, setIsPending] = useState<boolean>(false);
+const useUpdateDevice = (onSuccess?: () => void) => {
+    const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
     const update = useCallback(async (payload: UpdateDevice): Promise<boolean> => {
-        setIsPending(true);
+        setIsSubmitting(true);
         setError(null);
         try {
             await updateDevice(payload);
+            onSuccess?.();
             return true;
         } catch (err) {
             setError(err instanceof ApiError ? err.message : "Gagal mengubah perangkat");
             return false;
         } finally {
-            setIsPending(false);
+            setIsSubmitting(false);
         }
-    }, []);
+    }, [onSuccess]);
 
     const resetError = useCallback(() => setError(null), []);
 
-    return { update, isPending, error, resetError };
+    return { update, isSubmitting, error, resetError };
 }
 
-export { useDevices, useDevicesPagination, useCreateDevice, useUpdateDevice };
+export { useDevices, useDevicesPagination, useDeviceDetail, useCreateDevice, useUpdateDevice };

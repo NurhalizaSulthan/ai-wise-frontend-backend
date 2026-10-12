@@ -1,6 +1,6 @@
 import apiFetch from '@/lib/api/client';
 import { endpoints } from '@/lib/api/endpoints';
-import { FetchDevicesResponse, FetchDevicesPageResponse, CreateDevice, CreateDeviceResponse, UpdateDeviceResponse, UpdateDevice } from '@/types/device';
+import { FetchDevicesResponse, FetchDevicesPageResponse, CreateDevice, CreateDeviceResponse, UpdateDeviceResponse, UpdateDevice, FetchDeviceDetailResponse } from '@/types/device';
 
 // GET ALL DEVICES
 const fetchDevices = (signal?: AbortSignal) => {
@@ -24,6 +24,12 @@ const fetchDevicesPage = (params: PageParams = {}, signal?: AbortSignal) => {
   return apiFetch<FetchDevicesPageResponse>(url, { signal });
 };
 
+// GET DETAIL DEVICE
+const fetchDetailDevice = (publicId: string, signal: AbortSignal) =>
+  apiFetch<FetchDeviceDetailResponse>(
+    `${endpoints.devicesDetail}?public_id=${encodeURIComponent(publicId)}`,
+    { signal },
+  );
 
 // CREATE DEVICE
 const createDevice = (payload: CreateDevice, signal?: AbortSignal) => {
@@ -44,7 +50,8 @@ const updateDevice = (payload: UpdateDevice, signal?: AbortSignal) =>
     signal,
   });
 
-export { fetchDevices, fetchDevicesPage, createDevice, updateDevice };
+
+export { fetchDevices, fetchDevicesPage, fetchDetailDevice, createDevice, updateDevice };
 
 
 // Suggested location in your project: lib/devices.ts

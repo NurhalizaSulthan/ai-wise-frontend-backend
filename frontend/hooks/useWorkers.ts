@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
 import { mapWorker } from "@/types/worker";
-import type { Worker, CreateWorkerPayload, UpdateWorkerPayload } from "@/types/worker";
+import type { Worker, CreateWorkerPayload, UpdateWorkerPayload, ApiWorker } from "@/types/worker";
 import { ApiError } from "@/lib/api/errors";
-import { createWorker, updateWorker, fetchWorkersPage } from "@/lib/workers";
+import { createWorker, updateWorker, fetchWorkersPage, fetchWorkerDetail } from "@/lib/workers";
 
 type Cursor = { after?: string; before?: string };
 
@@ -78,12 +78,46 @@ const useWorkersPagination = (externalReloadKey = 0) => {
     };
 };
 
+// GET DETAIL WORKER
+const useWorkerDetail = (publicId?: string) => {
+    const [data, setData] = useState<ApiWorker | null>(null);
+    const [isLoading, setIsLoading] = useState(!!publicId);
+    const [error, setError] = useState<string | null>(null);
+    const [tick, setTick] = useState(0);
+
+    const refetch = useCallback(() => setTick((t) => t + 1), []);
+
+    useEffect(() => {
+        if (!publicId) return;
+        const controller = new AbortController();
+
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setIsLoading(true);
+        setError(null);
+
+        fetchWorkerDetail(publicId, controller.signal)
+            .then((res) => setData(res.data))
+            .catch((e) => {
+                if ((e as Error).name === "AbortError") return;
+                setError(e instanceof ApiError ? e.message : "Gagal memuat data pekerja");
+            })
+            .finally(() => {
+                if (!controller.signal.aborted) setIsLoading(false);
+            });
+
+        return () => controller.abort();
+    }, [publicId, tick]);
+
+    return { data, isLoading, error, refetch };
+};
+
+
 // CREATE WORKER
 const useCreateWorker = (onSuccess?: () => void) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const submit = useCallback(
+    const create = useCallback(
         async (payload: CreateWorkerPayload): Promise<boolean> => {
             setIsSubmitting(true);
             setError(null);
@@ -103,7 +137,7 @@ const useCreateWorker = (onSuccess?: () => void) => {
 
     const resetError = useCallback(() => setError(null), []);
 
-    return { submit, isSubmitting, error, resetError };
+    return { create, isSubmitting, error, resetError };
 };
 
 //UPDATE WORKER
@@ -111,7 +145,7 @@ const useUpdateWorker = (onSuccess?: () => void) => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
-    const submit = useCallback(
+    const update = useCallback(
         async (payload: UpdateWorkerPayload): Promise<boolean> => {
             setIsSubmitting(true);
             setError(null);
@@ -131,7 +165,8 @@ const useUpdateWorker = (onSuccess?: () => void) => {
 
     const resetError = useCallback(() => setError(null), []);
 
-    return { submit, isSubmitting, error, resetError };
+    return { update, isSubmitting, error, resetError };
 };
 
-export { useWorkersPagination, useCreateWorker, useUpdateWorker };
+
+export { useWorkersPagination, useCreateWorker, useUpdateWorker, useWorkerDetail };
