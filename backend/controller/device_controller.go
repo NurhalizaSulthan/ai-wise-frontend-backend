@@ -54,14 +54,14 @@ func (a *DeviceControllerImpl) Create(ctx fiber.Ctx) error {
 // @Description Endpoint untuk mengambil detail device
 // @Tags 		Device
 // @Produce 	json
-// @Param       public_id query int true "Public ID anak"
+// @Param       public_id query string true "Public ID anak"
 // @Success     200 {object}   response.SuccessResponse{status=string, status_code=int, message=string, data=dto.DeviceBase}
 // @Failure     400 {object}   response.BadRequestResponse{status=string, status_code=int, message=string, error=string}
 // @Failure     500 {object}   response.InternalErrorResponse{status=string, status_code=int, message=string, error=string}
 // @Security    ApiKeyAuth
 // @Router 		/api/v1/device/detail [get]
 func (a *DeviceControllerImpl) GetByPublicID(ctx fiber.Ctx) error {
-	publicID := ctx.Params("public_id")
+	publicID := ctx.Query("public_id")
 	if publicID == "" {
 		return response.BadRequest(ctx, constants.RetrievalError, errors.New(constants.PublicIDMissingError))
 	}
