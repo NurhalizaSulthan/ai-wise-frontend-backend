@@ -13,11 +13,17 @@ import type { Worker } from "@/types/worker";
 
 interface ListWorkersTableProps {
     onAddWorker: () => void;
+    onViewWorker: (worker: Worker) => void;
     onEditWorker: (worker: Worker) => void;
     pagination: ReturnType<typeof useWorkersPagination>;
 }
 
-function ListWorkersTable({ onAddWorker, onEditWorker, pagination }: ListWorkersTableProps) {
+function ListWorkersTable({
+    onAddWorker,
+    onViewWorker,
+    onEditWorker,
+    pagination,
+}: ListWorkersTableProps) {
     const { data, isLoading, error, hasNext, hasPrevious, goNext, goPrevious, retry } =
         pagination;
 
@@ -51,13 +57,14 @@ function ListWorkersTable({ onAddWorker, onEditWorker, pagination }: ListWorkers
                     <ActionsMenu
                         editLabel="Edit Pekerja"
                         deleteLabel="Hapus Pekerja"
+                        onView={() => onViewWorker(row.original)}
                         onEdit={() => onEditWorker(row.original)}
                         onDelete={() => console.log("delete", row.original.id)}
                     />
                 ),
             },
         ],
-        [onEditWorker],
+        [onViewWorker, onEditWorker],
     );
 
     const filteredData = useMemo(() => {
@@ -88,17 +95,17 @@ function ListWorkersTable({ onAddWorker, onEditWorker, pagination }: ListWorkers
                 />
             }
             renderMobileCard={(w) => (
-                <div className="border border-border rounded-xl p-4 flex flex-col gap-3">
+                <div className="border border-border rounded-xl p-4 flex flex-col gap-4">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-3">
                             <WorkerAvatar name={w.name} />
-                            <p className="font-semibold text-sm">{w.name}</p>
+                            <p className="font-semibold text-md">{w.name}</p>
                         </div>
                         <GenderBadge gender={w.gender} />
                     </div>
                     <div className="grid grid-cols-2 gap-3 text-sm">
                         <div>
-                            <p className="text-xs text-muted font-medium uppercase tracking-wide">
+                            <p className="text-sm text-muted font-medium uppercase tracking-wide">
                                 Tanggal Lahir
                             </p>
                             <p className="font-medium">{w.birthDate}</p>
@@ -108,6 +115,7 @@ function ListWorkersTable({ onAddWorker, onEditWorker, pagination }: ListWorkers
                         <ActionsMenu
                             editLabel="Edit Pekerja"
                             deleteLabel="Hapus Pekerja"
+                            onView={() => onViewWorker(w)}
                             onEdit={() => onEditWorker(w)}
                             onDelete={() => console.log("delete", w.id)}
                         />

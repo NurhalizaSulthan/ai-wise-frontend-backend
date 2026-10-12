@@ -15,6 +15,7 @@ import { useDevices } from "@/hooks/useDevices";
 import { useSupervisors } from "@/hooks/useSupervisors";
 import type { Worker, Gender } from "@/types/worker";
 import { toApiDate, toDisplayDate } from "@/lib/utils";
+import PanelHeader from "../molecules/PanelHeader";
 
 interface WorkerFormData {
     name: string;
@@ -65,14 +66,14 @@ const WorkerFormPanel = ({ worker, isOpen, onClose, onSaved }: WorkerFormPanelPr
     const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
     const {
-        submit: submitCreate,
+        create: submitCreate,
         isSubmitting: isCreating,
         error: createError,
         resetError: resetCreateError,
     } = useCreateWorker(onSaved);
 
     const {
-        submit: submitUpdate,
+        update: submitUpdate,
         isSubmitting: isUpdating,
         error: updateError,
         resetError: resetUpdateError,
@@ -211,39 +212,14 @@ const WorkerFormPanel = ({ worker, isOpen, onClose, onSaved }: WorkerFormPanelPr
     };
 
     return (
-         <div className="flex h-[calc(100dvh-4rem)] flex-col">
+        <div className="flex h-[calc(100dvh-4rem)] flex-col">
             {/* Header */}
-             <div className="flex shrink-0 items-start justify-between gap-2 px-4 pt-5 pb-4 sm:px-6 sm:pt-6">
-                <div className="flex items-start gap-2 sm:gap-3">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/60 text-background sm:size-12">
-                        <Icon
-                            icon={isEdit ? "ic:round-edit" : "ic:round-person-add"}
-                            className="size-5 sm:size-6"
-                        />
-                    </div>
-                    <div>
-                        <h2 className="text-lg font-bold text-foreground sm:text-xl">
-                            {isEdit ? "Edit Pekerja" : "Tambah Pekerja"}
-                        </h2>
-                        <p className="text-xs leading-relaxed text-muted sm:text-sm">
-                            {isEdit
-                                ? "Ubah data pekerja yang sudah terdaftar"
-                                : "Tambahkan pekerja baru dengan mengisi data diri"}
-                        </p>
-                    </div>
-                </div>
-
-                <button
-                    type="button"
-                    onClick={handleClose}
-                    disabled={isSubmitting}
-                    className="mt-1 shrink-0 cursor-pointer rounded-full p-1.5 text-muted transition hover:bg-muted/10 hover:text-danger disabled:cursor-not-allowed disabled:opacity-50 sm:p-2"
-                >
-                    <Icon icon="iconamoon:close-duotone" className="size-5 sm:size-6" />
-                </button>
-            </div>
-
-            <div className="shrink-0 border-t border-border" />
+            <PanelHeader
+                icon={isEdit ? "ic:round-edit" : "ic:round-person-add"}
+                title={isEdit ? "Edit Pekerja" : "Tambah Pekerja"}
+                subtitle={isEdit ? "Ubah data pekerja" : "Daftarkan pekerja baru"}
+                onClose={handleClose}
+            />
 
             {/* Form */}
             <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-4 py-5 sm:gap-6 sm:px-6 sm:py-6">
@@ -284,13 +260,7 @@ const WorkerFormPanel = ({ worker, isOpen, onClose, onSaved }: WorkerFormPanelPr
                                 hint={fieldErrors.birthDate}
                             />
                         </div>
-                        <button
-                            type="button"
-                            onClick={() => fpInstanceRef.current?.open()}
-                            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border-2 border-muted/50 text-muted transition hover:border-primary hover:text-primary"
-                        >
-                            <Icon icon="material-symbols:calendar-month-outline" className="size-5" />
-                        </button>
+                        <Button variant="outline" onClick={() => fpInstanceRef.current?.open()} startIcon={<Icon icon="material-symbols:calendar-month-outline" className="size-5" />} className="h-13 w-12 shrink-0 border-2 hover:border-primary  transition hover:text-primary" />
                     </div>
                 </div>
 
