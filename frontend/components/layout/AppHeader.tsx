@@ -7,7 +7,7 @@ import { Icon } from "@iconify/react";
 import { ThemeToggleButton } from "@/components/molecules/ThemeToggleButton";
 import NotificationDropdown from "@/components/molecules/NotificationDropdown";
 import UserDropdown from "@/components/molecules/UserDropdown";
-import { useSidebar } from "@/components/contex/SidebarContex";
+import { useSidebar } from "@/components/context/SidebarContex";
 
 const AppHeader: React.FC = () => {
     const [isApplicationMenuOpen, setApplicationMenuOpen] = useState(false);
@@ -53,7 +53,7 @@ const AppHeader: React.FC = () => {
                     </button>
 
                     <Link href="/dashboard" className="flex justify-center items-center gap-3">
-                        <Icon icon="fa6-solid:helmet-safety" className="text-2xl text-primary"  />
+                        <Icon icon="fa6-solid:helmet-safety" className="text-2xl text-primary" />
                         <h1 className="text-2xl text-primary font-bold">AI <span className="text-tertiary">WISE</span></h1>
                     </Link>
 
