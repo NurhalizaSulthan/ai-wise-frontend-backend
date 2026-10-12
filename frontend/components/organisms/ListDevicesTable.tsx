@@ -12,11 +12,12 @@ import type { Device } from "@/types/device";
 
 interface ListDevicesTableProps {
     onAddDevice: () => void;
+    onViewDevice: (device: Device) => void;
     onEditDevice: (device: Device) => void;
     pagination: ReturnType<typeof useDevicesPagination>;
 }
 
-function ListDevicesTable({ onAddDevice, onEditDevice, pagination }: ListDevicesTableProps) {
+function ListDevicesTable({ onAddDevice, onViewDevice, onEditDevice, pagination }: ListDevicesTableProps) {
     const { data, isLoading, error, hasNext, hasPrevious, goNext, goPrevious, retry } =
         pagination;
 
@@ -42,13 +43,14 @@ function ListDevicesTable({ onAddDevice, onEditDevice, pagination }: ListDevices
                     <ActionsMenu
                         editLabel="Edit Perangkat"
                         deleteLabel="Hapus Perangkat"
+                        onView={() => onViewDevice(row.original)}
                         onEdit={() => onEditDevice(row.original)}
                         onDelete={() => console.log("delete", row.original.id)}
                     />
                 ),
             },
         ],
-        [onEditDevice],
+        [onViewDevice, onEditDevice],
     );
 
     const filteredData = useMemo(() => {
@@ -83,8 +85,8 @@ function ListDevicesTable({ onAddDevice, onEditDevice, pagination }: ListDevices
                 <div className="border border-border rounded-xl p-4 flex flex-col gap-3">
                     <div className="flex items-center justify-between">
                         <div>
-                            <p className="font-semibold text-sm">{d.nama}</p>
-                            <p className="text-xs text-muted">{d.mac_address}</p>
+                            <p className="font-semibold text-md">{d.nama}</p>
+                            <p className="text-sm text-muted">{d.mac_address}</p>
                         </div>
                         <DeviceStatusBadge status={d.status} />
                     </div>
@@ -92,6 +94,7 @@ function ListDevicesTable({ onAddDevice, onEditDevice, pagination }: ListDevices
                         <ActionsMenu
                             editLabel="Edit Perangkat"
                             deleteLabel="Hapus Perangkat"
+                            onView={() => onViewDevice(d)}
                             onEdit={() => onEditDevice(d)}
                             onDelete={() => console.log("delete", d.id)}
                         />
