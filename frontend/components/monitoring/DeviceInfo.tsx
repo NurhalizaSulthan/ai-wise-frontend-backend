@@ -40,7 +40,7 @@ const MAX_RETRIES = 10; // after this many failed attempts -> "disconnected"
 const BASE_DELAY = 1000; // ms, doubles on each retry
 const MAX_DELAY = 10000; // ms
 
-function useSensorSocket(publicId: string) {
+function useSensorSocket(macAddress: string | undefined) {
   const [data, setData] = useState<SensorData | null>(null);
   const [state, setState] = useState<ConnectionState>("connecting");
   const [retryCount, setRetryCount] = useState(0);
@@ -52,16 +52,21 @@ function useSensorSocket(publicId: string) {
   const connectRef = useRef<() => void>(() => {});
 
   useEffect(() => {
+    if (!macAddress) return;
+
     stoppedRef.current = false;
     retriesRef.current = 0;
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setRetryCount(0);
     setData(null);
+
+    const url = `${WS_URL}/ws/mobile/${encodeURIComponent(macAddress)}`;
 
     const connect = () => {
       if (stoppedRef.current) return;
       setState(retriesRef.current === 0 ? "connecting" : "reconnecting");
 
-      const ws = new WebSocket(WS_URL);
+      const ws = new WebSocket(url);
       wsRef.current = ws;
 
       ws.onopen = () => {
@@ -75,7 +80,6 @@ function useSensorSocket(publicId: string) {
           const parsed = JSON.parse(event.data) as SensorData;
           // The server broadcasts every device to every client, so only
           // keep messages that belong to the device shown on this page.
-          if (parsed.public_id !== publicId) return;
           setData(parsed);
         } catch {
           console.error("Pesan WebSocket tidak valid:", event.data);
@@ -125,7 +129,7 @@ function useSensorSocket(publicId: string) {
         ws.close();
       }
     };
-  }, [publicId]);
+  }, [macAddress]);
 
   // Manual retry, shown after automatic retries are exhausted
   const reconnect = useCallback(() => {
@@ -220,7 +224,7 @@ export const DeviceInfo = ({ publicId }: DeviceInfoProps) => {
   const device = getDeviceByPublicId(publicId);
 
   // Hooks must run before any early return
-  const { data, state, retryCount, reconnect } = useSensorSocket(publicId);
+  const { data, state, retryCount, reconnect } = useSensorSocket(device?.macAddress);
 
   if (!device) {
     return (
@@ -323,7 +327,7 @@ export const DeviceInfo = ({ publicId }: DeviceInfoProps) => {
           {/* WebSocket connection badge */}
           <span
             className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${conn.badge}`}
-            title={WS_URL}
+            title={`${WS_URL}/ws/mobile/${device.macAddress}`}
           >
             <span className={`h-1.5 w-1.5 rounded-full ${conn.dot}`} />
             WebSocket: {conn.label}
