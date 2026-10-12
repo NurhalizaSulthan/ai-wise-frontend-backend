@@ -3,66 +3,30 @@
 import { useEffect, useMemo, useState } from "react";
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
-// [DIUBAH] renderToStaticMarkup & Icon dari @iconify/react DIHAPUS —
-// Icon Iconify fetch data secara async (via useEffect), tidak kompatibel
-// dengan renderToStaticMarkup yang berjalan sinkron. Diganti SVG path statis.
 import type { DivIcon } from "leaflet";
+import { useDashboard } from "./DashboardProvider";
+import { buildMapDevices } from "@/lib/dashboard";
 
-const MapContainer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.MapContainer),
-  { ssr: false }
-);
-const TileLayer = dynamic(
-  () => import("react-leaflet").then((mod) => mod.TileLayer),
-  { ssr: false }
-);
-const Marker = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Marker),
-  { ssr: false }
-);
-const Popup = dynamic(
-  () => import("react-leaflet").then((mod) => mod.Popup),
-  { ssr: false }
-);
+const MapContainer = dynamic(() => import("react-leaflet").then((m) => m.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import("react-leaflet").then((m) => m.TileLayer), { ssr: false });
+const Marker = dynamic(() => import("react-leaflet").then((m) => m.Marker), { ssr: false });
+const Popup = dynamic(() => import("react-leaflet").then((m) => m.Popup), { ssr: false });
 
-export type Device = {
-  id: string;
-  name: string;
-  lat: number;
-  lng: number;
-  status: "active" | "inactive";
-  lastActiveAt?: string;
-};
-
-const devices: Device[] = [
-  {
-    id: "dev-1",
-    name: "Alat 1 - Zona A",
-    lat: -5.1477,
-    lng: 119.4327,
-    status: "active",
-  },
-  {
-    id: "dev-2",
-    name: "Alat 2 - Zona B",
-    lat: -5.1500,
-    lng: 119.4360,
-    status: "inactive",
-    lastActiveAt: "24 Agustus 2026, 14:20",
-  },
-  {
-    id: "dev-3",
-    name: "Alat 3 - Zona C",
-    lat: -5.1450,
-    lng: 119.4300,
-    status: "active",
-  },
-];
+const DEFAULT_CENTER: [number, number] = [-5.1477, 119.4327];
 
 export default function DeviceMap() {
-  const center = useMemo<[number, number]>(() => [-5.1477, 119.4327], []);
-
+  const { devices: rawDevices, telemetry } = useDashboard();
   const [icons, setIcons] = useState<{ active: DivIcon; inactive: DivIcon } | null>(null);
+
+  const devices = useMemo(() => buildMapDevices(rawDevices, telemetry), [rawDevices, telemetry]);
+
+  // Pusat peta = rata-rata koordinat semua perangkat (atau default jika kosong)
+  const center = useMemo<[number, number]>(() => {
+    if (devices.length === 0) return DEFAULT_CENTER;
+    const lat = devices.reduce((s, d) => s + d.lat, 0) / devices.length;
+    const lng = devices.reduce((s, d) => s + d.lng, 0) / devices.length;
+    return [lat, lng];
+  }, [devices]);
 
   useEffect(() => {
     let mounted = true;
@@ -77,7 +41,6 @@ export default function DeviceMap() {
             <path fill="${color}" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7m0 9.5A2.5 2.5 0 0 1 9.5 9A2.5 2.5 0 0 1 12 6.5A2.5 2.5 0 0 1 14.5 9a2.5 2.5 0 0 1-2.5 2.5"/>
           </svg>
         `;
-
         return L.default.divIcon({
           className: "custom-device-marker",
           html: svg,
@@ -87,10 +50,7 @@ export default function DeviceMap() {
         });
       };
 
-      setIcons({
-        active: buildIcon("#22C55E"),
-        inactive: buildIcon("#9CA3AF"),
-      });
+      setIcons({ active: buildIcon("#22C55E"), inactive: buildIcon("#9CA3AF") });
     });
 
     return () => {
@@ -98,26 +58,27 @@ export default function DeviceMap() {
     };
   }, []);
 
+  const withoutLocation = rawDevices.length - devices.length;
+
   return (
     <div className="rounded-2xl border border-border bg-surface px-5 pb-5 pt-5 sm:px-6 sm:pt-6">
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <h3 className="text-lg font-semibold text-foreground">
-            Device Location Map
-          </h3>
+          <h3 className="text-lg font-semibold text-foreground">Peta Lokasi Perangkat</h3>
           <p className="mt-1 text-sm text-muted">
-            Real-time device position status
+            Status posisi perangkat secara real-time
+            {withoutLocation > 0 && ` • ${withoutLocation} perangkat belum punya data lokasi`}
           </p>
         </div>
 
         <div className="flex items-center gap-4 text-sm text-muted">
           <div className="flex items-center gap-2">
             <span className="size-3 rounded-full bg-[#22C55E]" />
-           Active
+            Aktif
           </div>
           <div className="flex items-center gap-2">
             <span className="size-3 rounded-full bg-[#9CA3AF]" />
-            Inactive
+            Tidak Aktif
           </div>
         </div>
       </div>
@@ -144,15 +105,8 @@ export default function DeviceMap() {
                 <Popup>
                   <div className="text-sm">
                     <p className="font-semibold">{device.name}</p>
-                    <p>
-                      Status:{" "}
-                      {device.status === "active" ? "Active" : "Inactive"}
-                    </p>
-                    {device.status === "inactive" && device.lastActiveAt && (
-                      <p className="text-muted">
-                        Last active: {device.lastActiveAt}
-                      </p>
-                    )}
+                    <p>Status: {device.status === "active" ? "Aktif" : "Tidak Aktif"}</p>
+                    {device.lastActiveAt && <p>Pembaruan terakhir: {device.lastActiveAt}</p>}
                   </div>
                 </Popup>
               </Marker>
@@ -160,7 +114,7 @@ export default function DeviceMap() {
           </MapContainer>
         ) : (
           <div className="flex h-full w-full items-center justify-center text-sm text-muted">
-            Loading map...
+            Memuat peta...
           </div>
         )}
       </div>
