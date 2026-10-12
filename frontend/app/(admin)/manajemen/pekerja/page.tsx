@@ -5,10 +5,15 @@ import PageTitle from "@/components/molecules/PageTitle";
 import ListWorkersTable from "@/components/organisms/ListWorkersTable";
 import SidePanel from "@/components/molecules/SidePanel";
 import WorkerFormPanel from "@/components/organisms/WorkerFormPanel";
+import WorkerDetailPanel from "@/components/organisms/WorkerDetailPanel";
 import { useWorkersPagination } from "@/hooks/useWorkers";
 import type { Worker } from "@/types/worker";
 
-type PanelState = { mode: "add" } | { mode: "edit"; worker: Worker } | null;
+type PanelState =
+    | { mode: "add" }
+    | { mode: "edit"; worker: Worker }
+    | { mode: "view"; worker: Worker }
+    | null;
 
 const WorkerManagementPage = () => {
     const [panel, setPanel] = useState<PanelState>(null);
@@ -16,6 +21,10 @@ const WorkerManagementPage = () => {
 
     const closePanel = useCallback(() => setPanel(null), []);
     const openAdd = useCallback(() => setPanel({ mode: "add" }), []);
+    const openView = useCallback(
+        (worker: Worker) => setPanel({ mode: "view", worker }),
+        [],
+    );
     const openEdit = useCallback(
         (worker: Worker) => setPanel({ mode: "edit", worker }),
         [],
@@ -31,14 +40,22 @@ const WorkerManagementPage = () => {
                 <ListWorkersTable
                     pagination={pagination}
                     onAddWorker={openAdd}
+                    onViewWorker={openView}
                     onEditWorker={openEdit}
                 />
             </div>
 
             <SidePanel isOpen={panel !== null} onClose={closePanel}>
-                {panel && (
+                {panel?.mode === "view" && (
+                    <WorkerDetailPanel
+                        key={`view-${panel.worker.public_id}`}
+                        publicId={panel.worker.public_id}
+                        onClose={closePanel}
+                    />
+                )}
+
+                {panel && panel.mode !== "view" && (
                     <WorkerFormPanel
-                        // key me-reset form dan flatpickr saat pindah tambah/edit atau antar pekerja
                         key={panel.mode === "edit" ? panel.worker.public_id : "add"}
                         worker={panel.mode === "edit" ? panel.worker : undefined}
                         isOpen

@@ -1,7 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { Icon } from "@iconify/react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import Input from "../atoms/InputField";
 import Button from "../atoms/Button";
@@ -9,6 +8,7 @@ import SelectField from "../atoms/SelectField";
 import Alert from "../atoms/Alert";
 import { useCreateDevice, useUpdateDevice } from "@/hooks/useDevices";
 import type { Device } from "@/types/device";
+import PanelHeader from "../molecules/PanelHeader";
 
 interface DeviceFormData {
     name: string;
@@ -47,28 +47,39 @@ const formFromDevice = (d?: Device): DeviceFormData => ({
 
 const DeviceFormPanel = ({ device, onClose, onSaved }: DeviceFormPanelProps) => {
     const isEdit = !!device;
+    const initialForm = useMemo(() => formFromDevice(device), [device]);
 
     const [form, setForm] = useState<DeviceFormData>(() => formFromDevice(device));
     const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
 
-    const createHook = useCreateDevice();
-    const updateHook = useUpdateDevice();
+    const {
+        create: submitCreate,
+        isSubmitting: isCreating,
+        error: createError,
+        resetError: resetCreateError,
+    } = useCreateDevice(onSaved);
 
-    const isSubmitting = isEdit ? updateHook.isPending : createHook.isPending;
-    const error = isEdit ? updateHook.error : createHook.error;
+    const {
+        update: submitUpdate,
+        isSubmitting: isUpdating,
+        error: updateError,
+        resetError: resetUpdateError,
+    } = useUpdateDevice(onSaved);
+
+    const isSubmitting = isEdit ? isUpdating : isCreating;
+    const error = isEdit ? updateError : createError;
 
     const resetError = useCallback(() => {
-        createHook.resetError();
-        updateHook.resetError();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [createHook.resetError, updateHook.resetError]);
+        resetCreateError();
+        resetUpdateError();
+    }, [resetCreateError, resetUpdateError]);
 
     const handleClose = useCallback(() => {
-        setForm(formFromDevice(device));
+        setForm(initialForm);
         setFieldErrors({});
         resetError();
         onClose();
-    }, [device, onClose, resetError]);
+    }, [initialForm, onClose, resetError]);
 
     useEffect(() => {
         const handleKeyDown = (e: KeyboardEvent) => {
@@ -99,17 +110,14 @@ const DeviceFormPanel = ({ device, onClose, onSaved }: DeviceFormPanelProps) => 
         setFieldErrors(errors);
         if (Object.keys(errors).length > 0) return;
 
+        const base = {
+            nama: name,
+            mac_address: mac.toLowerCase(),
+        }
+
         const ok = isEdit
-            ? await updateHook.update({
-                public_id: device.public_id,
-                nama: name,
-                mac_address: mac.toLowerCase(),
-                status: form.status,
-            })
-            : await createHook.create({
-                nama: name,
-                mac_address: mac.toLowerCase(),
-            });
+            ? await submitUpdate({ ...base, public_id: device.public_id, status: form.status })
+            : await submitCreate({ ...base });
 
         if (ok) {
             toast.success(isEdit ? "Perangkat diperbarui" : "Perangkat ditambahkan", {
@@ -125,35 +133,12 @@ const DeviceFormPanel = ({ device, onClose, onSaved }: DeviceFormPanelProps) => 
     return (
         <div className="flex h-[calc(100dvh-4rem)] flex-col">
             {/* Header */}
-            <div className="flex shrink-0 items-start justify-between gap-2 px-4 pt-5 pb-4 sm:px-6 sm:pt-6">
-                <div className="flex items-start gap-2 sm:gap-3">
-                    <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-primary/60 text-background sm:size-12">
-                        <Icon icon="mdi:tablet-cellphone" className="size-5 sm:size-6" />
-                    </div>
-                    <div>
-                        <h2 className="text-lg font-bold text-foreground sm:text-xl">
-                            {isEdit ? "Edit Perangkat" : "Tambah Perangkat"}
-                        </h2>
-                        <p className="text-xs leading-relaxed text-muted sm:text-sm">
-                            {isEdit
-                                ? "Ubah data perangkat yang sudah terdaftar"
-                                : "Tambahkan perangkat baru dengan mengisi data perangkat"}
-                        </p>
-                    </div>
-                </div>
-
-                <button
-                    type="button"
-                    onClick={handleClose}
-                    disabled={isSubmitting}
-                    className="mt-1 shrink-0 cursor-pointer rounded-full p-1.5 text-muted transition hover:bg-muted/10 hover:text-danger disabled:cursor-not-allowed disabled:opacity-50 sm:p-2"
-                >
-                    <Icon icon="iconamoon:close-duotone" className="size-5 sm:size-6" />
-                </button>
-            </div>
-
-            <div className="shrink-0 border-t border-border" />
-
+            <PanelHeader
+                icon={isEdit ? "solar:cpu-linear" : "solar:cpu-bolt-linear"}
+                title={isEdit ? "Edit Perangkat" : "Tambah Perangkat"}
+                subtitle={isEdit ? "Ubah data perangkat" : "Daftarkan perangkat baru"}
+                onClose={handleClose}
+            />
             {/* Form */}
             <div className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto px-4 py-5 sm:gap-6 sm:px-6 sm:py-6">
                 <div>
@@ -161,7 +146,7 @@ const DeviceFormPanel = ({ device, onClose, onSaved }: DeviceFormPanelProps) => 
                         Nama Perangkat
                     </label>
                     <Input
-                        placeholder="Contoh: Device-1"
+                        placeholder="Contoh: Device 1"
                         value={form.name}
                         onChange={(e) => handleChange("name", e.target.value)}
                         error={!!fieldErrors.name}

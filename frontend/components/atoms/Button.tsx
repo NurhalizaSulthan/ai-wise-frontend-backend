@@ -2,8 +2,9 @@ import React, { ReactNode } from "react";
 
 interface ButtonProps {
   children?: ReactNode;
-  size?: "sm" | "md";
-  variant?: "primary" | "secondary" | "outline";
+  size?: "sm" | "md" | "lg" | "icon";
+  variant?: "primary" | "secondary" | "outline" | "ghost";
+  rounded?: "lg" | "full";
   startIcon?: ReactNode;
   endIcon?: ReactNode;
   onClick?: () => void;
@@ -18,6 +19,7 @@ const Button: React.FC<ButtonProps> = ({
   children,
   size = "md",
   variant = "primary",
+  rounded = "lg",
   startIcon,
   endIcon,
   onClick,
@@ -31,6 +33,7 @@ const Button: React.FC<ButtonProps> = ({
     sm: "h-10 px-3 text-sm",
     md: "h-12 px-4 text-base",
     lg: "h-13 px-5 text-lg",
+    icon: "size-10 p-0",
   };
 
   const variantClasses = {
@@ -40,20 +43,26 @@ const Button: React.FC<ButtonProps> = ({
       "bg-muted/20 text-foreground hover:bg-muted/30 hover:text-primary disabled:bg-muted",
     outline:
       "border-2 border-muted/50 text-muted",
+    ghost:
+      "text-muted hover:bg-muted/10 hover:text-danger",
+  };
+
+  const roundedClasses = {
+    lg: "rounded-lg",
+    full: "rounded-full",
   };
 
   const stateClasses =
     active === undefined
       ? variantClasses[variant]
       : active
-      ? activeClassName
-      : inactiveClassName;
+        ? activeClassName
+        : inactiveClassName;
 
   return (
     <button
-      className={`inline-flex items-center justify-center font-semibold gap-2 cursor-pointer rounded-lg tracking-widest transition ${className} ${sizeClasses[size]} ${stateClasses} ${
-        disabled ? "cursor-not-allowed opacity-50" : ""
-      }`}
+      className={`inline-flex items-center justify-center font-semibold gap-2 cursor-pointer tracking-widest transition ${roundedClasses[rounded]} ${className} ${sizeClasses[size]} ${stateClasses} ${disabled ? "cursor-not-allowed opacity-50" : ""
+        }`}
       onClick={onClick}
       disabled={disabled}
     >

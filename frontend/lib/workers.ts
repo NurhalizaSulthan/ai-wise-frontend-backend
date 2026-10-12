@@ -5,6 +5,7 @@ import type {
     CreateWorkerResponse,
     UpdateWorkerPayload,
     UpdateWorkerResponse,
+    FetchWorkerDetailResponse,
 } from "@/types/worker";
 import apiFetch from "./api/client";
 import { endpoints } from "./api/endpoints";
@@ -30,6 +31,13 @@ const fetchWorkersPage = (
     );
 };
 
+// GET DETAIL WORKER
+const fetchWorkerDetail = (publicId: string, signal?: AbortSignal) =>
+    apiFetch<FetchWorkerDetailResponse>(
+        `${endpoints.workersDetail}?public_id=${encodeURIComponent(publicId)}`,
+        { signal },
+    );
+
 // CREATE WORKER
 const createWorker = (payload: CreateWorkerPayload, signal?: AbortSignal) =>
     apiFetch<CreateWorkerResponse>(endpoints.workers, {
@@ -46,4 +54,4 @@ const updateWorker = (payload: UpdateWorkerPayload, signal?: AbortSignal) =>
         signal,
     });
 
-export { fetchWorkers, fetchWorkersPage, createWorker, updateWorker };
+export { fetchWorkers, fetchWorkersPage, fetchWorkerDetail, createWorker, updateWorker };

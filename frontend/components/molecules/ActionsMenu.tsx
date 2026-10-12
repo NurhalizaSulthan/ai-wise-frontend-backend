@@ -46,7 +46,10 @@ const ActionsMenu = ({
                 variant="outline"
                 size="sm"
                 className="cursor-pointer hover:bg-primary/30 hover:border-primary/30 hover:text-primary"
-                onClick={onView}
+                onClick={() => {
+                    setOpen(false);
+                    onView?.();
+                }}
             >
                 View Details
             </Button>
@@ -62,7 +65,7 @@ const ActionsMenu = ({
             {open && (
                 <div className="absolute right-0 top-full z-50 mt-1 min-w-45 rounded-xl border border-border bg-surface shadow-lg">
                     <button
-                        className="flex w-full items-center gap-3 px-4 py-3 text-sm hover:bg-primary/10"
+                        className="flex w-full items-center gap-3 px-4 py-3 text-sm hover:bg-primary/10 cursor-pointer"
                         onClick={() => {
                             setOpen(false);
                             onEdit?.();
@@ -73,7 +76,7 @@ const ActionsMenu = ({
                     </button>
 
                     <button
-                        className="flex w-full items-center gap-3 px-4 py-3 text-sm text-danger hover:bg-danger/10"
+                        className="flex w-full items-center gap-3 px-4 py-3 text-sm text-danger hover:bg-danger/10 cursor-pointer"
                         onClick={() => {
                             setOpen(false);
                             onDelete?.();
