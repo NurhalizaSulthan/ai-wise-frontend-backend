@@ -82,7 +82,7 @@ func (repo *PekerjaRepositoryImpl) GetWithPagination(tx *gorm.DB, after bool, pu
 	var listPekerja []model.Pekerja
 
 	if after {
-		if err := repo.getDB(tx).Where("(created_at > ?) OR (created_at = ? && public_id > ? )", timestamp, timestamp, publicID).
+		if err := repo.getDB(tx).Where("(created_at > ?) OR (created_at = ? AND public_id > ? )", timestamp, timestamp, publicID).
 			Order("created_at ASC").
 			Order("public_id ASC").
 			Limit(11).
@@ -90,7 +90,7 @@ func (repo *PekerjaRepositoryImpl) GetWithPagination(tx *gorm.DB, after bool, pu
 			return nil, err
 		}
 	} else {
-		if err := repo.getDB(tx).Where("(created_at < ?) OR (created_at = ? && public_id < ?)", timestamp, timestamp, publicID).
+		if err := repo.getDB(tx).Where("(created_at < ?) OR (created_at = ? AND public_id < ?)", timestamp, timestamp, publicID).
 			Order("created_at DESC").
 			Order("public_id DESC").
 			Limit(11).
