@@ -183,7 +183,7 @@ func (s *DeviceServiceImpl) Create(dto *dto.DeviceCreate) (*dto.DeviceBase, erro
 
 	committed = true
 
-	topicString := fmt.Sprintf("telemetry/%s", data.PublicID)
+	topicString := fmt.Sprintf("telemetry/%s", data.MacAddress)
 	s.mqttClient.AddTopic(data.InternalID, data.MacAddress, topicString)
 
 	return mappers.Map(data, mappers.ToDeviceBase), nil

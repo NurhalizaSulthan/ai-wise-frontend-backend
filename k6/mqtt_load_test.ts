@@ -7,7 +7,7 @@ export const options = {
       executor: 'constant-vus',
       exec: 'firstDevice',
       vus: 1,
-      duration: '120s'
+      duration: '30s'
     },
     second_device: {
       executor: 'constant-vus',
@@ -58,12 +58,12 @@ export function firstDevice() {
     const intervalID = setInterval(() => {
       client.publish(topic, JSON.stringify(data))
       // console.log("Telemetry published");
-    }, 10)
+    }, 1000)
 
     setTimeout(() => {
       clearInterval(intervalID)
       client.end()
-    }, 120000)
+    }, 30000)
   });
 
   client.on("error", (error) => {
@@ -83,7 +83,7 @@ export function firstDevice() {
 export function secondDevice() {
   const client = new Client();
 
-  const topic = "telemetry/d5:8c:68:5d:5c:2f"
+  const topic = "telemetry/5d20804a-f69e-4c6d-9511-643acf5b6e60"
 
   const data = {
     x: 0.2,

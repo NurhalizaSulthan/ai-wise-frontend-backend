@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"log"
 
+	"net/url"
+
 	"github.com/gofiber/contrib/v3/websocket"
 	"github.com/gofiber/fiber/v3"
 	"github.com/google/uuid"
@@ -32,15 +34,22 @@ func (wc *WSController) HandleSession(c fiber.Ctx) error {
 
 func (wc *WSController) HandleSessionWS(c *websocket.Conn) {
 	macAddressStr := c.Params("mac_address")
+	decodeMacAddress, err := url.PathUnescape(macAddressStr)
 
-	if macAddressStr == "" {
-		log.Printf("WS invalid mac_address: %s", macAddressStr)
+	if err != nil {
+		log.Printf("WS invalid mac_address: node decoded %s", macAddressStr)
+		c.Close()
+		return
+	}
+
+	if decodeMacAddress == "" {
+		log.Printf("WS invalid mac_address: %s", decodeMacAddress)
 		c.Close()
 		return
 	}
 
 	pubID := uuid.New()
-	sessionRegistration := fmt.Sprintf("%s+%s", macAddressStr, pubID)
+	sessionRegistration := fmt.Sprintf("%s+%s", decodeMacAddress, pubID)
 
 	wc.hub.Register(sessionRegistration, c)
 	defer wc.hub.Unregister(sessionRegistration, c)

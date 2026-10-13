@@ -190,7 +190,7 @@ export default function SignUpForm() {
 
               <div>
                 <Button
-                  type="submit"
+                  // type="submit"
                   className="w-full"
                   size="sm"
                   disabled={loading}
