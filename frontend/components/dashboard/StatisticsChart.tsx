@@ -10,6 +10,8 @@ import ChartTab from "@/components/atoms/ChartTab";
 import type { ComponentType } from "react";
 import type { Props as ApexProps } from "react-apexcharts";
 import { Icon } from "@iconify/react";
+import { useDashboard } from "./DashboardProvider";
+import { monthlySeries } from "@/lib/dashboard";
 
 const Chart = dynamic<ApexProps>(
   () =>
@@ -21,6 +23,7 @@ const Chart = dynamic<ApexProps>(
 
 export default function StatisticsChart() {
   const datePickerRef = useRef<HTMLInputElement>(null);
+  const { alerts } = useDashboard();
 
   useEffect(() => {
     if (!datePickerRef.current) return;
@@ -35,159 +38,79 @@ export default function StatisticsChart() {
       dateFormat: "M d",
       defaultDate: [sevenDaysAgo, today],
       clickOpens: true,
-
-      // Jangan pakai static:true karena bisa bentrok dengan React/Iconify
       static: false,
-
       prevArrow: "‹",
       nextArrow: "›",
     });
 
     return () => {
-      if (!Array.isArray(fp)) {
-        fp.destroy();
-      }
+      if (!Array.isArray(fp)) fp.destroy();
     };
   }, []);
 
   const options = useMemo<ApexOptions>(
     () => ({
-      legend: {
-        show: false,
-      },
-
+      legend: { show: false },
       colors: ["#157138", "#fb8716"],
-
       chart: {
         fontFamily: "var(--font-sans)",
         height: 310,
         type: "area",
-        toolbar: {
-          show: false,
-        },
-        zoom: {
-          enabled: false,
-        },
+        toolbar: { show: false },
+        zoom: { enabled: false },
+        animations: { enabled: false },
       },
-
-      stroke: {
-        curve: "smooth",
-        width: [3, 3],
-      },
-
-      fill: {
-        type: "gradient",
-        gradient: {
-          opacityFrom: 0.35,
-          opacityTo: 0.02,
-        },
-      },
-
+      stroke: { curve: "smooth", width: [3, 3] },
+      fill: { type: "gradient", gradient: { opacityFrom: 0.35, opacityTo: 0.02 } },
       markers: {
         size: 0,
         strokeColors: "#ffffff",
         strokeWidth: 2,
-        hover: {
-          size: 6,
-        },
+        hover: { size: 6 },
       },
-
       grid: {
         borderColor: "var(--border)",
         strokeDashArray: 4,
-        xaxis: {
-          lines: {
-            show: false,
-          },
-        },
-        yaxis: {
-          lines: {
-            show: true,
-          },
-        },
+        xaxis: { lines: { show: false } },
+        yaxis: { lines: { show: true } },
       },
-
-      dataLabels: {
-        enabled: false,
-      },
-
-      tooltip: {
-        enabled: true,
-        theme: "light",
-      },
-
+      dataLabels: { enabled: false },
+      tooltip: { enabled: true, theme: "light" },
       xaxis: {
         type: "category",
-        categories: [
-          "Jan",
-          "Feb",
-          "Mar",
-          "Apr",
-          "May",
-          "Jun",
-          "Jul",
-          "Aug",
-          "Sep",
-          "Oct",
-          "Nov",
-          "Dec",
-        ],
-        axisBorder: {
-          show: false,
-        },
-        axisTicks: {
-          show: false,
-        },
-        tooltip: {
-          enabled: false,
-        },
+        categories: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"],
+        axisBorder: { show: false },
+        axisTicks: { show: false },
+        tooltip: { enabled: false },
         labels: {
-          style: {
-            fontSize: "12px",
-            colors: "var(--muted)",
-            fontFamily: "var(--font-sans)",
-          },
+          style: { fontSize: "12px", colors: "var(--muted)", fontFamily: "var(--font-sans)" },
         },
       },
-
       yaxis: {
+        min: 0,
+        forceNiceScale: true,
         labels: {
-          style: {
-            fontSize: "12px",
-            colors: ["var(--muted)"],
-            fontFamily: "var(--font-sans)",
-          },
+          style: { fontSize: "12px", colors: ["var(--muted)"], fontFamily: "var(--font-sans)" },
+          formatter: (v: number) => String(Math.round(v)),
         },
-        title: {
-          text: "",
-        },
+        title: { text: "" },
       },
     }),
     []
   );
 
-  const series = [
-    {
-      name: "Alerts",
-      data: [180, 190, 170, 160, 175, 165, 170, 205, 230, 210, 240, 235],
-    },
-    {
-      name: "Resolved",
-      data: [40, 30, 50, 40, 55, 40, 70, 100, 110, 120, 150, 140],
-    },
-  ];
-
+  const series = useMemo(() => {
+  const { total } = monthlySeries(alerts);
+  return [{ name: "Peringatan", data: total }];
+}, [alerts]);
 
   return (
     <div className="flex h-full flex-col rounded-2xl border border-border bg-surface dark:bg-surface px-5 pb-5 pt-5 sm:px-6 sm:pt-6">
       <div className="mb-6 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <div className="w-full min-w-0">
-          <h3 className="text-lg font-semibold text-foreground">
-            Statistics
-          </h3>
-
+          <h3 className="text-lg font-semibold text-foreground">Statistik</h3>
           <p className="mt-1 text-sm text-muted">
-            Safety alerts trend
+            Tren peringatan keselamatan ({new Date().getFullYear()})
           </p>
         </div>
 
@@ -201,15 +124,15 @@ export default function StatisticsChart() {
             />
             <input
               ref={datePickerRef}
-              className="h-10 w-10 cursor-pointer rounded-lg border border-border bg-background text-sm font-medium text-transparent outline-none transitionplaceholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 lg:h-auto lg:w-40 lg:py-2 lg:pl-10 lg:pr-3 lg:text-foreground"
-              placeholder="Select date range"
+              className="h-10 w-10 cursor-pointer rounded-lg border border-border bg-background text-sm font-medium text-transparent outline-none transition placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 lg:h-auto lg:w-40 lg:py-2 lg:pl-10 lg:pr-3 lg:text-foreground"
+              placeholder="Pilih rentang tanggal"
             />
           </div>
         </div>
       </div>
 
       <div className="max-w-full flex-1 overflow-x-auto custom-scrollbar">
-         <div className="h-full min-w-180 xl:min-w-full">
+        <div className="h-full min-w-180 xl:min-w-full">
           <Chart options={options} series={series} type="area" height="100%" />
         </div>
       </div>
