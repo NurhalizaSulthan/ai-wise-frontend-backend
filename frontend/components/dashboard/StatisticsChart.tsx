@@ -3,10 +3,9 @@
 import { useEffect, useMemo, useRef } from "react";
 import dynamic from "next/dynamic";
 import "flatpickr/dist/flatpickr.min.css";
-import { ApexOptions } from "apexcharts";
+import type { ApexOptions } from "apexcharts";
 import flatpickr from "flatpickr";
-import ChartTab from "@/components/atoms/ChartTab";
-
+import { Indonesian } from "flatpickr/dist/l10n/id";
 import type { ComponentType } from "react";
 import type { Props as ApexProps } from "react-apexcharts";
 import { Icon } from "@iconify/react";
@@ -34,13 +33,16 @@ export default function StatisticsChart() {
 
     const fp = flatpickr(datePickerRef.current, {
       mode: "range",
+      locale: { ...Indonesian, rangeSeparator: " - " },
       monthSelectorType: "static",
-      dateFormat: "M d",
+      dateFormat: "d M",
       defaultDate: [sevenDaysAgo, today],
       clickOpens: true,
       static: false,
       prevArrow: "‹",
       nextArrow: "›",
+      // TODO: nanti dipakai untuk memfilter grafik
+      // onChange: (selectedDates) => { ... },
     });
 
     return () => {
@@ -100,23 +102,24 @@ export default function StatisticsChart() {
   );
 
   const series = useMemo(() => {
-  const { total } = monthlySeries(alerts);
-  return [{ name: "Peringatan", data: total }];
-}, [alerts]);
+    const { total, resolved, hasStatus } = monthlySeries(alerts);
+    const s = [{ name: "Peringatan", data: total }];
+    // Seri "Selesai" hanya muncul jika backend mengirim field status pada alert
+    if (hasStatus) s.push({ name: "Selesai", data: resolved });
+    return s;
+  }, [alerts]);
 
   return (
-    <div className="flex h-full flex-col rounded-2xl border border-border bg-surface dark:bg-surface px-5 pb-5 pt-5 sm:px-6 sm:pt-6">
+    <div className="flex h-full flex-col rounded-2xl border border-border bg-surface px-5 pb-5 pt-5 dark:bg-surface sm:px-6 sm:pt-6">
       <div className="mb-6 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <div className="w-full min-w-0">
           <h3 className="text-lg font-semibold text-foreground">Statistik</h3>
           <p className="mt-1 text-sm text-muted">
-            Tren peringatan keselamatan ({new Date().getFullYear()})
+            Tren peringatan keselamatan ({new Date().getFullYear()}), per bulan
           </p>
         </div>
 
         <div className="flex items-center gap-3 sm:justify-end">
-          <ChartTab />
-
           <div className="relative inline-flex items-center">
             <Icon
               icon="solar:calendar-linear"
@@ -124,8 +127,8 @@ export default function StatisticsChart() {
             />
             <input
               ref={datePickerRef}
-              className="h-10 w-10 cursor-pointer rounded-lg border border-border bg-background text-sm font-medium text-transparent outline-none transition placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 lg:h-auto lg:w-40 lg:py-2 lg:pl-10 lg:pr-3 lg:text-foreground"
-              placeholder="Pilih rentang tanggal"
+              className="h-10 w-10 cursor-pointer rounded-lg border border-border bg-background text-sm font-medium text-transparent outline-none transition placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/20 lg:h-auto lg:w-44 lg:py-2 lg:pl-10 lg:pr-3 lg:text-foreground"
+              placeholder="Pilih tanggal"
             />
           </div>
         </div>

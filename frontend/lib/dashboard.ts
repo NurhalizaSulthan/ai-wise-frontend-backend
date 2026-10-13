@@ -1,29 +1,27 @@
 import apiFetch from "@/lib/api/client";
 
-
-
-// Jika NEXT_PUBLIC_BACKEND_URL di .env.local sudah berisi /api/v1,
-// ganti jadi: const PREFIX = "";
+// Jika NEXT_PUBLIC_BACKEND_URL sudah berisi /api/v1, ganti jadi: const PREFIX = "";
 const PREFIX = "/api/v1";
 
-type Envelope<T> = { data: T | null };
+/* ---------- Pengambil data ---------- */
 
-// Membuka envelope { status, message, data }. data bisa null jika kosong.
+
 const getList = async <T>(path: string): Promise<T[]> => {
-  const res = await apiFetch<Envelope<T[]>>(`${PREFIX}${path}`);
-  return res?.data ?? [];
+  const res = await apiFetch<unknown>(`${PREFIX}${path}`);
+  if (Array.isArray(res)) return res as T[];
+  const data = (res as { data?: T[] | null } | null)?.data;
+  return Array.isArray(data) ? data : [];
 };
 
-
+/* ---------- Tipe data ---------- */
 
 export type DeviceDTO = {
   public_id: string;
   pekerja_id: number | null;
-  nama: string;
+  nama?: string;
   mac_address: string;
   status: string; // "aktif" | ...
 };
-
 
 export type AlertDTO = {
   public_id: string;
@@ -31,7 +29,7 @@ export type AlertDTO = {
   device_public_id?: string;
   jenis_alert: string;
   tingkat_alert?: string;
-  status?: string; 
+  status?: string;
   created_at?: string;
 };
 
@@ -44,22 +42,20 @@ export type TelemetryDTO = {
   created_at: string;
 };
 
-/* ---------- Fetchers ---------- */
-
 export const getDevices = () => getList<DeviceDTO>("/device");
 export const getAlerts = () => getList<AlertDTO>("/alert");
 export const getTelemetry = () => getList<TelemetryDTO>("/telemetry");
 
-/* ---------- Tipe jenis alert ---------- */
+/* ---------- Jenis alert ---------- */
 
 export const ALERT_META: Record<string, { label: string; color: string }> = {
-  fall: { label: "Fall Risk", color: "#46C0D9" },
-  posture: { label: "Bad Posture", color: "#F5AE4B" },
-  other: { label: "Other", color: "#9CA3AF" },
+  fall: { label: "Risiko Jatuh", color: "#46C0D9" },
+  posture: { label: "Postur Berbahaya", color: "#F5AE4B" },
+  weather: { label: "Cuaca Ekstrem", color: "#8B5CF6" },
+  other: { label: "Lainnya", color: "#9CA3AF" },
 };
 
-// Menormalkan "Jatuh", "jatuh", "Postur Tubuh", "postur_tubuh", "Cuaca Ekstrem", dst.
-export function alertKey(jenis: string): keyof typeof ALERT_META {
+export function alertKey(jenis?: string): keyof typeof ALERT_META {
   const v = (jenis ?? "").toLowerCase();
   if (v.includes("jatuh") || v.includes("fall")) return "fall";
   if (v.includes("postur") || v.includes("posture")) return "posture";
@@ -76,7 +72,9 @@ export function countByType(alerts: AlertDTO[]) {
   return counts;
 }
 
-/* ---------- Util tanggal ---------- */
+/* ---------- Util ---------- */
+
+export const isActive = (d: DeviceDTO) => (d.status ?? "").toLowerCase() === "aktif";
 
 export function isToday(iso?: string) {
   if (!iso) return false;
@@ -95,7 +93,7 @@ export function monthlySeries(alerts: AlertDTO[]) {
   const year = new Date().getFullYear();
   const total = Array(12).fill(0) as number[];
   const resolved = Array(12).fill(0) as number[];
-  const hasStatus = alerts.some((a) => a.status !== undefined);
+  const hasStatus = alerts.some((a) => a.status !== undefined && a.status !== null);
 
   for (const a of alerts) {
     if (!a.created_at) continue;
@@ -108,7 +106,7 @@ export function monthlySeries(alerts: AlertDTO[]) {
   return { total, resolved, hasStatus };
 }
 
-/* ---------- Data untuk peta ---------- */
+/* ---------- Data peta ---------- */
 
 export type MapDevice = {
   id: string;
@@ -119,31 +117,29 @@ export type MapDevice = {
   lastActiveAt?: string;
 };
 
-// Lokasi = telemetry terbaru milik device tersebut.
-// ASUMSI: telemetry punya `device_public_id`. Jika tidak ada, device tidak bisa dicocokkan
-// dan peta kosong sampai backend menambahkan penanda device di telemetry.
+// Lokasi = telemetry terbaru milik device.
+// Membutuhkan telemetry yang punya `device_public_id` (perlu dari backend).
 export function buildMapDevices(devices: DeviceDTO[], telemetry: TelemetryDTO[]): MapDevice[] {
   const result: MapDevice[] = [];
 
   for (const d of devices) {
-    const mine = telemetry
+    const latest = telemetry
       .filter(
         (t) =>
           t.device_public_id === d.public_id &&
           Number.isFinite(t.latitude) &&
           Number.isFinite(t.longitude)
       )
-      .sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at));
+      .sort((a, b) => +new Date(b.created_at) - +new Date(a.created_at))[0];
 
-    const latest = mine[0];
     if (!latest) continue;
 
     result.push({
       id: d.public_id,
-      name: d.nama,
+      name: d.nama ?? d.mac_address,
       lat: latest.latitude,
       lng: latest.longitude,
-      status: d.status.toLowerCase() === "aktif" ? "active" : "inactive",
+      status: isActive(d) ? "active" : "inactive",
       lastActiveAt: new Date(latest.created_at).toLocaleString("id-ID", {
         dateStyle: "long",
         timeStyle: "short",

@@ -18,26 +18,22 @@ type DashboardState = {
   error: string | null;
 };
 
-const DashboardContext = createContext<DashboardState>({
+const initial: DashboardState = {
   devices: [],
   alerts: [],
   telemetry: [],
   loading: true,
   error: null,
-});
+};
+
+const DashboardContext = createContext<DashboardState>(initial);
 
 export const useDashboard = () => useContext(DashboardContext);
 
 const REFRESH_MS = 10_000;
 
 export function DashboardProvider({ children }: { children: ReactNode }) {
-  const [state, setState] = useState<DashboardState>({
-    devices: [],
-    alerts: [],
-    telemetry: [],
-    loading: true,
-    error: null,
-  });
+  const [state, setState] = useState<DashboardState>(initial);
 
   useEffect(() => {
     let mounted = true;

@@ -20,7 +20,6 @@ export default function DeviceMap() {
 
   const devices = useMemo(() => buildMapDevices(rawDevices, telemetry), [rawDevices, telemetry]);
 
-  // Pusat peta = rata-rata koordinat semua perangkat (atau default jika kosong)
   const center = useMemo<[number, number]>(() => {
     if (devices.length === 0) return DEFAULT_CENTER;
     const lat = devices.reduce((s, d) => s + d.lat, 0) / devices.length;
@@ -83,7 +82,7 @@ export default function DeviceMap() {
         </div>
       </div>
 
-      <div className="h-105 w-full overflow-hidden rounded-xl">
+      <div className="relative z-0 h-105 w-full overflow-hidden rounded-xl isolate">
         {icons ? (
           <MapContainer
             center={center}

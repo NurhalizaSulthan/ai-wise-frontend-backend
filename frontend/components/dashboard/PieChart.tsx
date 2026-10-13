@@ -22,8 +22,8 @@ export default function PieChart() {
     () =>
       Object.entries(countByType(alerts)).map(([key, value]) => ({
         value,
-        name: ALERT_META[key].label,
-        itemStyle: { color: ALERT_META[key].color },
+        name: ALERT_META[key]?.label ?? key,
+        itemStyle: { color: ALERT_META[key]?.color ?? "#9CA3AF" },
       })),
     [alerts]
   );
@@ -46,7 +46,13 @@ export default function PieChart() {
           center: ["50%", "42%"],
           data,
           avoidLabelOverlap: true,
-          label: { show: true, position: "outside", formatter: "{d}%", fontSize: 14, color: "#6B7280" },
+          label: {
+            show: true,
+            position: "outside",
+            formatter: "{d}%",
+            fontSize: 14,
+            color: "#6B7280",
+          },
           labelLine: { show: true, length: 18, length2: 25, smooth: false },
           emphasis: { scale: false },
         },
@@ -58,7 +64,6 @@ export default function PieChart() {
   return (
     <div className="rounded-2xl border border-border bg-surface dark:border-border dark:bg-surface">
       <div className="px-5 pt-5 sm:px-6">
-        {/* Header */}
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-foreground dark:text-foreground">
             Distribusi Jenis Risiko
@@ -91,14 +96,13 @@ export default function PieChart() {
           </div>
         </div>
 
-        {/* Chart */}
-        <div>
+        <div style={{ height: 450 }}>
           {loading ? (
-            <div className="flex h-112.5 items-center justify-center text-sm text-muted">
+            <div className="flex h-full items-center justify-center text-sm text-muted">
               Memuat...
             </div>
           ) : data.length === 0 ? (
-            <div className="flex h-112.5 items-center justify-center text-sm text-muted">
+            <div className="flex h-full items-center justify-center text-sm text-muted">
               Belum ada data peringatan
             </div>
           ) : (
