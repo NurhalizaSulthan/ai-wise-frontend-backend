@@ -4,7 +4,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
       tags:
-        - kaizerd23/rikub-backend:${APP_TAG}
+        - kaizerd23/rikub-backend:${BACKEND_APP_TAG}
       platforms:
         - linux/arm64
         - linux/amd64
@@ -16,7 +16,7 @@ services:
         condition: service_started
 
     env_file:
-      - .env
+      - prod.env
 
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
@@ -26,25 +26,26 @@ services:
     networks:
       - network
 
-  # frontend:
-  #   build:
-  #     context: ./frontend
-  #     dockerfile: Dockerfile
-  #     args:
-  #       NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL}
-  #     tags:
-  #       - kaizerd23/telehealth-frontend:${APP_TAG}
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_BACKEND_URL: ${NEXT_PUBLIC_BACKEND_URL}
+        NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL}
+      tags:
+        - kaizerd23/rikub-frontend:${FRONTEND_APP_TAG}
 
-  #   ports:
-  #     - "${PORT}:3000"
+    ports:
+      - "${PORT}:3000"
 
-  #   depends_on:
-  #     - backend
+    depends_on:
+      - backend
 
-  #   restart: unless-stopped
+    restart: unless-stopped
 
-  #   networks:
-  #     - network
+    networks:
+      - network
 
   migrate:
     image: migrate/migrate:4

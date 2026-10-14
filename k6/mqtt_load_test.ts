@@ -7,7 +7,7 @@ export const options = {
       executor: 'constant-vus',
       exec: 'firstDevice',
       vus: 1,
-      duration: '30s'
+      duration: '120s'
     },
     second_device: {
       executor: 'constant-vus',
@@ -18,6 +18,24 @@ export const options = {
     third_device: {
       executor: 'constant-vus',
       exec: 'thirdDevice',
+      vus: 1,
+      duration: '120s'
+    },
+    fourth_device: {
+      executor: 'constant-vus',
+      exec: 'fourthDevice',
+      vus: 1,
+      duration: '120s'
+    },
+    fifth_device: {
+      executor: 'constant-vus',
+      exec: 'fifthDevice',
+      vus: 1,
+      duration: '120s'
+    },
+    sixth_device: {
+      executor: 'constant-vus',
+      exec: 'sixthDevice',
       vus: 1,
       duration: '120s'
     }
@@ -83,7 +101,7 @@ export function firstDevice() {
 export function secondDevice() {
   const client = new Client();
 
-  const topic = "telemetry/5d20804a-f69e-4c6d-9511-643acf5b6e60"
+  const topic = "telemetry/d5:8c:68:5d:5c:2f"
 
   const data = {
     x: 0.2,
@@ -132,6 +150,150 @@ export function thirdDevice() {
   const client = new Client();
 
   const topic = "telemetry/64:00:01:8b:8e:8e"
+
+  const data = {
+    x: 0.3,
+    y: 0.3,
+    z: 9.3,
+    gx: -0.3,
+    gy: 0.3,
+    gz: 1.3,
+    roll: -1.3,
+    pitch: 0.3,
+    yaw: 232.3,
+    total: 1.0,
+    status: "AMAN"
+  };
+
+  client.on("connect", async () => {
+    console.log("Connected to MQTT broker");
+
+    const intervalID = setInterval(() => {
+      client.publish(topic, JSON.stringify(data))
+      console.log("Telemetry published");
+
+    }, 10)
+
+    setTimeout(() => {
+      clearInterval(intervalID)
+      client.end()
+    }, 120000)
+  });
+
+  client.on("error", (error) => {
+    console.error("MQTT error:", error);
+  });
+
+  client.on("end", () => {
+    console.log("Disconnected from MQTT broker");
+  });
+
+  client.connect(
+    // __ENV.MQTT_BROKER_ADDRESS || 
+    "mqtt://13.229.227.127:1884"
+  );
+}
+
+export function fourthDevice() {
+  const client = new Client();
+
+  const topic = "telemetry/9c:be:eb:a9:f1:d0"
+
+  const data = {
+    x: 0.3,
+    y: 0.3,
+    z: 9.3,
+    gx: -0.3,
+    gy: 0.3,
+    gz: 1.3,
+    roll: -1.3,
+    pitch: 0.3,
+    yaw: 232.3,
+    total: 1.0,
+    status: "AMAN"
+  };
+
+  client.on("connect", async () => {
+    console.log("Connected to MQTT broker");
+
+    const intervalID = setInterval(() => {
+      client.publish(topic, JSON.stringify(data))
+      console.log("Telemetry published");
+
+    }, 10)
+
+    setTimeout(() => {
+      clearInterval(intervalID)
+      client.end()
+    }, 120000)
+  });
+
+  client.on("error", (error) => {
+    console.error("MQTT error:", error);
+  });
+
+  client.on("end", () => {
+    console.log("Disconnected from MQTT broker");
+  });
+
+  client.connect(
+    // __ENV.MQTT_BROKER_ADDRESS || 
+    "mqtt://13.229.227.127:1884"
+  );
+}
+
+export function fifthDevice() {
+  const client = new Client();
+
+  const topic = "telemetry/68:fe:71:0c:b4:48"
+
+  const data = {
+    x: 0.3,
+    y: 0.3,
+    z: 9.3,
+    gx: -0.3,
+    gy: 0.3,
+    gz: 1.3,
+    roll: -1.3,
+    pitch: 0.3,
+    yaw: 232.3,
+    total: 1.0,
+    status: "AMAN"
+  };
+
+  client.on("connect", async () => {
+    console.log("Connected to MQTT broker");
+
+    const intervalID = setInterval(() => {
+      client.publish(topic, JSON.stringify(data))
+      console.log("Telemetry published");
+
+    }, 10)
+
+    setTimeout(() => {
+      clearInterval(intervalID)
+      client.end()
+    }, 120000)
+  });
+
+  client.on("error", (error) => {
+    console.error("MQTT error:", error);
+  });
+
+  client.on("end", () => {
+    console.log("Disconnected from MQTT broker");
+  });
+
+  client.connect(
+    // __ENV.MQTT_BROKER_ADDRESS || 
+    "mqtt://13.229.227.127:1884"
+  );
+}
+
+export function sixthDevice() {
+  const client = new Client();
+
+  const topic = "telemetry/68:ee:8f:4d:8c:bc"
 
   const data = {
     x: 0.3,

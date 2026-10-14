@@ -43,7 +43,7 @@ const TIME_ZONE = "Asia/Makassar"; // fixed so server and client render the same
 
 function useSensorSocket(
   macAddress: string | undefined,
-  publicId: string | undefined
+  publicId: string | undefined,
 ) {
   const [data, setData] = useState<SensorData | null>(null);
   const [state, setState] = useState<ConnectionState>("connecting");
@@ -53,7 +53,7 @@ function useSensorSocket(
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const retriesRef = useRef(0);
   const stoppedRef = useRef(false);
-  const connectRef = useRef<() => void>(() => { });
+  const connectRef = useRef<() => void>(() => {});
 
   useEffect(() => {
     if (!macAddress) return;
@@ -64,7 +64,7 @@ function useSensorSocket(
     setRetryCount(0);
     setData(null);
 
-    const url = `${WS_URL}/ws/mobile/${encodeURIComponent(macAddress)}`;
+    const url = `${WS_URL}/api/v1/ws/mobile/${encodeURIComponent(macAddress)}`;
 
     const connect = () => {
       if (stoppedRef.current) return;
@@ -96,7 +96,10 @@ function useSensorSocket(
             pitch: m.pitch,
             roll: m.roll,
             yaw: m.yaw,
-            status: String(m.Status ?? m.status).toUpperCase() === "JATUH" ? "JATUH" : "AMAN",
+            status:
+              String(m.Status ?? m.status).toUpperCase() === "JATUH"
+                ? "JATUH"
+                : "AMAN",
             // latitude: typeof m.latitude === "number" ? m.latitude : null,
             // longitude: typeof m.longitude === "number" ? m.longitude : null,
             received_at: Date.now(),
@@ -276,7 +279,7 @@ export const DeviceInfo = ({ publicId }: DeviceInfoProps) => {
   // Hooks must run before any early return
   const { data, state, retryCount, reconnect } = useSensorSocket(
     device?.macAddress,
-    publicId
+    publicId,
   );
   const now = useClientNow();
   const mounted = now !== null;
@@ -350,14 +353,16 @@ export const DeviceInfo = ({ publicId }: DeviceInfoProps) => {
         <div className="flex flex-wrap items-center gap-2">
           {/* Device online badge (from device.lastSeenAt) */}
           <span
-            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${online
-              ? "bg-green-50 text-green-700 dark:bg-green-500/10 dark:text-green-400"
-              : "bg-gray-100 text-gray-500 dark:bg-gray-500/10 dark:text-gray-400"
-              }`}
+            className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${
+              online
+                ? "bg-green-50 text-green-700 dark:bg-green-500/10 dark:text-green-400"
+                : "bg-gray-100 text-gray-500 dark:bg-gray-500/10 dark:text-gray-400"
+            }`}
           >
             <span
-              className={`h-1.5 w-1.5 rounded-full ${online ? "bg-green-500" : "bg-gray-400"
-                }`}
+              className={`h-1.5 w-1.5 rounded-full ${
+                online ? "bg-green-500" : "bg-gray-400"
+              }`}
             />
             {online ? "Online" : "Offline"}
           </span>
@@ -365,7 +370,7 @@ export const DeviceInfo = ({ publicId }: DeviceInfoProps) => {
           {/* WebSocket connection badge */}
           <span
             className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${conn.badge}`}
-            title={`${WS_URL}/ws/mobile/${device.macAddress}`}
+            title={`${WS_URL}api/v1/ws/mobile/${device.macAddress}`}
           >
             <span className={`h-1.5 w-1.5 rounded-full ${conn.dot}`} />
             WebSocket: {conn.label}
@@ -405,7 +410,9 @@ export const DeviceInfo = ({ publicId }: DeviceInfoProps) => {
           </h4>
           {data && (
             <span className="text-xs text-gray-400 dark:text-gray-500">
-              {new Date(data.received_at).toLocaleTimeString("id-ID", { timeZone: TIME_ZONE })}
+              {new Date(data.received_at).toLocaleTimeString("id-ID", {
+                timeZone: TIME_ZONE,
+              })}
             </span>
           )}
         </div>
@@ -420,10 +427,11 @@ export const DeviceInfo = ({ publicId }: DeviceInfoProps) => {
           <div className="space-y-5">
             {/* Fall status */}
             <div
-              className={`flex items-center justify-between rounded-xl px-4 py-3 ${fell
-                ? "bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400"
-                : "bg-green-50 text-green-700 dark:bg-green-500/10 dark:text-green-400"
-                }`}
+              className={`flex items-center justify-between rounded-xl px-4 py-3 ${
+                fell
+                  ? "bg-red-50 text-red-700 dark:bg-red-500/10 dark:text-red-400"
+                  : "bg-green-50 text-green-700 dark:bg-green-500/10 dark:text-green-400"
+              }`}
             >
               <span className="text-sm font-medium">Status Pekerja</span>
               <span
