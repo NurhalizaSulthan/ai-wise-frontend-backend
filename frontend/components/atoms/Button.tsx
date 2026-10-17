@@ -5,6 +5,7 @@ interface ButtonProps {
   size?: "sm" | "md" | "lg" | "icon";
   variant?: "primary" | "secondary" | "outline" | "ghost";
   rounded?: "lg" | "full";
+   type?: "button" | "submit" | "reset";
   startIcon?: ReactNode;
   endIcon?: ReactNode;
   onClick?: () => void;
