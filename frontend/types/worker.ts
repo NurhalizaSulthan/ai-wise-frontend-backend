@@ -38,6 +38,8 @@ interface WorkerDevice {
     nama: string;
     mac_address: string;
     status: string;
+    created_at: string;
+    updated_at: string;
 }
 
 interface Worker {
@@ -70,6 +72,8 @@ const mapWorker = (w: ApiWorker): Worker => ({
             nama: w.device.nama ?? "",
             mac_address: w.device.mac_address ?? "",
             status: w.device.status ?? "",
+            created_at: w.device.created_at ?? "",
+            updated_at: w.device.updated_at ?? "",
         }
         : null,
 });

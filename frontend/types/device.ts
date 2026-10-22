@@ -6,6 +6,8 @@ interface ApiDevice {
     nama: string;
     mac_address: string;
     status: string;
+    created_at: string;
+    updated_at: string;
 }
 
 type CreateDevice = Pick<ApiDevice, "nama" | "mac_address">;

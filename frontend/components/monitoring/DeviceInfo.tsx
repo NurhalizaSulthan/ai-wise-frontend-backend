@@ -8,6 +8,8 @@ import {
   getDeviceByPublicId,
   isOnline,
 } from "@/lib/devices";
+import { useDeviceDetail } from "@/hooks/useDevices";
+import { useWorkerDetail } from "@/hooks/useWorkers";
 
 /* ----------------------------- WebSocket hook ----------------------------- */
 
@@ -274,17 +276,24 @@ interface DeviceInfoProps {
 export const DeviceInfo = ({ publicId }: DeviceInfoProps) => {
   // Swap getDeviceByPublicId for a real fetch (e.g. GET /api/devices/[publicId])
   // once the endpoint is ready.
-  const device = getDeviceByPublicId(publicId);
-
+  // const device = getDeviceByPublicId(publicId);
   // Hooks must run before any early return
+
+  // const deviceDetailData = useDeviceDetail(publicId);
+  const workerDetailResp = useWorkerDetail(publicId);
+  const workerData = workerDetailResp.data;
+  const deviceDetail = workerData?.device;
+
   const { data, state, retryCount, reconnect } = useSensorSocket(
-    device?.macAddress,
-    publicId,
+    // device?.macAddress,
+    // device.publicId,
+    deviceDetail?.mac_address,
+    deviceDetail?.public_id,
   );
   const now = useClientNow();
   const mounted = now !== null;
 
-  if (!device) {
+  if (!deviceDetail) {
     return (
       <div className="rounded-2xl border border-gray-200 bg-white p-8 text-center dark:border-gray-800 dark:bg-white/[0.03]">
         <p className="text-sm text-gray-500 dark:text-gray-400">
@@ -300,21 +309,34 @@ export const DeviceInfo = ({ publicId }: DeviceInfoProps) => {
     );
   }
 
+  // ************************ UNTUK SEKARANG TIDAK ADA FIELD last_seen *********************************************
   // Depends on "now", so it is only computed on the client after mount.
   // Server and first client render both show "Offline" / "-" -> no mismatch.
-  const online = mounted && isOnline(device.lastSeenAt);
-  const lastSeenText = mounted ? formatRelativeTime(device.lastSeenAt) : "-";
+  // const online = mounted && isOnline(deviceDetail.lastSeenAt);
+
+  // ********** ONLINE UNTUK SEKARANG UPDATE KEMBALI NANTI*******************
+  const online = deviceDetail.status == "aktif";
+
+  // const lastSeenText = mounted
+  //   ? formatRelativeTime(deviceDetail.lastSeenAt)
+  //   : "-";
   const conn = CONNECTION_STYLES[state];
   const fell = data?.status === "JATUH";
 
   const details: { label: string; value: string }[] = [
-    { label: "Public ID", value: device.publicId },
-    { label: "MAC Address", value: device.macAddress },
-    { label: "Nama Pekerja", value: device.pekerjaName },
-    { label: "ID Pekerja", value: String(device.pekerjaId) },
-    { label: "Terakhir Aktif", value: lastSeenText },
-    { label: "Terdaftar Sejak", value: formatDateTime(device.createdAt) },
-    { label: "Terakhir Diperbarui", value: formatDateTime(device.updatedAt) },
+    { label: "Public ID", value: deviceDetail.public_id },
+    { label: "MAC Address", value: deviceDetail.mac_address },
+    { label: "Nama Pekerja", value: workerData.nama },
+    //   { label: "ID Pekerja", value: String(deviceDetail.pekerjaId) },
+    //   { label: "Terakhir Aktif", value: lastSeenText },
+    {
+      label: "Terdaftar Sejak",
+      value: formatDateTime(deviceDetail.created_at),
+    },
+    {
+      label: "Terakhir Diperbarui",
+      value: formatDateTime(deviceDetail.updated_at),
+    },
   ];
 
   return (
@@ -343,10 +365,12 @@ export const DeviceInfo = ({ publicId }: DeviceInfoProps) => {
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-gray-100 pb-5 dark:border-gray-800">
         <div>
           <h3 className="text-lg font-semibold text-gray-800 dark:text-white/90">
-            {device.pekerjaName}
+            {/* {device.pekerjaName} */}
+            {deviceDetail.nama}
           </h3>
           <p className="mt-1 font-mono text-sm text-gray-500 dark:text-gray-400">
-            {device.macAddress}
+            {/* {device.macAddress} */}
+            {deviceDetail.mac_address}
           </p>
         </div>
 
@@ -370,7 +394,8 @@ export const DeviceInfo = ({ publicId }: DeviceInfoProps) => {
           {/* WebSocket connection badge */}
           <span
             className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium ${conn.badge}`}
-            title={`${WS_URL}api/v1/ws/mobile/${device.macAddress}`}
+            // title={`${WS_URL}api/v1/ws/mobile/${device.macAddress}`}
+            title={`${WS_URL}api/v1/ws/mobile/${deviceDetail.mac_address}`}
           >
             <span className={`h-1.5 w-1.5 rounded-full ${conn.dot}`} />
             WebSocket: {conn.label}

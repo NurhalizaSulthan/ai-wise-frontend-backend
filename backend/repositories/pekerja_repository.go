@@ -61,7 +61,9 @@ func (repo *PekerjaRepositoryImpl) GetAll(
 	var list []model.Pekerja
 	query := repo.getDB(tx).Model(&model.Pekerja{})
 
-	if err := query.Find(&list).Error; err != nil {
+	if err := query.Preload("Device").
+		// Where("device.status = ?", enum.Aktif).
+		Find(&list).Error; err != nil {
 		return nil, err
 	}
 

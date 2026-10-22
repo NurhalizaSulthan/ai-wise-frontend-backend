@@ -7,7 +7,7 @@ export const options = {
       executor: 'constant-vus',
       exec: 'firstDevice',
       vus: 1,
-      duration: '120s'
+      duration: '30s'
     },
     second_device: {
       executor: 'constant-vus',
@@ -54,48 +54,130 @@ const topics = [
 export function firstDevice() {
   const client = new Client();
 
-  const topic = "telemetry/d5:23:6a:16:fb:82"
+  const topic = "telemetry/90:70:69:12:e6:d4";
 
-  const data = {
-    x: 0.1,
-    y: 0.1,
-    z: 9.1,
-    gx: -0.1,
-    gy: 0.1,
-    gz: 1.1,
-    roll: -1.1,
-    pitch: 0.1,
-    yaw: 232.1,
-    total: 1.0,
-    status: "AMAN"
+  const startTime = Date.now();
+  let intervalID: number;
+  let isClosing = false;
+
+  const roundTo = (value: number, decimals: number) => {
+    const factor = 10 ** decimals;
+    return Math.round(value * factor) / factor;
   };
 
-  client.on("connect", async () => {
+  // Generate small, natural variations in sensor readings.
+  const randomBetween = (min: number, max: number) =>
+    Math.random() * (max - min) + min;
+
+  const generateTelemetry = () => {
+    const elapsed = Date.now() - startTime;
+
+    // Simulate a short impact every 10 seconds.
+    // The impact lasts 500 ms.
+    const impactCycle = elapsed % 10000;
+    const isImpact = impactCycle < 500 && elapsed >= 5000;
+
+    let x, y, z;
+    let gx, gy, gz;
+
+    if (isImpact) {
+      // Simulate a sudden movement / fall impact.
+      x = randomBetween(17, 19);
+      y = randomBetween(4, 6);
+      z = randomBetween(11, 13);
+
+      gx = randomBetween(100, 180);
+      gy = randomBetween(-150, -80);
+      gz = randomBetween(50, 100);
+    } else {
+      // Simulate a stationary worker wearing the device.
+      x = randomBetween(-0.3, 0.3);
+      y = randomBetween(-0.3, 0.3);
+      z = randomBetween(9.0, 9.3);
+
+      gx = randomBetween(-1.5, 1.5);
+      gy = randomBetween(-1.5, 1.5);
+      gz = randomBetween(-1.5, 1.5);
+    }
+
+    // Same magnitude calculation used for the mock acceleration.
+    const totalAcc = Math.sqrt(x * x + y * y + z * z);
+
+    // Match the ESP32 status threshold.
+    const status = totalAcc > 20.0 ? "JATUH" : "AMAN";
+
+    // Mock orientation values.
+    const roll = isImpact
+      ? randomBetween(35, 70)
+      : randomBetween(-2, 2);
+
+    const pitch = isImpact
+      ? randomBetween(-60, -25)
+      : randomBetween(-2, 2);
+
+    const yaw = (232 + elapsed / 1000 * 2 + randomBetween(-1, 1)) % 360;
+
+    return {
+      time: elapsed,
+      x: roundTo(x, 2),
+      y: roundTo(y, 2),
+      z: roundTo(z, 2),
+      gx: roundTo(gx, 2),
+      gy: roundTo(gy, 2),
+      gz: roundTo(gz, 2),
+      total: roundTo(totalAcc, 2),
+      roll: roundTo(roll, 1),
+      pitch: roundTo(pitch, 1),
+      yaw: roundTo(yaw, 1),
+      status,
+    };
+
+  };
+
+  client.on("connect", () => {
     console.log("Connected to MQTT broker");
+    console.log(`Publishing mock telemetry to ${topic}`);
 
-    const intervalID = setInterval(() => {
-      client.publish(topic, JSON.stringify(data))
-      // console.log("Telemetry published");
-    }, 1000)
+    intervalID = setInterval(() => {
+      const data = generateTelemetry();
+      const payload = JSON.stringify(data);
 
+      client.publish(topic, payload, (error) => {
+        if (error) {
+          console.error("Failed to publish telemetry:", error);
+        }
+      });
+
+      // Uncomment to inspect each payload.
+      // console.log(payload);
+    }, 100);
+
+    // Stop after 30 seconds, as in the original test.
     setTimeout(() => {
-      clearInterval(intervalID)
-      client.end()
-    }, 30000)
+      if (intervalID) {
+        clearInterval(intervalID);
+      }
+
+      isClosing = true;
+      client.end();
+    }, 30000);
+
   });
 
   client.on("error", (error) => {
     console.error("MQTT error:", error);
+
+    if (intervalID) {
+      clearInterval(intervalID);
+    }
+
   });
 
   client.on("end", () => {
     console.log("Disconnected from MQTT broker");
   });
 
-  client.connect(
-    // __ENV.MQTT_BROKER_ADDRESS || 
-    "mqtt://13.229.227.127:1884"
-  );
+  client.connect("mqtt://13.229.227.127:1884");
 }
 
 export function secondDevice() {

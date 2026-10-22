@@ -1,6 +1,8 @@
 package dto
 
 import (
+	"time"
+
 	"github.com/NurhalizaSulthan/ai-wise-frontend-backend/backend/enum"
 	"github.com/google/uuid"
 )
@@ -13,6 +15,8 @@ type DeviceBase struct {
 	Status     enum.DeviceStatus `json:"status"`
 	// ListAlert []AlertBase `json:"daftar_alert"`
 	Telemetry []TelemetryBase `json:"telemetry,omitempty"`
+	CreatedAt time.Time       `json:"created_at"`
+	UpdatedAt time.Time       `json:"updated_at"`
 }
 type DeviceCreate struct {
 	// PekerjaPublicID uuid.UUID `json:"pekerja_public_id"`

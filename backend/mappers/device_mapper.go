@@ -17,6 +17,8 @@ func ToDeviceBase(d *model.Device) *dto.DeviceBase {
 		PekerjaID:  d.PekerjaID,
 		MacAddress: d.MacAddress,
 		Status:     d.Status,
+		CreatedAt:  d.CreatedAt,
+		UpdatedAt:  d.UpdatedAt,
 	}
 
 	if telemetry := MapSlice(d.Telemetry, ToTelemetryBase); telemetry != nil {

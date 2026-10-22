@@ -2,9 +2,33 @@ import { useCallback, useEffect, useState } from "react";
 import { mapWorker } from "@/types/worker";
 import type { Worker, CreateWorkerPayload, UpdateWorkerPayload, ApiWorker } from "@/types/worker";
 import { ApiError } from "@/lib/api/errors";
-import { createWorker, updateWorker, fetchWorkersPage, fetchWorkerDetail } from "@/lib/workers";
+import { createWorker, updateWorker, fetchWorkersPage, fetchWorkerDetail, fetchWorkers } from "@/lib/workers";
 
 type Cursor = { after?: string; before?: string };
+
+const useWorkers = () => {
+    const [data, setData] = useState<ApiWorker[] | []>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+
+        const controller = new AbortController()
+        setError(null)
+
+        fetchWorkers().then((res) => setData(res.data)).catch((e) => {
+            if ((e as Error).name === "AbortError") return;
+            setError(e instanceof ApiError ? e.message : "Gagal memuat data pekerja");
+        })
+            .finally(() => {
+                if (!controller.signal.aborted) setIsLoading(false);
+            });
+
+        return () => controller.abort()
+
+    });
+    return { data, isLoading, error };
+}
 
 // GET ALL WORKERS PAGINATION
 const useWorkersPagination = (externalReloadKey = 0) => {
@@ -169,4 +193,4 @@ const useUpdateWorker = (onSuccess?: () => void) => {
 };
 
 
-export { useWorkersPagination, useCreateWorker, useUpdateWorker, useWorkerDetail };
+export { useWorkers, useWorkersPagination, useCreateWorker, useUpdateWorker, useWorkerDetail };
