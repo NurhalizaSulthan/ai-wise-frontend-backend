@@ -54,7 +54,7 @@ const topics = [
 export function firstDevice() {
   const client = new Client();
 
-  const topic = "telemetry/90:70:69:12:e6:d4";
+  const topic = "telemetry/90:70:69:12:E6:D4";
 
   const startTime = Date.now();
   let intervalID: number;
@@ -130,6 +130,7 @@ export function firstDevice() {
       pitch: roundTo(pitch, 1),
       yaw: roundTo(yaw, 1),
       status,
+      seq: 0,
     };
 
   };
